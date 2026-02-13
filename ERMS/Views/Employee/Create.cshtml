@@ -1,0 +1,152 @@
+@model ERMS.ViewModels.Employee.CreateEmployeeViewModel
+@{
+    ViewBag.Title = "Add New Employee";
+}
+
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="glyphicon glyphicon-user-plus"></span> Add New Employee
+                </h3>
+            </div>
+            <div class="panel-body">
+                <form asp-action="Create" asp-controller="Employee" method="post">
+                    @Html.AntiForgeryToken()
+                    <!-- IMPROVED VALIDATION DISPLAY -->
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <h4>Please correct the following errors:</h4>
+                            <ul>
+                                @foreach (var modelState in ViewData.ModelState.Values)
+                                {
+                                    foreach (var error in modelState.Errors)
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <h4 class="text-muted">Personal Information</h4>
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FirstName"></label>
+                                <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="LastName"></label>
+                                <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Email"></label>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="employee@company.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PhoneNumber"></label>
+                                <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="+1234567890" />
+                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-muted" style="margin-top: 30px;">Employment Details</h4>
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="HireDate"></label>
+                                <input asp-for="HireDate" type="date" class="form-control" />
+                                <span asp-validation-for="HireDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="DepartmentId"></label>
+                                <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-control">
+                                    <option value="">-- Select Department --</option>
+                                </select>
+                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="PositionId"></label>
+                                <select asp-for="PositionId" asp-items="Model.Positions" class="form-control">
+                                    <option value="">-- Select Position --</option>
+                                </select>
+                                <span asp-validation-for="PositionId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="ManagerId"></label>
+                                <select asp-for="ManagerId" asp-items="Model.Managers" class="form-control">
+                                    <option value="">-- No Manager --</option>
+                                </select>
+                                <span asp-validation-for="ManagerId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="text-muted" style="margin-top: 30px;">System Access</h4>
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Role"></label>
+                                <select asp-for="Role" asp-items="Model.Roles" class="form-control">
+                                    <option value="">-- Select Role --</option>
+                                </select>
+                                <span asp-validation-for="Role" class="text-danger"></span>
+                                <small class="form-text text-muted">
+                                    This determines the employee's system access level.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info" style="margin-top: 20px;">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                        <strong>Note:</strong> A username and temporary password will be automatically generated and sent to the employee's email address.
+                    </div>
+
+                    <div class="form-group" style="margin-top: 30px;">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <span class="glyphicon glyphicon-floppy-disk"></span> Create Employee
+                        </button>
+                        <a href="@Url.Action("Index", "Employee")" class="btn btn-default btn-lg">
+                            <span class="glyphicon glyphicon-remove"></span> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
