@@ -1,4 +1,5 @@
 ﻿using ERMS.DTOs.Auth;
+using ERMS.Helpers;
 using ERMS.Services.Interfaces;
 using ERMS.ViewModels.Auth;
 using Microsoft.AspNetCore.Mvc;
@@ -35,12 +36,7 @@ namespace ERMS.Controllers
                 return View(model);
             }
 
-            var loginDto = new LoginDto
-            {
-                Username = model.Username,
-                Password = model.Password,
-                RememberMe = model.RememberMe
-            };
+            var loginDto = model.ViewModelToDto();
 
             var result = await _authService.LoginAsync(loginDto);
 

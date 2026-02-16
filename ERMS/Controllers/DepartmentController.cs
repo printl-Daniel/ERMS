@@ -1,7 +1,6 @@
-﻿using ERMS.DTOs;
-using ERMS.DTOs.Department;
+﻿using ERMS.Helpers;
+using ERMS.Helpers.Mappers;
 using ERMS.Services.Interfaces;
-using ERMS.ViewModels;
 using ERMS.ViewModels.Department;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,12 +19,7 @@ namespace ERMS.Controllers
         public async Task<IActionResult> Index()
         {
             var departments = await _departmentService.GetAllAsync();
-            var viewModels = departments.Select(d => new DepartmentViewModel
-            {
-                Id = d.Id,
-                Name = d.Name,
-                Description = d.Description
-            });
+            var viewModels = departments.Select(d => d.ToViewModel());
 
             return View(viewModels);
         }
@@ -46,13 +40,7 @@ namespace ERMS.Controllers
 
             try
             {
-                var dto = new CreateDepartmentDto
-                {
-                    Name = model.Name,
-                    Description = model.Description
-                };
-
-                await _departmentService.CreateAsync(dto);
+                await _departmentService.CreateAsync(model.ToCreateDto());
                 TempData["SuccessMessage"] = "Department created successfully";
                 return RedirectToAction(nameof(Index));
             }
@@ -70,14 +58,7 @@ namespace ERMS.Controllers
             if (department == null)
                 return NotFound();
 
-            var viewModel = new EditDepartmentViewModel
-            {
-                Id = department.Id,
-                Name = department.Name,
-                Description = department.Description
-            };
-
-            return View(viewModel);
+            return View(department.ToEditViewModel());
         }
 
         // POST: Department/Edit/5
@@ -93,14 +74,7 @@ namespace ERMS.Controllers
 
             try
             {
-                var dto = new UpdateDepartmentDto
-                {
-                    Id = model.Id,
-                    Name = model.Name,
-                    Description = model.Description
-                };
-
-                await _departmentService.UpdateAsync(dto);
+                await _departmentService.UpdateAsync(model.ToUpdateDto());
                 TempData["SuccessMessage"] = "Department updated successfully";
                 return RedirectToAction(nameof(Index));
             }
@@ -118,14 +92,7 @@ namespace ERMS.Controllers
             if (department == null)
                 return NotFound();
 
-            var viewModel = new DeleteDepartmentViewModel
-            {
-                Id = department.Id,
-                Name = department.Name,
-                Description = department.Description
-            };
-
-            return View(viewModel);
+            return View(department.ToDeleteViewModel());
         }
 
         // POST: Department/Delete/5

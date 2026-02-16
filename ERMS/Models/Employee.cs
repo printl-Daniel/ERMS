@@ -9,17 +9,29 @@ namespace ERMS.Models
         [Key]
         public int Id { get; set; }
 
+        [Required]
         public string FirstName { get; set; }
 
+        [Required]
         public string LastName { get; set; }
 
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
 
         public string PhoneNumber { get; set; }
 
+        [Required]
         public DateTime HireDate { get; set; }
 
+        [Required]
         public EmployeeStatus Status { get; set; } = EmployeeStatus.Active;
+
+        // NEW PROFILE FIELDS
+        public string? Address { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+        public string? ProfilePicturePath { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         // Foreign Keys
         [Required]

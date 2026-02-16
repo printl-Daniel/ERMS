@@ -1,7 +1,5 @@
-﻿using ERMS.DTOs;
-using ERMS.DTOs.Position;
+﻿using ERMS.Helpers;
 using ERMS.Services.Interfaces;
-using ERMS.ViewModels;
 using ERMS.ViewModels.Position;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,14 +20,7 @@ namespace ERMS.Controllers
             try
             {
                 var positions = await _positionService.GetAllPositionsAsync();
-                var viewModel = positions.Select(p => new PositionListViewModel
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    Description = p.Description,
-                    BaseSalary = p.BaseSalary,
-                    EmployeeCount = p.EmployeeCount
-                }).ToList();
+                var viewModel = positions.Select(p => p.ToListViewModel()).ToList();
 
                 return View(viewModel);
             }
@@ -46,16 +37,7 @@ namespace ERMS.Controllers
             try
             {
                 var position = await _positionService.GetPositionByIdAsync(id);
-                var viewModel = new PositionListViewModel
-                {
-                    Id = position.Id,
-                    Title = position.Title,
-                    Description = position.Description,
-                    BaseSalary = position.BaseSalary,
-                    EmployeeCount = position.EmployeeCount
-                };
-
-                return View(viewModel);
+                return View(position.ToListViewModel());
             }
             catch (KeyNotFoundException)
             {
@@ -80,14 +62,7 @@ namespace ERMS.Controllers
 
             try
             {
-                var createDto = new CreatePositionDto
-                {
-                    Title = viewModel.Title,
-                    Description = viewModel.Description,
-                    BaseSalary = viewModel.BaseSalary
-                };
-
-                await _positionService.CreatePositionAsync(createDto);
+                await _positionService.CreatePositionAsync(viewModel.ToCreateDto());
                 TempData["Success"] = $"Position '{viewModel.Title}' created successfully.";
                 return RedirectToAction(nameof(Index));
             }
@@ -109,15 +84,7 @@ namespace ERMS.Controllers
             try
             {
                 var position = await _positionService.GetPositionByIdAsync(id);
-                var viewModel = new EditPositionViewModel
-                {
-                    Id = position.Id,
-                    Title = position.Title,
-                    Description = position.Description,
-                    BaseSalary = position.BaseSalary
-                };
-
-                return View(viewModel);
+                return View(position.ToEditViewModel());
             }
             catch (KeyNotFoundException)
             {
@@ -139,14 +106,7 @@ namespace ERMS.Controllers
 
             try
             {
-                var updateDto = new UpdatePositionDto
-                {
-                    Title = viewModel.Title,
-                    Description = viewModel.Description,
-                    BaseSalary = viewModel.BaseSalary
-                };
-
-                await _positionService.UpdatePositionAsync(id, updateDto);
+                await _positionService.UpdatePositionAsync(id, viewModel.ToUpdateDto());
                 TempData["Success"] = $"Position '{viewModel.Title}' updated successfully.";
                 return RedirectToAction(nameof(Index));
             }
@@ -173,16 +133,7 @@ namespace ERMS.Controllers
             try
             {
                 var position = await _positionService.GetPositionByIdAsync(id);
-                var viewModel = new DeletePositionViewModel
-                {
-                    Id = position.Id,
-                    Title = position.Title,
-                    Description = position.Description,
-                    BaseSalary = position.BaseSalary,
-                    EmployeeCount = position.EmployeeCount
-                };
-
-                return View(viewModel);
+                return View(position.ToDeleteViewModel());
             }
             catch (KeyNotFoundException)
             {

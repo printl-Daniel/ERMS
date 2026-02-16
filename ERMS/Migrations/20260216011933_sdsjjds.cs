@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ERMS.Migrations
 {
     /// <inheritdoc />
-    public partial class sdd : Migration
+    public partial class sdsjjds : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,8 +35,8 @@ namespace ERMS.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     BaseSalary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -58,6 +58,10 @@ namespace ERMS.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     HireDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProfilePicturePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     DepartmentId = table.Column<int>(type: "int", nullable: false),
                     PositionId = table.Column<int>(type: "int", nullable: false),
                     ManagerId = table.Column<int>(type: "int", nullable: true)
@@ -96,6 +100,7 @@ namespace ERMS.Migrations
                     Role = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EmployeeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -138,42 +143,42 @@ namespace ERMS.Migrations
 
             migrationBuilder.InsertData(
                 table: "Employees",
-                columns: new[] { "Id", "DepartmentId", "Email", "FirstName", "HireDate", "LastName", "ManagerId", "PhoneNumber", "PositionId", "Status" },
+                columns: new[] { "Id", "Address", "DateOfBirth", "DepartmentId", "Email", "FirstName", "HireDate", "LastName", "ManagerId", "PhoneNumber", "PositionId", "ProfilePicturePath", "Status", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 1, 1, "john.smith@company.com", "John", new DateTime(2020, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Smith", null, "555-0001", 1, 0 },
-                    { 2, 2, "sarah.johnson@company.com", "Sarah", new DateTime(2020, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Johnson", 1, "555-0002", 2, 0 },
-                    { 3, 3, "michael.chen@company.com", "Michael", new DateTime(2020, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Chen", 1, "555-0003", 3, 0 },
-                    { 4, 4, "emily.davis@company.com", "Emily", new DateTime(2020, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Davis", 1, "555-0004", 6, 0 },
-                    { 5, 5, "david.wilson@company.com", "David", new DateTime(2020, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "Wilson", 1, "555-0005", 8, 0 }
+                    { 1, "123 Main St, City, State 12345", new DateTime(1980, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, "john.smith@company.com", "John", new DateTime(2020, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Smith", null, "555-0001", 1, null, 0, null },
+                    { 2, "456 Oak Ave, City, State 12345", new DateTime(1985, 8, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, "sarah.johnson@company.com", "Sarah", new DateTime(2020, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Johnson", 1, "555-0002", 2, null, 0, null },
+                    { 3, "789 Pine Rd, City, State 12345", new DateTime(1983, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "michael.chen@company.com", "Michael", new DateTime(2020, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Chen", 1, "555-0003", 3, null, 0, null },
+                    { 4, "321 Elm St, City, State 12345", new DateTime(1987, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "emily.davis@company.com", "Emily", new DateTime(2020, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "Davis", 1, "555-0004", 6, null, 0, null },
+                    { 5, "654 Maple Dr, City, State 12345", new DateTime(1986, 7, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 5, "david.wilson@company.com", "David", new DateTime(2020, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), "Wilson", 1, "555-0005", 8, null, 0, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "CreatedAt", "EmployeeId", "IsActive", "PasswordHash", "Role", "Username" },
-                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, true, "admin123", 0, "admin" });
+                columns: new[] { "Id", "CreatedAt", "EmployeeId", "IsActive", "PasswordHash", "Role", "UpdatedAt", "Username" },
+                values: new object[] { 1, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, true, "admin123", 0, null, "admin" });
 
             migrationBuilder.InsertData(
                 table: "Employees",
-                columns: new[] { "Id", "DepartmentId", "Email", "FirstName", "HireDate", "LastName", "ManagerId", "PhoneNumber", "PositionId", "Status" },
+                columns: new[] { "Id", "Address", "DateOfBirth", "DepartmentId", "Email", "FirstName", "HireDate", "LastName", "ManagerId", "PhoneNumber", "PositionId", "ProfilePicturePath", "Status", "UpdatedAt" },
                 values: new object[,]
                 {
-                    { 6, 3, "james.brown@company.com", "James", new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Brown", 3, "555-0006", 4, 0 },
-                    { 7, 3, "lisa.garcia@company.com", "Lisa", new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Garcia", 3, "555-0007", 5, 0 },
-                    { 8, 4, "robert.martinez@company.com", "Robert", new DateTime(2021, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Martinez", 4, "555-0008", 7, 0 },
-                    { 9, 4, "jennifer.taylor@company.com", "Jennifer", new DateTime(2022, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Taylor", 4, "555-0009", 7, 1 }
+                    { 6, "987 Cedar Ln, City, State 12345", new DateTime(1990, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "james.brown@company.com", "James", new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Brown", 3, "555-0006", 4, null, 0, null },
+                    { 7, "147 Birch St, City, State 12345", new DateTime(1995, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, "lisa.garcia@company.com", "Lisa", new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Garcia", 3, "555-0007", 5, null, 0, null },
+                    { 8, "258 Willow Way, City, State 12345", new DateTime(1992, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "robert.martinez@company.com", "Robert", new DateTime(2021, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Martinez", 4, "555-0008", 7, null, 0, null },
+                    { 9, "369 Spruce Ave, City, State 12345", new DateTime(1993, 12, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, "jennifer.taylor@company.com", "Jennifer", new DateTime(2022, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Taylor", 4, "555-0009", 7, null, 1, null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "CreatedAt", "EmployeeId", "IsActive", "PasswordHash", "Role", "Username" },
+                columns: new[] { "Id", "CreatedAt", "EmployeeId", "IsActive", "PasswordHash", "Role", "UpdatedAt", "Username" },
                 values: new object[,]
                 {
-                    { 2, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, true, "manager123", 1, "sarah.j" },
-                    { 3, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, true, "manager123", 1, "michael.c" },
-                    { 4, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, true, "manager123", 1, "emily.d" },
-                    { 5, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, true, "employee123", 2, "james.b" },
-                    { 6, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, true, "employee123", 2, "lisa.g" }
+                    { 2, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, true, "manager123", 1, null, "sarah.j" },
+                    { 3, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, true, "manager123", 1, null, "michael.c" },
+                    { 4, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, true, "manager123", 1, null, "emily.d" },
+                    { 5, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 6, true, "employee123", 2, null, "james.b" },
+                    { 6, new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 7, true, "employee123", 2, null, "lisa.g" }
                 });
 
             migrationBuilder.CreateIndex(

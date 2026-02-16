@@ -1,10 +1,11 @@
 ﻿using ERMS.DTOs.Employee;
+using ERMS.DTOs.Profile;
 using ERMS.Models;
 using ERMS.ViewModels.Employee;
+using ERMS.ViewModels.Profile;
 
 namespace ERMS.Helpers.Mappers
 {
-
     public static class EmployeeMapperHelper
     {
         // DtoToModel
@@ -25,7 +26,7 @@ namespace ERMS.Helpers.Mappers
             };
         }
 
-        // ModelToDto
+        // ModelToDto - UPDATED WITH ADDRESS AND DATEOFBIRTH
         public static CreateEmployeeDto ModelToDto(this CreateEmployeeViewModel model)
         {
             return new CreateEmployeeDto
@@ -35,6 +36,8 @@ namespace ERMS.Helpers.Mappers
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
                 HireDate = model.HireDate,
+                Address = model.Address,          
+                DateOfBirth = model.DateOfBirth,   
                 DepartmentId = model.DepartmentId,
                 PositionId = model.PositionId,
                 ManagerId = model.ManagerId,
@@ -93,6 +96,54 @@ namespace ERMS.Helpers.Mappers
             };
         }
 
+        public static ProfileViewModel ToViewModel(this ProfileDto dto)
+        {
+            return new ProfileViewModel
+            {
+                EmployeeId = dto.EmployeeId,
+                EmployeeNumber = dto.EmployeeNumber,
+                FullName = dto.FullName,
+                Position = dto.Position,
+                Department = dto.Department,
+                Email = dto.Email,
+                PhoneNumber = dto.PhoneNumber,
+                Address = dto.Address,
+                DateOfBirth = dto.DateOfBirth,
+                HireDate = dto.HireDate,
+                ProfilePicturePath = dto.ProfilePicturePath
+            };
+        }
+
+        public static UpdatePasswordDto ToDto(this UpdatePasswordViewModel viewModel, int employeeId)
+        {
+            return new UpdatePasswordDto
+            {
+                EmployeeId = employeeId,
+                CurrentPassword = viewModel.CurrentPassword,
+                NewPassword = viewModel.NewPassword
+            };
+        }
+
+        public static UpdateProfilePictureDto ToDto(this UpdateProfilePictureViewModel viewModel, string filePath)
+        {
+            return new UpdateProfilePictureDto
+            {
+                EmployeeId = viewModel.EmployeeId,
+                ProfilePicturePath = filePath
+            };
+        }
+
+        public static UpdatePersonalInfoDto ToDto(this UpdatePersonalInfoViewModel viewModel)
+        {
+            return new UpdatePersonalInfoDto
+            {
+                EmployeeId = viewModel.EmployeeId,
+                Email = viewModel.Email,
+                PhoneNumber = viewModel.PhoneNumber,
+                Address = viewModel.Address,
+                DateOfBirth = viewModel.DateOfBirth
+            };
+        }
 
         //LIST
         public static List<EmployeeListViewModel> ToListViewModels(this IEnumerable<EmployeeResponseDto> employees)
@@ -100,5 +151,4 @@ namespace ERMS.Helpers.Mappers
             return employees.Select(e => e.DtoToModel()).ToList();
         }
     }
-    
 }

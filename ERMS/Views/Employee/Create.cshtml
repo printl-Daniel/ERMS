@@ -70,6 +70,23 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="DateOfBirth"></label>
+                                <input asp-for="DateOfBirth" type="date" class="form-control" />
+                                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Address"></label>
+                                <input asp-for="Address" class="form-control" placeholder="123 Main St, City, State ZIP" />
+                                <span asp-validation-for="Address" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
                     <h4 class="text-muted" style="margin-top: 30px;">Employment Details</h4>
                     <hr />
 
@@ -149,4 +166,3 @@
         </div>
     </div>
 </div>
-

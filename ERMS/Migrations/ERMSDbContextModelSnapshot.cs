@@ -94,6 +94,12 @@ namespace ERMS.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
@@ -122,8 +128,14 @@ namespace ERMS.Migrations
                     b.Property<int>("PositionId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ProfilePicturePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -142,6 +154,8 @@ namespace ERMS.Migrations
                         new
                         {
                             Id = 1,
+                            Address = "123 Main St, City, State 12345",
+                            DateOfBirth = new DateTime(1980, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 1,
                             Email = "john.smith@company.com",
                             FirstName = "John",
@@ -154,6 +168,8 @@ namespace ERMS.Migrations
                         new
                         {
                             Id = 2,
+                            Address = "456 Oak Ave, City, State 12345",
+                            DateOfBirth = new DateTime(1985, 8, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 2,
                             Email = "sarah.johnson@company.com",
                             FirstName = "Sarah",
@@ -167,6 +183,8 @@ namespace ERMS.Migrations
                         new
                         {
                             Id = 3,
+                            Address = "789 Pine Rd, City, State 12345",
+                            DateOfBirth = new DateTime(1983, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 3,
                             Email = "michael.chen@company.com",
                             FirstName = "Michael",
@@ -180,6 +198,8 @@ namespace ERMS.Migrations
                         new
                         {
                             Id = 4,
+                            Address = "321 Elm St, City, State 12345",
+                            DateOfBirth = new DateTime(1987, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 4,
                             Email = "emily.davis@company.com",
                             FirstName = "Emily",
@@ -193,6 +213,8 @@ namespace ERMS.Migrations
                         new
                         {
                             Id = 5,
+                            Address = "654 Maple Dr, City, State 12345",
+                            DateOfBirth = new DateTime(1986, 7, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 5,
                             Email = "david.wilson@company.com",
                             FirstName = "David",
@@ -206,6 +228,8 @@ namespace ERMS.Migrations
                         new
                         {
                             Id = 6,
+                            Address = "987 Cedar Ln, City, State 12345",
+                            DateOfBirth = new DateTime(1990, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 3,
                             Email = "james.brown@company.com",
                             FirstName = "James",
@@ -219,6 +243,8 @@ namespace ERMS.Migrations
                         new
                         {
                             Id = 7,
+                            Address = "147 Birch St, City, State 12345",
+                            DateOfBirth = new DateTime(1995, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 3,
                             Email = "lisa.garcia@company.com",
                             FirstName = "Lisa",
@@ -232,6 +258,8 @@ namespace ERMS.Migrations
                         new
                         {
                             Id = 8,
+                            Address = "258 Willow Way, City, State 12345",
+                            DateOfBirth = new DateTime(1992, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 4,
                             Email = "robert.martinez@company.com",
                             FirstName = "Robert",
@@ -245,6 +273,8 @@ namespace ERMS.Migrations
                         new
                         {
                             Id = 9,
+                            Address = "369 Spruce Ave, City, State 12345",
+                            DateOfBirth = new DateTime(1993, 12, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 4,
                             Email = "jennifer.taylor@company.com",
                             FirstName = "Jennifer",
@@ -273,14 +303,16 @@ namespace ERMS.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -376,6 +408,9 @@ namespace ERMS.Migrations
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Username")
                         .IsRequired()

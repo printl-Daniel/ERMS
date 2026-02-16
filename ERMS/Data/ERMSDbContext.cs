@@ -25,7 +25,7 @@ namespace ERMS.Data
                 .HasOne(e => e.Manager)
                 .WithMany(e => e.Subordinates)
                 .HasForeignKey(e => e.ManagerId)
-                .OnDelete(DeleteBehavior.Restrict); // Prevent cascade delete
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configure one-to-one relationship between Employee and User
             modelBuilder.Entity<User>()
@@ -47,9 +47,11 @@ namespace ERMS.Data
             SeedData(modelBuilder);
         }
 
+
+        //SEEDER
         private void SeedData(ModelBuilder modelBuilder)
         {
-            // Seed Departments
+            // Seed Departments (unchanged)
             modelBuilder.Entity<Department>().HasData(
                 new Department { Id = 1, Name = "Executive", Description = "C-Level executives" },
                 new Department { Id = 2, Name = "Human Resources", Description = "HR and talent management" },
@@ -58,7 +60,7 @@ namespace ERMS.Data
                 new Department { Id = 5, Name = "Marketing", Description = "Marketing and communications" }
             );
 
-            // Seed Positions
+            // Seed Positions (unchanged)
             modelBuilder.Entity<Position>().HasData(
                 new Position { Id = 1, Title = "CEO", Description = "Chief Executive Officer", BaseSalary = 250000m },
                 new Position { Id = 2, Title = "HR Manager", Description = "Human Resources Manager", BaseSalary = 90000m },
@@ -70,9 +72,8 @@ namespace ERMS.Data
                 new Position { Id = 8, Title = "Marketing Manager", Description = "Marketing Team Manager", BaseSalary = 90000m }
             );
 
-            // Seed Employees (with hierarchy)
+            // Seed Employees (with new fields)
             modelBuilder.Entity<Employee>().HasData(
-                // CEO - No manager
                 new Employee
                 {
                     Id = 1,
@@ -84,10 +85,10 @@ namespace ERMS.Data
                     Status = EmployeeStatus.Active,
                     DepartmentId = 1,
                     PositionId = 1,
-                    ManagerId = null
+                    ManagerId = null,
+                    Address = "123 Main St, City, State 12345",
+                    DateOfBirth = new DateTime(1980, 5, 15)
                 },
-
-                // Department Managers - Report to CEO
                 new Employee
                 {
                     Id = 2,
@@ -99,7 +100,9 @@ namespace ERMS.Data
                     Status = EmployeeStatus.Active,
                     DepartmentId = 2,
                     PositionId = 2,
-                    ManagerId = 1
+                    ManagerId = 1,
+                    Address = "456 Oak Ave, City, State 12345",
+                    DateOfBirth = new DateTime(1985, 8, 22)
                 },
                 new Employee
                 {
@@ -112,7 +115,9 @@ namespace ERMS.Data
                     Status = EmployeeStatus.Active,
                     DepartmentId = 3,
                     PositionId = 3,
-                    ManagerId = 1
+                    ManagerId = 1,
+                    Address = "789 Pine Rd, City, State 12345",
+                    DateOfBirth = new DateTime(1983, 3, 10)
                 },
                 new Employee
                 {
@@ -125,7 +130,9 @@ namespace ERMS.Data
                     Status = EmployeeStatus.Active,
                     DepartmentId = 4,
                     PositionId = 6,
-                    ManagerId = 1
+                    ManagerId = 1,
+                    Address = "321 Elm St, City, State 12345",
+                    DateOfBirth = new DateTime(1987, 11, 30)
                 },
                 new Employee
                 {
@@ -138,10 +145,10 @@ namespace ERMS.Data
                     Status = EmployeeStatus.Active,
                     DepartmentId = 5,
                     PositionId = 8,
-                    ManagerId = 1
+                    ManagerId = 1,
+                    Address = "654 Maple Dr, City, State 12345",
+                    DateOfBirth = new DateTime(1986, 7, 18)
                 },
-
-                // Team Members - Report to Department Managers
                 new Employee
                 {
                     Id = 6,
@@ -153,7 +160,9 @@ namespace ERMS.Data
                     Status = EmployeeStatus.Active,
                     DepartmentId = 3,
                     PositionId = 4,
-                    ManagerId = 3
+                    ManagerId = 3,
+                    Address = "987 Cedar Ln, City, State 12345",
+                    DateOfBirth = new DateTime(1990, 2, 14)
                 },
                 new Employee
                 {
@@ -166,7 +175,9 @@ namespace ERMS.Data
                     Status = EmployeeStatus.Active,
                     DepartmentId = 3,
                     PositionId = 5,
-                    ManagerId = 3
+                    ManagerId = 3,
+                    Address = "147 Birch St, City, State 12345",
+                    DateOfBirth = new DateTime(1995, 9, 5)
                 },
                 new Employee
                 {
@@ -179,7 +190,9 @@ namespace ERMS.Data
                     Status = EmployeeStatus.Active,
                     DepartmentId = 4,
                     PositionId = 7,
-                    ManagerId = 4
+                    ManagerId = 4,
+                    Address = "258 Willow Way, City, State 12345",
+                    DateOfBirth = new DateTime(1992, 4, 25)
                 },
                 new Employee
                 {
@@ -192,22 +205,22 @@ namespace ERMS.Data
                     Status = EmployeeStatus.OnLeave,
                     DepartmentId = 4,
                     PositionId = 7,
-                    ManagerId = 4
+                    ManagerId = 4,
+                    Address = "369 Spruce Ave, City, State 12345",
+                    DateOfBirth = new DateTime(1993, 12, 8)
                 }
             );
 
-            // Seed Users (role-based login)
-            // Note: In production, use proper password hashing (e.g., BCrypt)
+            // Seed Users (unchanged)
             modelBuilder.Entity<User>().HasData(
                 new User
                 {
                     Id = 1,
                     Username = "admin",
-                    PasswordHash = "admin123", // DEMO ONLY - Hash this in production!
+                    PasswordHash = "admin123",
                     Role = UserRole.Admin,
                     IsActive = true,
                     CreatedAt = new DateTime(2024, 1, 1),
-
                     EmployeeId = 1
                 },
                 new User
@@ -218,7 +231,6 @@ namespace ERMS.Data
                     Role = UserRole.Manager,
                     IsActive = true,
                     CreatedAt = new DateTime(2024, 1, 1),
-
                     EmployeeId = 2
                 },
                 new User
@@ -229,7 +241,6 @@ namespace ERMS.Data
                     Role = UserRole.Manager,
                     IsActive = true,
                     CreatedAt = new DateTime(2024, 1, 1),
-
                     EmployeeId = 3
                 },
                 new User
@@ -240,7 +251,6 @@ namespace ERMS.Data
                     Role = UserRole.Manager,
                     IsActive = true,
                     CreatedAt = new DateTime(2024, 1, 1),
-
                     EmployeeId = 4
                 },
                 new User
@@ -251,7 +261,6 @@ namespace ERMS.Data
                     Role = UserRole.Employee,
                     IsActive = true,
                     CreatedAt = new DateTime(2024, 1, 1),
-
                     EmployeeId = 6
                 },
                 new User
@@ -266,5 +275,7 @@ namespace ERMS.Data
                 }
             );
         }
+
     }
+    
 }

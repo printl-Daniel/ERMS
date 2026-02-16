@@ -33,7 +33,6 @@ namespace ERMS.Controllers
             return HttpContext.Session.GetString("Role") == "Admin";
         }
 
-
         // GET: Employee/Index
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -49,7 +48,6 @@ namespace ERMS.Controllers
             return View(viewModel);
         }
 
-
         // GET: Employee/Create
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -64,7 +62,6 @@ namespace ERMS.Controllers
             return View(viewModel);
         }
 
-
         // POST: Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -74,23 +71,26 @@ namespace ERMS.Controllers
             {
                 return RedirectToAction("Login", "Auth");
             }
+
             if (!ModelState.IsValid)
             {
                 await PopulateDropdowns(model);
                 return View(model);
             }
+
             var dto = model.ModelToDto();
             var result = await _employeeService.CreateEmployeeAsync(dto);
+
             if (result.Success)
             {
                 var resultViewModel = result.ToResultViewModel(model);
                 return View("CreateResult", resultViewModel);
             }
+
             ModelState.AddModelError("", result.Message);
             await PopulateDropdowns(model);
             return View(model);
         }
-
 
         // GET: Employee/Details/5
         [HttpGet]
@@ -112,7 +112,6 @@ namespace ERMS.Controllers
 
             return View(viewModel);
         }
-
 
         // GET: Employee/Delete/5
         [HttpGet]
@@ -155,11 +154,7 @@ namespace ERMS.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-   
-
-
-        ///PRIVATE METHODS
-
+        /// PRIVATE METHODS
         private async Task PopulateDropdowns(CreateEmployeeViewModel model)
         {
             var departments = await _departmentRepository.GetAllAsync();
@@ -183,13 +178,6 @@ namespace ERMS.Controllers
                 Value = e.Id.ToString(),
                 Text = e.FullName
             }).Prepend(new SelectListItem { Value = "", Text = "-- No Manager --" });
-
-            model.Roles = new[]
-            {
-                new SelectListItem { Value = "Employee", Text = "Employee" },
-                new SelectListItem { Value = "Manager", Text = "Manager" },
-                new SelectListItem { Value = "Admin", Text = "Admin" }
-            };
         }
     }
 }

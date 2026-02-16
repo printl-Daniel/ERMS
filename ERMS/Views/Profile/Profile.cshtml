@@ -1,0 +1,317 @@
+﻿@model ERMS.ViewModels.Profile.ProfileViewModel
+@{
+    ViewBag.Title = "My Profile";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <span class="glyphicon glyphicon-user"></span> My Profile
+                </h3>
+            </div>
+            <div class="panel-body">
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <span class="glyphicon glyphicon-ok"></span> @TempData["Success"]
+                    </div>
+                }
+
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <span class="glyphicon glyphicon-exclamation-sign"></span> @TempData["Error"]
+                    </div>
+                }
+
+                <div class="row">
+                    <!-- Profile Picture Section -->
+                    <div class="col-md-4">
+                        <div class="panel panel-default">
+                            <div class="panel-body text-center">
+                                <img src="@Model.ProfilePicturePath" alt="Profile Picture"
+                                     class="img-circle img-responsive center-block"
+                                     style="width: 200px; height: 200px; object-fit: cover; margin-bottom: 15px;">
+                                <h4>@Model.FullName</h4>
+                                <p class="text-muted">@Model.Position</p>
+                                <p class="text-muted">@Model.Department</p>
+
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updatePictureModal">
+                                    <span class="glyphicon glyphicon-camera"></span> Change Picture
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Employment Information</h4>
+                            </div>
+                            <div class="panel-body">
+                                <dl class="dl-horizontal">
+                                    <dt>Employee Number:</dt>
+                                    <dd>@Model.EmployeeNumber</dd>
+
+                                    <dt>Hire Date:</dt>
+                                    <dd>@Model.HireDate.ToString("MMMM dd, yyyy")</dd>
+
+                                    <dt>Position:</dt>
+                                    <dd>@Model.Position</dd>
+
+                                    <dt>Department:</dt>
+                                    <dd>@Model.Department</dd>
+                                </dl>
+                                <small class="text-muted">
+                                    <span class="glyphicon glyphicon-info-sign"></span>
+                                    Position and Department cannot be changed
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information Section -->
+                    <div class="col-md-8">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title pull-left" style="padding-top: 7px;">Personal Information</h4>
+                                <button type="button" class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#updateInfoModal">
+                                    <span class="glyphicon glyphicon-edit"></span> Edit
+                                </button>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <dl>
+                                            <dt>Email</dt>
+                                            <dd>
+                                                <a href="mailto:@Model.Email">@Model.Email</a>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dl>
+                                            <dt>Phone Number</dt>
+                                            <dd>@Model.PhoneNumber</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <dl>
+                                            <dt>Date of Birth</dt>
+                                            <dd>@Model.DateOfBirth.ToString("MMMM dd, yyyy")</dd>
+                                        </dl>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <dl>
+                                            <dt>Address</dt>
+                                            <dd>@Model.Address</dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel panel-warning">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Security</h4>
+                            </div>
+                            <div class="panel-body">
+                                <p>
+                                    <span class="glyphicon glyphicon-lock"></span>
+                                    Keep your account secure by updating your password regularly.
+                                </p>
+                                <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#updatePasswordModal">
+                                    <span class="glyphicon glyphicon-lock"></span> Change Password
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Personal Info Modal -->
+<div class="modal fade" id="updateInfoModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UpdatePersonalInfo" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        <span class="glyphicon glyphicon-edit"></span> Update Personal Information
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="EmployeeId" value="@Model.EmployeeId" />
+
+                    <div class="form-group">
+                        <label for="Email">Email</label>
+                        <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="PhoneNumber">Phone Number</label>
+                        <input type="tel" class="form-control" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="DateOfBirth">Date of Birth</label>
+                        <input type="date" class="form-control" id="DateOfBirth" name="DateOfBirth" value="@Model.DateOfBirth.ToString("yyyy-MM-dd")" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Address">Address</label>
+                        <textarea class="form-control" id="Address" name="Address" rows="3" required>@Model.Address</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-floppy-disk"></span> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Update Password Modal -->
+<div class="modal fade" id="updatePasswordModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UpdatePassword" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        <span class="glyphicon glyphicon-lock"></span> Change Password
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="CurrentPassword">Current Password</label>
+                        <input type="password" class="form-control" id="CurrentPassword" name="CurrentPassword" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="NewPassword">New Password</label>
+                        <input type="password" class="form-control" id="NewPassword" name="NewPassword" required minlength="6">
+                        <small class="text-muted">Password must be at least 6 characters long</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ConfirmPassword">Confirm New Password</label>
+                        <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required>
+                        <span id="passwordMatch" class="help-block"></span>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                        <strong>Security Tip:</strong> Use a strong password with a mix of letters, numbers, and symbols.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        <span class="glyphicon glyphicon-lock"></span> Update Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Update Profile Picture Modal -->
+<div class="modal fade" id="updatePictureModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UpdateProfilePicture" method="post" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        <span class="glyphicon glyphicon-camera"></span> Change Profile Picture
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="EmployeeId" value="@Model.EmployeeId" />
+
+                    <div class="form-group">
+                        <label for="ProfilePicture">Select Image</label>
+                        <input type="file" class="form-control" id="ProfilePicture" name="ProfilePicture"
+                               accept="image/jpeg,image/png,image/gif,image/jpg" required>
+                        <small class="text-muted">
+                            <span class="glyphicon glyphicon-info-sign"></span>
+                            Allowed formats: JPG, JPEG, PNG, GIF. Max size: 5MB
+                        </small>
+                    </div>
+
+                    <div id="imagePreview" class="text-center" style="display: none; margin-top: 15px;">
+                        <img id="preview" src="#" alt="Preview" class="img-thumbnail" style="max-width: 100%;">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span> Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-upload"></span> Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // Image preview
+            $('#ProfilePicture').on('change', function(e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#preview').attr('src', e.target.result);
+                        $('#imagePreview').show();
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Password confirmation validation
+            $('#ConfirmPassword').on('input', function() {
+                var newPassword = $('#NewPassword').val();
+                var confirmPassword = $(this).val();
+                var $helpBlock = $('#passwordMatch');
+
+                if (newPassword !== confirmPassword) {
+                    $(this).closest('.form-group').addClass('has-error');
+                    $helpBlock.text('Passwords do not match').addClass('text-danger');
+                } else {
+                    $(this).closest('.form-group').removeClass('has-error');
+                    $helpBlock.text('Passwords match').removeClass('text-danger').addClass('text-success');
+                }
+            });
+
+            // Clear password match message when typing new password
+            $('#NewPassword').on('input', function() {
+                $('#ConfirmPassword').val('');
+                $('#passwordMatch').text('');
+                $('#ConfirmPassword').closest('.form-group').removeClass('has-error');
+            });
+        });
+    </script>
+}

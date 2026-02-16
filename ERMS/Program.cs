@@ -1,6 +1,8 @@
 using ERMS.Data;
+using ERMS.Repositories;
 using ERMS.Repositories.Implementations;
 using ERMS.Repositories.Interfaces;
+using ERMS.Services;
 using ERMS.Services.Implementations;
 using ERMS.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +22,15 @@ builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 
 
+
 // Register Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IPositionService, PositionService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+
 
 // Add Session support
 builder.Services.AddSession(options =>
