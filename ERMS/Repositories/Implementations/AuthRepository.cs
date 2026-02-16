@@ -50,5 +50,10 @@ namespace ERMS.Repositories.Implementations
             // DEMO ONLY - In production, use BCrypt.Net.BCrypt.Verify(password, passwordHash)
             return password == passwordHash;
         }
+
+
+
+
+
     }
 }

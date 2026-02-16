@@ -1,4 +1,5 @@
 ﻿using ERMS.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ERMS.Repositories.Interfaces
 {
@@ -13,5 +14,6 @@ namespace ERMS.Repositories.Interfaces
         Task<bool> SoftDeleteAsync(int id);
         Task<bool> ExistsAsync(int id);
         Task<bool> TitleExistsAsync(string title, int? excludeId = null);
+        Task<IEnumerable<SelectListItem>> GetPositionDropdownAsync();
     }
 }

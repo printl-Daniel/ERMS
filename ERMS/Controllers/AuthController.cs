@@ -2,7 +2,11 @@
 using ERMS.Helpers;
 using ERMS.Services.Interfaces;
 using ERMS.ViewModels.Auth;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ERMS.Controllers
 {
@@ -19,11 +23,10 @@ namespace ERMS.Controllers
         public IActionResult Login()
         {
             // If already logged in, redirect to home
-            if (HttpContext.Session.GetString("UserId") != null)
+            if (User.Identity?.IsAuthenticated == true)
             {
                 return RedirectToAction("Index", "Home");
             }
-
             return View();
         }
 
@@ -37,30 +40,46 @@ namespace ERMS.Controllers
             }
 
             var loginDto = model.ViewModelToDto();
-
             var result = await _authService.LoginAsync(loginDto);
 
             if (result.Success)
             {
-                // Set session variables
+                // Create claims for the authenticated user
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()),
+                    new Claim(ClaimTypes.Name, result.FullName),
+                    new Claim(ClaimTypes.Role, result.Role),
+                    new Claim("EmployeeId", result.EmployeeId.ToString())
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = model.RememberMe,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
+                    AllowRefresh = true
+                };
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
+
+                // Keep session for backward compatibility (optional - can be removed later)
                 HttpContext.Session.SetString("UserId", result.UserId.ToString());
                 HttpContext.Session.SetString("EmployeeId", result.EmployeeId.ToString());
                 HttpContext.Session.SetString("FullName", result.FullName);
                 HttpContext.Session.SetString("Role", result.Role);
 
                 // Redirect based on role
-                if (result.Role == "Admin")
+                return result.Role switch
                 {
-                    return RedirectToAction("Index", "Employee");
-                }
-                else if (result.Role == "Manager")
-                {
-                    return RedirectToAction("Dashboard", "Manager");
-                }
-                else
-                {
-                    return RedirectToAction("Profile", "Employee");
-                }
+                    "Admin" => RedirectToAction("Index", "Employee"),
+                    "Manager" => RedirectToAction("Dashboard", "Manager"),
+                    _ => RedirectToAction("Profile", "Employee")
+                };
             }
 
             ModelState.AddModelError("", result.Message);
@@ -68,12 +87,20 @@ namespace ERMS.Controllers
         }
 
         [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _authService.LogoutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
-    }
 
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+    }
 }

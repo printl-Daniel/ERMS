@@ -1,7 +1,10 @@
 ﻿using ERMS.DTOs.Employee;
 using ERMS.Models;
+using ERMS.Repositories.Implementations;
 using ERMS.Repositories.Interfaces;
 using ERMS.Services.Interfaces;
+using ERMS.ViewModels.Employee;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Cryptography;
 using System.Text;
 using static ERMS.Enums.EmployeeEnum;
@@ -13,15 +16,21 @@ namespace ERMS.Services.Implementations
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
+        private readonly IDepartmentRepository _departmentRepository;
 
+        private readonly IPositionRepository _positionRepository;
         public EmployeeService(
             IEmployeeRepository employeeRepository,
             IUserRepository userRepository,
-            IEmailService emailService)
+            IEmailService emailService,
+            IDepartmentRepository departmentRepository,
+            IPositionRepository positionRepository)
         {
             _employeeRepository = employeeRepository;
             _userRepository = userRepository;
             _emailService = emailService;
+            _departmentRepository = departmentRepository;
+            _positionRepository = positionRepository;
         }
 
         public async Task<IEnumerable<EmployeeResponseDto>> GetAllEmployeesAsync()
@@ -220,6 +229,12 @@ namespace ERMS.Services.Implementations
             };
         }
 
+        public async Task PopulateDropdowns(CreateEmployeeViewModel model, int? excludeEmployeeId = null)
+        {
+            model.Departments = await _departmentRepository.GetDepartmentDropdownAsync();
+            model.Positions = await _positionRepository.GetPositionDropdownAsync();
+            model.Managers = await _employeeRepository.GetManagerDropdownAsync(excludeEmployeeId);
+        }
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ERMS.Data;
 using ERMS.Models;
 using ERMS.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERMS.Repositories.Implementations
@@ -83,6 +84,19 @@ namespace ERMS.Repositories.Implementations
                 .AnyAsync(p => p.Title.ToLower() == title.ToLower()
                     && !p.IsDeleted
                     && (!excludeId.HasValue || p.Id != excludeId.Value));
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetPositionDropdownAsync()
+        {
+            return await _context.Positions
+                .Where(p => !p.IsDeleted)
+                .OrderBy(p => p.Title)
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Title
+                })
+                .ToListAsync();
         }
     }
 }

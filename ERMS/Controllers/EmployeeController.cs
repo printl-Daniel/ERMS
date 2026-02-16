@@ -1,10 +1,11 @@
-﻿using ERMS.DTOs.Employee;
+﻿using ERMS.Constants.ERMS.Constants;
+using ERMS.DTOs.Employee;
+using ERMS.Helpers.Mappers;
 using ERMS.Repositories.Interfaces;
 using ERMS.Services.Interfaces;
 using ERMS.ViewModels.Employee;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ERMS.Helpers.Mappers;
 
 namespace ERMS.Controllers
 {
@@ -31,6 +32,14 @@ namespace ERMS.Controllers
         private bool IsAdmin()
         {
             return HttpContext.Session.GetString("Role") == "Admin";
+        }
+
+        // Populate dropdowns for employee forms
+        private async Task PopulateDropdowns(CreateEmployeeViewModel model, int? excludeEmployeeId = null)
+        {
+            model.Departments = await _departmentRepository.GetDepartmentDropdownAsync();
+            model.Positions = await _positionRepository.GetPositionDropdownAsync();
+            model.Managers = await _employeeRepository.GetManagerDropdownAsync(excludeEmployeeId);
         }
 
         // GET: Employee/Index
@@ -144,40 +153,14 @@ namespace ERMS.Controllers
             var result = await _employeeService.DeleteEmployeeAsync(id);
             if (result)
             {
-                TempData["SuccessMessage"] = "Employee deleted successfully";
+                TempData["SuccessMessage"] = Messages.Success.EmployeeDeleted;
             }
             else
             {
-                TempData["ErrorMessage"] = "Failed to delete employee";
+                TempData["ErrorMessage"] = Messages.Error.EmployeeDeleteFailed;
             }
 
             return RedirectToAction(nameof(Index));
-        }
-
-        /// PRIVATE METHODS
-        private async Task PopulateDropdowns(CreateEmployeeViewModel model)
-        {
-            var departments = await _departmentRepository.GetAllAsync();
-            var positions = await _positionRepository.GetAllAsync();
-            var employees = await _employeeRepository.GetAllAsync();
-
-            model.Departments = departments.Select(d => new SelectListItem
-            {
-                Value = d.Id.ToString(),
-                Text = d.Name
-            });
-
-            model.Positions = positions.Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = p.Title
-            });
-
-            model.Managers = employees.Select(e => new SelectListItem
-            {
-                Value = e.Id.ToString(),
-                Text = e.FullName
-            }).Prepend(new SelectListItem { Value = "", Text = "-- No Manager --" });
         }
     }
 }

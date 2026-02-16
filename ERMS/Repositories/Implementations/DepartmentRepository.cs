@@ -1,6 +1,7 @@
 ﻿using ERMS.Data;
 using ERMS.Models;
 using ERMS.Repositories.Interfaces;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERMS.Repositories.Implementations
@@ -62,7 +63,6 @@ namespace ERMS.Repositories.Implementations
 
             department.IsDeleted = true;
             department.DeletedAt = DateTime.UtcNow;
-
             await _context.SaveChangesAsync();
             return true;
         }
@@ -79,6 +79,19 @@ namespace ERMS.Repositories.Implementations
                 .AnyAsync(d => d.Name.ToLower() == name.ToLower()
                     && !d.IsDeleted
                     && (!excludeId.HasValue || d.Id != excludeId.Value));
+        }
+
+        public async Task<IEnumerable<SelectListItem>> GetDepartmentDropdownAsync()
+        {
+            return await _context.Departments
+                .Where(d => !d.IsDeleted)
+                .OrderBy(d => d.Name)
+                .Select(d => new SelectListItem
+                {
+                    Value = d.Id.ToString(),
+                    Text = d.Name
+                })
+                .ToListAsync();
         }
     }
 }

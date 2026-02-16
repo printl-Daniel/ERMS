@@ -1,0 +1,178 @@
+﻿@* Views/Hierarchy/Department.cshtml *@
+@model ERMS.ViewModels.Hierarchy.DepartmentHierarchyViewModel
+
+@{
+    ViewData["Title"] = $"{Model.DepartmentName} - Hierarchy";
+}
+
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Hierarchy</a></li>
+                    <li class="breadcrumb-item active">@Model.DepartmentName</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Department Header -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h2><i class="fas fa-building"></i> @Model.DepartmentName Department</h2>
+                    <p class="mb-0">Department Organizational Structure</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Statistics -->
+    @if (Model.Statistics != null)
+    {
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-primary">@Model.Statistics.TotalEmployees</h3>
+                        <p class="mb-0">Total Employees</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">@Model.Statistics.ManagersCount</h3>
+                        <p class="mb-0">Managers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-info">@Model.Statistics.TopLevelCount</h3>
+                        <p class="mb-0">Top Level</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-warning">@Model.Statistics.AverageSpanOfControl</h3>
+                        <p class="mb-0">Avg Span</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Department Hierarchy Tree -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-sitemap"></i> Department Structure</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Hierarchy != null && Model.Hierarchy.Any())
+                    {
+                        <div class="hierarchy-container">
+                            @foreach (var employee in Model.Hierarchy)
+                            {
+                                @await Html.PartialAsync("_HierarchyNode", employee)
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No employees found in this department.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .hierarchy-container {
+            padding: 20px;
+        }
+
+        .hierarchy-node {
+            margin-left: 40px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+            .hierarchy-node::before {
+                content: '';
+                position: absolute;
+                left: -25px;
+                top: 20px;
+                width: 25px;
+                height: 2px;
+                background: #dee2e6;
+            }
+
+            .hierarchy-node::after {
+                content: '';
+                position: absolute;
+                left: -25px;
+                top: -10px;
+                width: 2px;
+                height: 100%;
+                background: #dee2e6;
+            }
+
+            .hierarchy-node:last-child::after {
+                height: 30px;
+            }
+
+            .hierarchy-node.level-0 {
+                margin-left: 0;
+            }
+
+                .hierarchy-node.level-0::before,
+                .hierarchy-node.level-0::after {
+                    display: none;
+                }
+
+        .employee-card {
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+        }
+
+            .employee-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transform: translateX(5px);
+            }
+
+        .employee-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .subordinate-badge {
+            background: #17a2b8;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+    </style>
+}

@@ -1,4 +1,5 @@
 ﻿using ERMS.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ERMS.Repositories.Interfaces
 {
@@ -13,5 +14,15 @@ namespace ERMS.Repositories.Interfaces
         Task<Employee> UpdateAsync(Employee employee);
         Task<bool> DeleteAsync(int id);
         Task<bool> EmailExistsAsync(string email);
+
+
+        // New methods for hierarchy
+        Task<IEnumerable<Employee>> GetAllWithRelationsAsync();
+        Task<IEnumerable<Employee>> GetTopLevelEmployeesAsync();
+        Task<Employee> GetByIdWithHierarchyAsync(int id);
+        Task<IEnumerable<Employee>> GetSubordinatesAsync(int managerId);
+        Task<IEnumerable<Employee>> GetEmployeeChainAsync(int employeeId);
+
+        Task<IEnumerable<SelectListItem>> GetManagerDropdownAsync(int? excludeEmployeeId = null);
     }
 }
