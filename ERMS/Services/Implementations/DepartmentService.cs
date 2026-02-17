@@ -43,7 +43,6 @@ namespace ERMS.Services.Implementations
 
         public async Task<DepartmentDto> CreateAsync(CreateDepartmentDto dto)
         {
-            // Check if name already exists
             if (await _repository.NameExistsAsync(dto.Name))
                 throw new InvalidOperationException("A department with this name already exists");
 

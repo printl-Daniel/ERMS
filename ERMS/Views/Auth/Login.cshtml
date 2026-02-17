@@ -1,88 +1,66 @@
-﻿@model ERMS.ViewModels.Auth.LoginViewModel
+@model ERMS.ViewModels.Auth.LoginViewModel
 @{
-    Layout = null;
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login - ERMS</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+@section Styles {
+    <link rel="stylesheet" href="~/css/Auth.css" />
+}
 
-        .login-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 40px;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-            .login-header h2 {
-                color: #333;
-                font-weight: 600;
-            }
-
-        .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            font-weight: 500;
-        }
-
-            .btn-login:hover {
-                background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-            }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <div class="login-header">
-            <h2>ERMS Login</h2>
-            <p class="text-muted">Enter your credentials to access your account</p>
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-brand">
+            <h1>Welcome Back</h1>
+            <p>Sign in to continue to ERMS</p>
         </div>
 
-        <form asp-action="Login" asp-controller="Auth" method="post">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-modern alert-dismissible fade in" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-modern alert-dismissible fade in" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <form asp-action="Login" asp-controller="Auth" method="post" class="login-form">
             @Html.AntiForgeryToken()
+            
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger alert-modern" role="alert"></div>
 
-            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-
-            <div class="mb-3">
-                <label asp-for="Username" class="form-label">Username</label>
-                <input asp-for="Username" class="form-control" placeholder="Enter your username" />
+            <div class="form-group">
+                <label asp-for="Username" class="control-label">Username</label>
+                <input asp-for="Username" class="form-control" placeholder="Enter your username" autocomplete="username" />
                 <span asp-validation-for="Username" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label">Password</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" />
+            <div class="form-group">
+                <label asp-for="Password" class="control-label">Password</label>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" autocomplete="current-password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <div class="mb-3 form-check">
-                <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
-                <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+            <div class="form-footer">
+                <div class="remember-me">
+                    <input asp-for="RememberMe" type="checkbox" id="rememberMe" />
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                <a asp-action="ForgotPassword" asp-controller="Auth" class="forgot-link">Forgot Password?</a>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-login">Login</button>
+            <button type="submit" class="btn btn-submit">Sign In</button>
         </form>
     </div>
-
-</body>
-</html>
+</div>

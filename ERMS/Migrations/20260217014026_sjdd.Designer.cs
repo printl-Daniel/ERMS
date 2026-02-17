@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERMS.Migrations
 {
     [DbContext(typeof(ERMSDbContext))]
-    [Migration("20260216011933_sdsjjds")]
-    partial class sdsjjds
+    [Migration("20260217014026_sjdd")]
+    partial class sjdd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -290,6 +290,44 @@ namespace ERMS.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ERMS.Models.PasswordResetToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PasswordResetTokens");
+                });
+
             modelBuilder.Entity("ERMS.Models.Position", b =>
                 {
                     b.Property<int>("Id")
@@ -516,6 +554,17 @@ namespace ERMS.Migrations
                     b.Navigation("Manager");
 
                     b.Navigation("Position");
+                });
+
+            modelBuilder.Entity("ERMS.Models.PasswordResetToken", b =>
+                {
+                    b.HasOne("ERMS.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ERMS.Models.User", b =>

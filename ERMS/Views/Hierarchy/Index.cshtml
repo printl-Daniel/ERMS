@@ -1,187 +1,230 @@
-﻿@* Views/Hierarchy/Index.cshtml *@
+@* Views/Hierarchy/Index.cshtml *@
 @model ERMS.ViewModels.Hierarchy.HierarchyIndexViewModel
 
 @{
     ViewData["Title"] = "Organization Hierarchy";
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <h2><i class="fa fa-sitemap"></i> Organization Hierarchy</h2>
-            <p class="text-muted">Visual representation of reporting structure</p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/Hierarchy.css" />
+}
+
+<div class="hierarchy-page">
+
+    <div class="page-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h1 class="page-title">
+                    <i class="fas fa-sitemap"></i>
+                    Organization Structure
+                </h1>
+                <p class="page-subtitle">Explore reporting relationships and team structure</p>
+            </div>
+            <div class="header-actions">
+                <a asp-action="OrgChart" class="btn-primary">
+                    <i class="fas fa-chart-bar"></i>
+                    Org Chart View
+                </a>
+            </div>
         </div>
     </div>
 
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger alert-dismissible" role="alert">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+            <i class="fas fa-exclamation-circle"></i>
             @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     }
 
-    <!-- Statistics Cards -->
     @if (Model.Statistics != null)
     {
-        <div class="row" style="margin-bottom: 20px;">
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <div class="panel panel-primary text-center">
-                    <div class="panel-body">
-                        <h3>@Model.Statistics.TotalEmployees</h3>
-                        <p>Total Employees</p>
-                    </div>
+        <div class="stats-grid">
+            <div class="stat-card stat-primary">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">@Model.Statistics.TotalEmployees</div>
+                    <div class="stat-label">Total Employees</div>
                 </div>
             </div>
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <div class="panel panel-success text-center">
-                    <div class="panel-body">
-                        <h3>@Model.Statistics.TopLevelManagers</h3>
-                        <p>Top Managers</p>
-                    </div>
+            <div class="stat-card stat-success">
+                <div class="stat-icon"><i class="fas fa-crown"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">@Model.Statistics.TopLevelManagers</div>
+                    <div class="stat-label">Executives</div>
                 </div>
             </div>
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <div class="panel panel-info text-center">
-                    <div class="panel-body">
-                        <h3>@Model.Statistics.ManagersCount</h3>
-                        <p>Total Managers</p>
-                    </div>
+            <div class="stat-card stat-info">
+                <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">@Model.Statistics.ManagersCount</div>
+                    <div class="stat-label">Managers</div>
                 </div>
             </div>
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <div class="panel panel-warning text-center">
-                    <div class="panel-body">
-                        <h3>@Model.Statistics.MaxHierarchyDepth</h3>
-                        <p>Max Depth</p>
-                    </div>
+            <div class="stat-card stat-warning">
+                <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">@Model.Statistics.MaxHierarchyDepth</div>
+                    <div class="stat-label">Levels Deep</div>
                 </div>
             </div>
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <div class="panel panel-default text-center">
-                    <div class="panel-body">
-                        <h3>@Model.Statistics.AverageSpanOfControl</h3>
-                        <p>Avg Span</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2 col-sm-4 col-xs-6">
-                <div class="panel panel-default text-center">
-                    <div class="panel-body">
-                        <a asp-action="OrgChart" class="btn btn-primary btn-sm">
-                            <i class="fa fa-project-diagram"></i> Org Chart
-                        </a>
-                    </div>
+            <div class="stat-card stat-accent">
+                <div class="stat-icon"><i class="fas fa-project-diagram"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value">@Model.Statistics.AverageSpanOfControl</div>
+                    <div class="stat-label">Avg Team Size</div>
                 </div>
             </div>
         </div>
     }
 
-    <!-- Hierarchy Tree -->
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><i class="fa fa-users"></i> Reporting Structure</h3>
-                </div>
-                <div class="panel-body">
-                    @if (Model.Hierarchy != null && Model.Hierarchy.Any())
-                    {
-                        <div class="hierarchy-container">
-                            @foreach (var employee in Model.Hierarchy)
-                            {
-                                @await Html.PartialAsync("_HierarchyNode", employee)
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-info">
-                            <i class="fa fa-info-circle"></i> No hierarchy data available.
-                        </div>
-                    }
-                </div>
+    <div class="hierarchy-controls">
+        <div class="control-section">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text"
+                       id="hierarchySearch"
+                       class="search-input"
+                       placeholder="Search by name, position, or department…" />
+            </div>
+        </div>
+        <div class="control-section">
+            <div class="view-options">
+                <button class="view-btn active" data-view="expanded">
+                    <i class="fas fa-expand-alt"></i> Expand All
+                </button>
+                <button class="view-btn" data-view="collapsed">
+                    <i class="fas fa-compress-alt"></i> Collapse All
+                </button>
             </div>
         </div>
     </div>
+
+    <div class="hierarchy-section">
+        @if (Model.Hierarchy != null && Model.Hierarchy.Any())
+        {
+            <div class="hierarchy-tree">
+                @foreach (var employee in Model.Hierarchy)
+                {
+                    @await Html.PartialAsync("_HierarchyNode", employee)
+                }
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fas fa-inbox"></i></div>
+                <h3 class="empty-title">No Hierarchy Data</h3>
+                <p class="empty-description">
+                    The organizational structure hasn't been configured yet.
+                    Please contact your administrator to set up the hierarchy.
+                </p>
+            </div>
+        }
+    </div>
 </div>
 
-@section Styles {
-    <style>
-        .hierarchy-container {
-            padding: 20px;
-        }
+@section Scripts {
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
-        .hierarchy-node {
-            margin-left: 40px;
-            margin-bottom: 15px;
-            position: relative;
-        }
+    // ── 1. Mark body ready — reveals tree (prevents blink) ──────────────
+    // The CSS hides .hierarchy-tree until .hr-ready is on <body>.
+    // We set state FIRST (all nodes already hr-expanded from server),
+    // THEN reveal — so user never sees a collapse/re-expand flash.
+    document.body.classList.add('hr-ready');
 
-            .hierarchy-node::before {
-                content: '';
-                position: absolute;
-                left: -25px;
-                top: 20px;
-                width: 25px;
-                height: 2px;
-                background: #dee2e6;
+    // ── 2. Bootstrap tooltips ────────────────────────────────────────────
+    if (typeof bootstrap !== 'undefined') {
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function (el) {
+            new bootstrap.Tooltip(el);
+        });
+    }
+
+    // ── 3. Expand / Collapse buttons ─────────────────────────────────────
+    function setAllNodes(expand) {
+        document.querySelectorAll('.subordinates-grid').forEach(function (grid) {
+            grid.classList.toggle('hr-expanded', expand);
+        });
+        document.querySelectorAll('.expand-btn').forEach(function (btn) {
+            btn.setAttribute('aria-expanded', expand ? 'true' : 'false');
+        });
+    }
+
+    document.querySelectorAll('.view-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.view-btn').forEach(function (b) {
+                b.classList.remove('active');
+            });
+            this.classList.add('active');
+            setAllNodes(this.dataset.view === 'expanded');
+        });
+    });
+
+    // ── 4. Per-node expand button ────────────────────────────────────────
+    document.querySelectorAll('.expand-btn').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var targetId = this.dataset.target;
+            var grid = document.getElementById(targetId);
+            if (!grid) return;
+            var isOpen = grid.classList.toggle('hr-expanded');
+            this.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+    });
+
+    // ── 5. Search ────────────────────────────────────────────────────────
+    var searchTimeout;
+    document.getElementById('hierarchySearch').addEventListener('input', function () {
+        clearTimeout(searchTimeout);
+        var term = this.value.toLowerCase().trim();
+
+        searchTimeout = setTimeout(function () {
+            var nodes = document.querySelectorAll('.org-chart-node');
+
+            if (!term) {
+                nodes.forEach(function (node) {
+                    node.style.display = '';
+                    node.classList.remove('search-highlight');
+                });
+                return;
             }
 
-            .hierarchy-node::after {
-                content: '';
-                position: absolute;
-                left: -25px;
-                top: -10px;
-                width: 2px;
-                height: 100%;
-                background: #dee2e6;
-            }
+            nodes.forEach(function (node) {
+                var name   = node.querySelector('.node-name')?.textContent ?? '';
+                var title  = node.querySelector('.node-title')?.textContent ?? '';
+                var dept   = node.querySelector('.node-department')?.textContent ?? '';
+                var match  = (name + title + dept).toLowerCase().includes(term);
 
-            .hierarchy-node:last-child::after {
-                height: 30px;
-            }
+                node.style.display = match ? '' : 'none';
+                node.classList.toggle('search-highlight', match);
 
-            .hierarchy-node.level-0 {
-                margin-left: 0;
-            }
-
-                .hierarchy-node.level-0::before,
-                .hierarchy-node.level-0::after {
-                    display: none;
+                // Keep all ancestors visible
+                if (match) {
+                    var ancestor = node.parentElement;
+                    while (ancestor) {
+                        if (ancestor.classList.contains('org-chart-node')) {
+                            ancestor.style.display = '';
+                            var grid = ancestor.querySelector(':scope > .subordinates-grid');
+                            if (grid) grid.classList.add('hr-expanded');
+                        }
+                        ancestor = ancestor.parentElement;
+                    }
                 }
+            });
+        }, 250);
+    });
 
-        .employee-card {
-            border-left: 4px solid #337ab7;
-            transition: all 0.3s ease;
+    // ── 6. Print shortcut ────────────────────────────────────────────────
+    document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+            e.preventDefault();
+            window.print();
         }
-
-            .employee-card:hover {
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                transform: translateX(5px);
-            }
-
-        .employee-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-right: 15px;
-        }
-
-        .subordinate-badge {
-            background: #5bc0de;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 0.85em;
-            margin-left: 10px;
-        }
-
-        .panel {
-            margin-bottom: 15px;
-        }
-    </style>
+    });
+});
+</script>
 }

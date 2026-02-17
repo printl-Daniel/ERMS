@@ -1,0 +1,1507 @@
+﻿/* ============================================================
+   Hierarchy Module — Scoped Styles
+   Namespace: hr-* / org-* / node-*
+   File: wwwroot/css/Hierarchy.css
+   ============================================================ */
+
+/* ── Tokens (fallback to site-wide vars if defined) ───────── */
+:root {
+    --hr-accent: var(--accent, #0181b0);
+    --hr-accent-hover: var(--accent-hover, #016a93);
+    --hr-accent-dim: var(--accent-dim, rgba(1,129,176,0.10));
+    --hr-accent-dim2: var(--accent-dim2, rgba(1,129,176,0.18));
+    --hr-surface: var(--surface, #ffffff);
+    --hr-surface-2: var(--surface-2, #f7f9fc);
+    --hr-surface-3: var(--surface-3, #edf0f4);
+    --hr-bg: var(--bg, #f0f2f5);
+    --hr-border: var(--border, rgba(0,0,0,0.07));
+    --hr-border-med: var(--border-med, rgba(0,0,0,0.12));
+    --hr-text: var(--text, #0d1117);
+    --hr-text-2: var(--text-secondary,#4a5568);
+    --hr-text-muted: var(--text-muted, #8a95a3);
+    --hr-green: #10b981;
+    --hr-green-dim: rgba(16,185,129,0.12);
+    --hr-amber: #f59e0b;
+    --hr-amber-dim: rgba(245,158,11,0.12);
+    --hr-red: #ef4444;
+    --hr-red-dim: rgba(239,68,68,0.12);
+    --hr-sky: #06b6d4;
+    --hr-sky-dim: rgba(6,182,212,0.12);
+    --hr-purple: #8b5cf6;
+    --hr-purple-dim: rgba(139,92,246,0.12);
+    --hr-shadow-xs: var(--shadow-xs, 0 1px 3px rgba(0,0,0,0.06));
+    --hr-shadow-sm: var(--shadow-sm, 0 2px 6px rgba(0,0,0,0.08));
+    --hr-shadow-md: var(--shadow-md, 0 4px 14px rgba(0,0,0,0.10));
+    --hr-radius-sm: 8px;
+    --hr-radius-md: 12px;
+    --hr-radius-lg: 18px;
+    --hr-radius-xl: 24px;
+    --hr-transition: 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+
+body.dark-mode {
+    --hr-accent: var(--accent, #22aad4);
+    --hr-accent-hover: var(--accent-hover, #1b95bb);
+    --hr-accent-dim: var(--accent-dim, rgba(34,170,212,0.12));
+    --hr-accent-dim2: var(--accent-dim2, rgba(34,170,212,0.22));
+    --hr-surface: var(--surface, #111827);
+    --hr-surface-2: var(--surface-2, #161d2e);
+    --hr-surface-3: var(--surface-3, #1e2740);
+    --hr-bg: var(--bg, #0a0e1a);
+    --hr-border: var(--border, rgba(255,255,255,0.06));
+    --hr-border-med: var(--border-med, rgba(255,255,255,0.10));
+    --hr-text: var(--text, #e8edf5);
+    --hr-text-2: var(--text-secondary,#94a3b8);
+    --hr-text-muted: var(--text-muted, #4e5d73);
+    --hr-green: #34d399;
+    --hr-green-dim: rgba(52,211,153,0.12);
+    --hr-amber: #fbbf24;
+    --hr-amber-dim: rgba(251,191,36,0.12);
+    --hr-red: #f87171;
+    --hr-red-dim: rgba(248,113,113,0.12);
+    --hr-sky: #38bdf8;
+    --hr-sky-dim: rgba(56,189,248,0.12);
+    --hr-purple: #a78bfa;
+    --hr-purple-dim: rgba(167,139,250,0.12);
+    --hr-shadow-xs: var(--shadow-xs, 0 1px 3px rgba(0,0,0,0.35));
+    --hr-shadow-sm: var(--shadow-sm, 0 2px 6px rgba(0,0,0,0.45));
+    --hr-shadow-md: var(--shadow-md, 0 4px 14px rgba(0,0,0,0.55));
+}
+
+/* ── SUPPRESS all content until JS is ready ─────────────────
+   Prevents the collapse-blink. Body gets .hr-ready by JS.    */
+.hierarchy-tree {
+    visibility: hidden;
+}
+
+.hr-ready .hierarchy-tree {
+    visibility: visible;
+}
+
+/* ── Page shell ──────────────────────────────────────────── */
+.hierarchy-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 36px 28px;
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.page-header {
+    margin-bottom: 28px;
+}
+
+.header-content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--hr-text);
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .page-title i {
+        color: var(--hr-accent);
+        font-size: 22px;
+    }
+
+.page-subtitle {
+    font-size: 14px;
+    color: var(--hr-text-muted);
+    margin: 0;
+}
+
+/* ── Breadcrumb ──────────────────────────────────────────── */
+.hr-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+    font-size: 14px;
+}
+
+    .hr-breadcrumb li {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .hr-breadcrumb a {
+        color: var(--hr-accent);
+        text-decoration: none;
+        font-weight: 500;
+        transition: color var(--hr-transition);
+    }
+
+        .hr-breadcrumb a:hover {
+            color: var(--hr-accent-hover);
+        }
+
+    .hr-breadcrumb li:not(:last-child)::after {
+        content: '/';
+        color: var(--hr-text-muted);
+        font-size: 12px;
+    }
+
+    .hr-breadcrumb li.active {
+        color: var(--hr-text-muted);
+    }
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: var(--hr-radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, var(--hr-accent), var(--hr-accent-hover));
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--hr-transition);
+    font-family: inherit;
+}
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(1,129,176,0.38);
+        color: #fff;
+        text-decoration: none;
+    }
+
+    .btn-primary i {
+        font-size: 13px;
+    }
+
+.btn-default {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 20px;
+    border-radius: var(--hr-radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--hr-text-2);
+    background: var(--hr-surface-2);
+    border: 1px solid var(--hr-border);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all var(--hr-transition);
+    font-family: inherit;
+}
+
+    .btn-default:hover {
+        border-color: var(--hr-border-med);
+        color: var(--hr-text);
+        text-decoration: none;
+    }
+
+/* ── Alerts ──────────────────────────────────────────────── */
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: var(--hr-radius-md);
+    font-size: 14px;
+    margin-bottom: 20px;
+    border: none;
+    border-left: 4px solid;
+}
+
+.alert-danger {
+    background: var(--hr-red-dim);
+    color: var(--hr-red);
+    border-left-color: var(--hr-red);
+}
+
+.alert-info {
+    background: var(--hr-accent-dim);
+    color: var(--hr-accent);
+    border-left-color: var(--hr-accent);
+}
+
+.alert-dismissible {
+    position: relative;
+    padding-right: 40px;
+}
+
+.btn-close {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.5;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+    transition: opacity var(--hr-transition);
+}
+
+    .btn-close:hover {
+        opacity: 1;
+    }
+
+/* ── Stats grid (Index) ──────────────────────────────────── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+/* ── Stat card ───────────────────────────────────────────── */
+.stat-card {
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: var(--hr-radius-lg);
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--hr-shadow-xs);
+    transition: all var(--hr-transition);
+}
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--hr-shadow-md);
+        border-color: var(--hr-border-med);
+    }
+
+.stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--hr-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+}
+
+.stat-content {
+    min-width: 0;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--hr-text);
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: var(--hr-text-muted);
+    font-weight: 500;
+    margin-top: 3px;
+}
+
+.stat-primary .stat-icon {
+    background: var(--hr-accent-dim);
+    color: var(--hr-accent);
+}
+
+.stat-success .stat-icon {
+    background: var(--hr-green-dim);
+    color: var(--hr-green);
+}
+
+.stat-info .stat-icon {
+    background: var(--hr-sky-dim);
+    color: var(--hr-sky);
+}
+
+.stat-warning .stat-icon {
+    background: var(--hr-amber-dim);
+    color: var(--hr-amber);
+}
+
+.stat-accent .stat-icon {
+    background: var(--hr-purple-dim);
+    color: var(--hr-purple);
+}
+
+/* ── Controls bar ────────────────────────────────────────── */
+.hierarchy-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.control-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Search ──────────────────────────────────────────────── */
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    color: var(--hr-text-muted);
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.search-input {
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: var(--hr-radius-md);
+    padding: 10px 14px 10px 36px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--hr-text);
+    width: 320px;
+    outline: none;
+    transition: all var(--hr-transition);
+}
+
+    .search-input::placeholder {
+        color: var(--hr-text-muted);
+    }
+
+    .search-input:focus {
+        border-color: var(--hr-accent);
+        box-shadow: 0 0 0 3px var(--hr-accent-dim);
+        width: 380px;
+    }
+
+/* ── View options (expand/collapse) ─────────────────────── */
+.view-options {
+    display: flex;
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: var(--hr-radius-md);
+    overflow: hidden;
+}
+
+.view-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--hr-text-2);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all var(--hr-transition);
+    border-right: 1px solid var(--hr-border);
+}
+
+    .view-btn:last-child {
+        border-right: none;
+    }
+
+    .view-btn:hover {
+        background: var(--hr-surface-2);
+        color: var(--hr-text);
+    }
+
+    .view-btn.active {
+        background: var(--hr-accent-dim);
+        color: var(--hr-accent);
+    }
+
+    .view-btn i {
+        font-size: 12px;
+    }
+
+/* ── Hierarchy section wrapper ───────────────────────────── */
+.hierarchy-section {
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: var(--hr-radius-xl);
+    box-shadow: var(--hr-shadow-xs);
+    overflow: hidden;
+}
+
+.hierarchy-tree {
+    padding: 28px;
+}
+
+/* ── Org chart node ──────────────────────────────────────── */
+.org-chart-node {
+    position: relative;
+}
+
+    /* connector lines */
+    .org-chart-node::before,
+    .org-chart-node::after {
+        content: none;
+    }
+
+/* ── Node card ───────────────────────────────────────────── */
+.node-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: var(--hr-radius-lg);
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    box-shadow: var(--hr-shadow-xs);
+    transition: all var(--hr-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+    /* Left accent bar — colour shifts by depth */
+    .node-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--hr-accent);
+        border-radius: 2px 0 0 2px;
+        transition: background var(--hr-transition);
+    }
+
+.org-chart-node[data-level="1"] > .node-card::before {
+    background: var(--hr-green);
+}
+
+.org-chart-node[data-level="2"] > .node-card::before {
+    background: var(--hr-amber);
+}
+
+.org-chart-node[data-level="3"] > .node-card::before {
+    background: var(--hr-purple);
+}
+
+.org-chart-node[data-level="4"] > .node-card::before {
+    background: var(--hr-sky);
+}
+
+.node-card:hover {
+    border-color: var(--hr-border-med);
+    box-shadow: var(--hr-shadow-md);
+    transform: translateX(3px);
+}
+
+/* ══════════════════════════════════════════════════════════
+   av-* Initials Avatar system
+   No <img> tags. No network requests. No layout shift.
+   A coloured circle/square with initials — always instant.
+   ══════════════════════════════════════════════════════════ */
+
+.av {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    user-select: none;
+    border: 2px solid rgba(255,255,255,0.15);
+}
+
+/* Sizes */
+.av-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+}
+
+.av-md {
+    width: 48px;
+    height: 48px;
+    font-size: 16px;
+}
+
+.av-lg {
+    width: 72px;
+    height: 72px;
+    font-size: 22px;
+}
+
+.av-xl {
+    width: 110px;
+    height: 110px;
+    font-size: 34px;
+}
+
+/* Shapes */
+.av-rounded {
+    border-radius: 12px;
+}
+
+.av-sm.av-rounded {
+    border-radius: 8px;
+}
+
+.av-lg.av-rounded {
+    border-radius: 16px;
+}
+
+.av-xl.av-rounded {
+    border-radius: 20px;
+}
+
+.av-circle {
+    border-radius: 50%;
+}
+
+/* ── Node avatar container (team-badge wrapper) ──────────── */
+.node-avatar-container {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.team-badge {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: var(--hr-accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 99px;
+    padding: 2px 6px;
+    border: 2px solid var(--hr-surface);
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+
+
+/* ── Node content ────────────────────────────────────────── */
+.node-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.node-name {
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: var(--hr-text);
+    margin: 0 0 2px;
+    line-height: 1.2;
+}
+
+.name-link {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--hr-transition);
+}
+
+    .name-link:hover {
+        color: var(--hr-accent);
+    }
+
+.node-title {
+    font-size: 13px;
+    color: var(--hr-text-2);
+    margin: 0 0 2px;
+}
+
+.node-department {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--hr-text-muted);
+    background: var(--hr-surface-2);
+    border: 1px solid var(--hr-border);
+    border-radius: 99px;
+    padding: 2px 9px;
+    margin-top: 4px;
+}
+
+/* ── Node actions ────────────────────────────────────────── */
+.node-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: var(--hr-radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--hr-text-muted);
+    font-size: 13px;
+    transition: all var(--hr-transition);
+    padding: 0;
+    font-family: inherit;
+}
+
+    .action-btn:hover {
+        background: var(--hr-accent-dim);
+        color: var(--hr-accent);
+    }
+
+/* Expand chevron */
+.expand-btn i {
+    transition: transform 0.22s cubic-bezier(0.4,0,0.2,1);
+    display: block;
+}
+
+.expand-btn[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+/* ── Subordinates grid ───────────────────────────────────── */
+.subordinates-grid {
+    /* NOT using Bootstrap collapse — we control this ourselves
+       to avoid the blink. Hidden by default, shown by JS.     */
+    display: none;
+    padding-left: 32px;
+    margin-top: 0;
+    position: relative;
+}
+
+    /* Vertical connector line */
+    .subordinates-grid::before {
+        content: '';
+        position: absolute;
+        left: 14px;
+        top: 0;
+        bottom: 24px;
+        width: 2px;
+        background: var(--hr-border-med);
+        border-radius: 1px;
+    }
+
+    /* Horizontal connector ticks */
+    .subordinates-grid > .org-chart-node::before {
+        content: '';
+        position: absolute;
+        left: -18px;
+        top: 28px;
+        width: 18px;
+        height: 2px;
+        background: var(--hr-border-med);
+    }
+
+    /* Show state (added by JS) */
+    .subordinates-grid.hr-expanded {
+        display: block;
+    }
+
+/* ── Smooth expand animation ─────────────────────────────── */
+@keyframes hrSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.subordinates-grid.hr-expanded {
+    animation: hrSlideDown 0.2s ease both;
+}
+
+/* ── Search highlight ────────────────────────────────────── */
+.search-highlight > .node-card {
+    border-color: var(--hr-accent) !important;
+    box-shadow: 0 0 0 3px var(--hr-accent-dim) !important;
+}
+
+/* ── Depth indent overrides ──────────────────────────────── */
+.subordinates-grid .subordinates-grid {
+    padding-left: 28px;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    text-align: center;
+    gap: 12px;
+}
+
+.empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--hr-radius-lg);
+    background: var(--hr-surface-2);
+    border: 1px solid var(--hr-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: var(--hr-text-muted);
+    margin-bottom: 4px;
+}
+
+.empty-title {
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    color: var(--hr-text);
+    margin: 0;
+}
+
+.empty-description {
+    font-size: 14px;
+    color: var(--hr-text-muted);
+    max-width: 320px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Department.cshtml — dept header card
+   ════════════════════════════════════════════════════════════ */
+.hr-dept-header {
+    background: linear-gradient(135deg, var(--hr-accent), var(--hr-accent-hover));
+    border-radius: var(--hr-radius-xl);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+    .hr-dept-header i {
+        font-size: 28px;
+        opacity: 0.9;
+    }
+
+    .hr-dept-header h2 {
+        font-size: 22px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        margin: 0 0 4px;
+    }
+
+    .hr-dept-header p {
+        font-size: 14px;
+        opacity: 0.8;
+        margin: 0;
+    }
+
+/* ── Dept stats row ──────────────────────────────────────── */
+.dept-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+/* ── Section card (Department Structure) ─────────────────── */
+.hr-section-card {
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: var(--hr-radius-xl);
+    box-shadow: var(--hr-shadow-xs);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.hr-section-header {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--hr-border);
+    font-size: 16px;
+    font-weight: 650;
+    color: var(--hr-text);
+    letter-spacing: -0.02em;
+}
+
+    .hr-section-header i {
+        color: var(--hr-accent);
+        font-size: 16px;
+    }
+
+.hr-section-body {
+    padding: 24px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Employee.cshtml — employee profile
+   ════════════════════════════════════════════════════════════ */
+.hr-profile-card {
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: var(--hr-radius-xl);
+    box-shadow: var(--hr-shadow-xs);
+    padding: 28px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+/* Profile avatar is .av.av-xl.av-rounded — sized by av-* rules */
+
+.hr-profile-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.hr-profile-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--hr-text);
+    margin: 0 0 4px;
+}
+
+.hr-profile-role {
+    font-size: 15px;
+    color: var(--hr-text-2);
+    margin: 0 0 12px;
+}
+
+.hr-badge-toplevel {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--hr-accent-dim);
+    color: var(--hr-accent);
+    border: 1px solid rgba(1,129,176,0.25);
+    margin-bottom: 14px;
+}
+
+body.dark-mode .hr-badge-toplevel {
+    border-color: rgba(34,170,212,0.28);
+}
+
+.hr-divider {
+    height: 1px;
+    background: var(--hr-border);
+    margin: 16px 0;
+}
+
+.hr-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 24px;
+}
+
+.hr-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.hr-meta-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--hr-text-muted);
+}
+
+.hr-meta-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--hr-text);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+    .hr-meta-value i {
+        color: var(--hr-accent);
+        font-size: 13px;
+    }
+
+/* ── Reporting chain ─────────────────────────────────────── */
+.hr-chain-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 4px 0 12px;
+}
+
+.hr-chain-person {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    min-width: 80px;
+    max-width: 100px;
+}
+
+    /* Chain avatar is .av sized 56px — inline style or av-* variant */
+    .hr-chain-person .av {
+        width: 56px;
+        height: 56px;
+        font-size: 18px;
+        margin-bottom: 6px;
+        transition: box-shadow var(--hr-transition);
+    }
+
+    .hr-chain-person:hover .av {
+        box-shadow: 0 0 0 3px var(--hr-accent-dim);
+    }
+
+.hr-chain-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--hr-text);
+    line-height: 1.2;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+}
+
+.hr-chain-title {
+    font-size: 11px;
+    color: var(--hr-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+}
+
+.hr-chain-link {
+    text-decoration: none;
+}
+
+.hr-chain-arrow {
+    flex-shrink: 0;
+    color: var(--hr-text-muted);
+    font-size: 14px;
+    margin: 0 4px;
+    padding-bottom: 22px; /* align with avatar centre */
+}
+
+/* ── Direct report cards ─────────────────────────────────── */
+.hr-reports-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.hr-report-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: var(--hr-radius-lg);
+    padding: 14px 16px;
+    transition: all var(--hr-transition);
+    text-decoration: none;
+}
+
+    .hr-report-card:hover {
+        border-color: var(--hr-border-med);
+        box-shadow: var(--hr-shadow-sm);
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    /* Report avatar is .av.av-rounded sized 44px */
+    .hr-report-card .av {
+        width: 44px;
+        height: 44px;
+        font-size: 15px;
+        border-radius: 10px;
+    }
+
+.hr-report-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--hr-text);
+    margin-bottom: 2px;
+    display: block;
+}
+
+.hr-report-sub-text {
+    font-size: 12px;
+    color: var(--hr-text-muted);
+}
+
+.hr-sub-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--hr-sky-dim);
+    color: var(--hr-sky);
+    margin-top: 4px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   OrgChart — pure CSS/HTML tree, no D3
+   ════════════════════════════════════════════════════════════ */
+
+/* ── Page shell ──────────────────────────────────────────── */
+.orgchart-page {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 36px 28px;
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.orgchart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.orgchart-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hr-accent);
+    margin: 0 0 4px;
+}
+
+.orgchart-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--hr-text);
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .orgchart-title i {
+        color: var(--hr-accent);
+        font-size: 22px;
+    }
+
+.orgchart-sub {
+    font-size: 14px;
+    color: var(--hr-text-muted);
+    margin: 0;
+}
+
+/* ── Scroll container ────────────────────────────────────── */
+.oc-scroll-wrap {
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-bottom: 24px;
+    /* Subtle inset shadow to indicate scrollability */
+    border-radius: var(--hr-radius-xl);
+    border: 1px solid var(--hr-border);
+    background: var(--hr-surface);
+    box-shadow: var(--hr-shadow-xs);
+    padding: 40px 32px 48px;
+}
+
+/* ── Tree root ───────────────────────────────────────────── */
+.oc-tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: max-content;
+}
+
+/* ══════════════════════════════════════════════════════════
+   oc-node  — one person + their children subtree
+   Layout:
+     .oc-node
+       .oc-card          ← the visible card
+       .oc-children      ← horizontal row of child oc-nodes
+         .oc-node
+         .oc-node
+         ...
+   Connectors are CSS pseudo-elements on .oc-children and
+   its direct .oc-node children.
+   ══════════════════════════════════════════════════════════ */
+
+.oc-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 0 12px;
+}
+
+    /* Vertical line DOWN from card to the horizontal bar */
+    .oc-node:has(.oc-children)::after {
+        content: '';
+        display: block;
+        width: 2px;
+        height: 28px;
+        background: var(--hr-border-med);
+        border-radius: 1px;
+        margin: 0 auto;
+    }
+
+/* ── Children row ────────────────────────────────────────── */
+.oc-children {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    position: relative;
+    padding-top: 28px;
+}
+
+    /* Horizontal bar spanning all children */
+    .oc-children::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: calc(50% - (100% - 24px) / 2);
+        right: calc(50% - (100% - 24px) / 2);
+        height: 2px;
+        background: var(--hr-border-med);
+        border-radius: 1px;
+    }
+
+    /* Single child — no bar needed, just a straight line down */
+    .oc-children:has(> .oc-node:only-child)::before {
+        display: none;
+    }
+
+    /* Vertical line UP from each child to the horizontal bar */
+    .oc-children > .oc-node::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 2px;
+        height: 28px;
+        background: var(--hr-border-med);
+        border-radius: 1px;
+    }
+
+/* ── Card ────────────────────────────────────────────────── */
+.oc-card {
+    --oc-accent: var(--hr-accent);
+    display: flex;
+    flex-direction: column;
+    width: 220px;
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: 16px;
+    box-shadow: var(--hr-shadow-sm);
+    text-decoration: none;
+    overflow: hidden;
+    transition: all var(--hr-transition);
+    cursor: pointer;
+    position: relative;
+}
+
+    .oc-card:hover {
+        border-color: var(--oc-accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--oc-accent) 15%, transparent), var(--hr-shadow-md);
+        transform: translateY(-3px);
+        text-decoration: none;
+    }
+
+/* Depth-coloured top accent bar */
+.oc-card-accent {
+    height: 4px;
+    background: var(--oc-accent);
+    border-radius: 16px 16px 0 0;
+    flex-shrink: 0;
+}
+
+/* ── Card body ───────────────────────────────────────────── */
+.oc-card-body {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 14px 10px;
+}
+
+/* ── Initials avatar ─────────────────────────────────────── */
+.oc-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    user-select: none;
+}
+
+/* ── Text stack ──────────────────────────────────────────── */
+.oc-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.oc-name {
+    font-size: 13px;
+    font-weight: 650;
+    color: var(--hr-text);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.oc-title {
+    font-size: 11px;
+    color: var(--hr-text-2);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.oc-dept {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--hr-text-muted);
+    background: var(--hr-surface-2);
+    border: 1px solid var(--hr-border);
+    border-radius: 99px;
+    padding: 1px 8px;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+}
+
+/* ── Card footer (team count) ────────────────────────────── */
+.oc-card-footer {
+    padding: 6px 14px 10px;
+    border-top: 1px solid var(--hr-border);
+    margin-top: 2px;
+}
+
+.oc-team-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--hr-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+    .oc-team-count i {
+        color: var(--oc-accent);
+        font-size: 10px;
+    }
+
+/* ── Root node — slightly larger card ───────────────────── */
+.oc-root > .oc-card {
+    width: 240px;
+    box-shadow: var(--hr-shadow-md);
+}
+
+    .oc-root > .oc-card .oc-card-accent {
+        height: 5px;
+    }
+
+    .oc-root > .oc-card .oc-avatar {
+        width: 46px;
+        height: 46px;
+        font-size: 16px;
+    }
+
+    .oc-root > .oc-card .oc-name {
+        font-size: 14px;
+    }
+
+/* ── Empty state ─────────────────────────────────────────── */
+.oc-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+    gap: 14px;
+    text-align: center;
+    background: var(--hr-surface);
+    border: 1px solid var(--hr-border);
+    border-radius: var(--hr-radius-xl);
+    box-shadow: var(--hr-shadow-xs);
+}
+
+.oc-empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: var(--hr-accent-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    color: var(--hr-accent);
+}
+
+.oc-empty-title {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--hr-text);
+    margin: 0;
+}
+
+.oc-empty-sub {
+    font-size: 14px;
+    color: var(--hr-text-muted);
+    max-width: 280px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Dark mode connector lines ───────────────────────────── */
+body.dark-mode .oc-node:has(.oc-children)::after,
+body.dark-mode .oc-children::before,
+body.dark-mode .oc-children > .oc-node::before {
+    background: var(--hr-border-med);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1100px) {
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dept-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hr-reports-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hr-meta-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .hierarchy-page,
+    .orgchart-page {
+        padding: 20px 16px;
+    }
+
+    .search-input,
+    .search-input:focus {
+        width: 100%;
+    }
+
+    .hierarchy-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .control-section {
+        width: 100%;
+    }
+
+    .hr-profile-card {
+        flex-direction: column;
+    }
+
+    .hr-profile-avatar {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dept-stats {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* ── Print ───────────────────────────────────────────────── */
+@media print {
+    .hierarchy-controls,
+    .header-actions,
+    .node-actions {
+        display: none !important;
+    }
+
+    .subordinates-grid {
+        display: block !important;
+    }
+
+    .hierarchy-page {
+        padding: 0;
+    }
+
+    .node-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border-color: #ccc;
+    }
+}

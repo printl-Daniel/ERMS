@@ -1,155 +1,174 @@
-﻿@* Views/Hierarchy/Employee.cshtml *@
+@* Views/Hierarchy/Employee.cshtml *@
 @model ERMS.ViewModels.Hierarchy.EmployeeHierarchyViewModel
 
 @{
     ViewData["Title"] = $"{Model.Employee.FullName} - Hierarchy";
+
+    string[] palette = { "#0181b0","#10b981","#f59e0b","#8b5cf6","#06b6d4","#ef4444","#ec4899","#6366f1" };
+
+    string AvatarBg(string name) {
+        int ci = 0; foreach (char c in (name ?? "")) ci += c;
+        return palette[ci % palette.Length];
+    }
+
+    string Initials(string name) {
+        var p = (name ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return p.Length >= 2
+            ? $"{char.ToUpper(p[0][0])}{char.ToUpper(p[^1][0])}"
+            : (name ?? "?").Length > 0 ? char.ToUpper((name ?? "?")[0]).ToString() : "?";
+    }
 }
 
-<div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-action="Index">Hierarchy</a></li>
-                    <li class="breadcrumb-item active">@Model.Employee.FullName</li>
-                </ol>
-            </nav>
-        </div>
-    </div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/Hierarchy.css" />
+}
+
+<div class="hierarchy-page">
+
+    <ol class="hr-breadcrumb">
+        <li><a asp-action="Index">Hierarchy</a></li>
+        <li class="active">@Model.Employee.FullName</li>
+    </ol>
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            <i class="fas fa-exclamation-circle"></i>
             @TempData["Error"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
         </div>
     }
 
-    <!-- Employee Info Card -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-2 text-center">
-                            <img src="@Model.Employee.DisplayProfilePicture"
-                                 alt="@Model.Employee.FullName"
-                                 class="img-fluid rounded-circle"
-                                 style="max-width: 150px;"
-                                 onerror="this.src='/images/default-avatar.png'">
-                        </div>
-                        <div class="col-md-10">
-                            <h3>@Model.Employee.FullName</h3>
-                            <p class="lead">@Model.Employee.PositionTitle - @Model.Employee.DepartmentName</p>
+    <div class="hr-profile-card">
+        <div class="av av-xl av-rounded"
+             style="background: @AvatarBg(Model.Employee.FullName)">
+            @Initials(Model.Employee.FullName)
+        </div>
 
-                            @if (Model.Info.IsTopLevel)
-                            {
-                                <span class="badge bg-primary">Top Level Manager</span>
-                            }
+        <div class="hr-profile-info">
+            <h3 class="hr-profile-name">@Model.Employee.FullName</h3>
+            <p class="hr-profile-role">
+                @Model.Employee.PositionTitle
+                <span style="color: var(--hr-text-muted); font-weight: 400; margin: 0 4px;">in</span>
+                @Model.Employee.DepartmentName
+            </p>
 
-                            <hr>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p><strong><i class="fas fa-envelope"></i> Email:</strong> @Model.Employee.Email</p>
-                                    @if (Model.Employee.HasPhoneNumber)
-                                    {
-                                        <p><strong><i class="fas fa-phone"></i> Phone:</strong> @Model.Employee.PhoneNumber</p>
-                                    }
-                                </div>
-                                <div class="col-md-6">
-                                    <p><strong><i class="fas fa-users"></i> Direct Reports:</strong> @Model.Info.DirectReports</p>
-                                    <p><strong><i class="fas fa-sitemap"></i> Total Subordinates:</strong> @Model.Info.TotalSubordinates</p>
-                                </div>
-                            </div>
-                        </div>
+            @if (Model.Info.IsTopLevel)
+            {
+                <span class="hr-badge-toplevel">
+                    <i class="fas fa-crown" style="font-size:11px; margin-right:4px;"></i>
+                    Top Level Manager
+                </span>
+            }
+
+            <div class="hr-divider"></div>
+
+            <div class="hr-meta-grid">
+                <div class="hr-meta-item">
+                    <span class="hr-meta-label">Email</span>
+                    <span class="hr-meta-value">
+                        <i class="fas fa-envelope"></i>
+                        @Model.Employee.Email
+                    </span>
+                </div>
+                @if (Model.Employee.HasPhoneNumber)
+                {
+                    <div class="hr-meta-item">
+                        <span class="hr-meta-label">Phone</span>
+                        <span class="hr-meta-value">
+                            <i class="fas fa-phone"></i>
+                            @Model.Employee.PhoneNumber
+                        </span>
                     </div>
+                }
+                <div class="hr-meta-item">
+                    <span class="hr-meta-label">Direct Reports</span>
+                    <span class="hr-meta-value">
+                        <i class="fas fa-users"></i>
+                        @Model.Info.DirectReports
+                    </span>
+                </div>
+                <div class="hr-meta-item">
+                    <span class="hr-meta-label">Total Subordinates</span>
+                    <span class="hr-meta-value">
+                        <i class="fas fa-sitemap"></i>
+                        @Model.Info.TotalSubordinates
+                    </span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Manager Chain -->
-    @if (Model.ManagerChain != null && Model.ManagerChain.Any() && Model.ManagerChain.Count > 1)
+    @if (Model.ManagerChain != null && Model.ManagerChain.Count > 1)
     {
-        <div class="row mb-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-users-cog"></i> Reporting Chain</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex align-items-center overflow-auto">
-                            @for (int i = 0; i < Model.ManagerChain.Count; i++)
-                            {
-                                var person = Model.ManagerChain[i];
-                                <div class="text-center mx-3">
-                                    <a asp-action="Employee" asp-route-id="@person.Id" class="text-decoration-none">
-                                        <img src="@person.DisplayProfilePicture"
-                                             alt="@person.FullName"
-                                             class="rounded-circle mb-2"
-                                             style="width: 60px; height: 60px;"
-                                             onerror="this.src='/images/default-avatar.png'">
-                                        <p class="mb-0 small"><strong>@person.FullName</strong></p>
-                                        <p class="mb-0 small text-muted">@person.PositionTitle</p>
-                                    </a>
+        <div class="hr-section-card">
+            <div class="hr-section-header">
+                <i class="fas fa-users-cog"></i>
+                Reporting Chain
+            </div>
+            <div class="hr-section-body">
+                <div class="hr-chain-wrap">
+                    @for (int i = 0; i < Model.ManagerChain.Count; i++)
+                    {
+                        var person = Model.ManagerChain[i];
+                        <a asp-action="Employee" asp-route-id="@person.Id" class="hr-chain-link">
+                            <div class="hr-chain-person">
+                                <div class="av av-rounded"
+                                     style="background: @AvatarBg(person.FullName)">
+                                    @Initials(person.FullName)
                                 </div>
-                                @if (i < Model.ManagerChain.Count - 1)
-                                {
-                                    <i class="fas fa-arrow-right fa-2x text-muted mx-2"></i>
-                                }
-                            }
-                        </div>
-                    </div>
+                                <span class="hr-chain-name">@person.FullName</span>
+                                <span class="hr-chain-title">@person.PositionTitle</span>
+                            </div>
+                        </a>
+                        @if (i < Model.ManagerChain.Count - 1)
+                        {
+                            <span class="hr-chain-arrow"><i class="fas fa-arrow-right"></i></span>
+                        }
+                    }
                 </div>
             </div>
         </div>
     }
 
-    <!-- Subordinates -->
     @if (Model.Info.HasSubordinates && Model.DirectReports != null && Model.DirectReports.Any())
     {
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5><i class="fas fa-user-friends"></i> Direct Reports (@Model.Info.DirectReports)</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            @foreach (var subordinate in Model.DirectReports)
-                            {
-                                <div class="col-md-6 mb-3">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center">
-                                                <img src="@subordinate.DisplayProfilePicture"
-                                                     alt="@subordinate.FullName"
-                                                     class="rounded-circle me-3"
-                                                     style="width: 50px; height: 50px;"
-                                                     onerror="this.src='/images/default-avatar.png'">
-                                                <div class="flex-grow-1">
-                                                    <h6 class="mb-1">
-                                                        <a asp-action="Employee" asp-route-id="@subordinate.Id" class="text-decoration-none">
-                                                            @subordinate.FullName
-                                                        </a>
-                                                    </h6>
-                                                    <p class="mb-0 small text-muted">
-                                                        @subordinate.PositionTitle - @subordinate.DepartmentName
-                                                    </p>
-                                                    @if (subordinate.HasSubordinates)
-                                                    {
-                                                        <span class="badge bg-info mt-1">
-                                                            @subordinate.SubordinateCount subordinates
-                                                        </span>
-                                                    }
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
+        <div class="hr-section-card">
+            <div class="hr-section-header">
+                <i class="fas fa-user-friends"></i>
+                Direct Reports
+                <span style="margin-left:auto; font-size:13px; font-weight:500; color:var(--hr-text-muted);">
+                    @Model.Info.DirectReports total
+                </span>
+            </div>
+            <div class="hr-section-body">
+                <div class="hr-reports-grid">
+                    @foreach (var subordinate in Model.DirectReports)
+                    {
+                        <a asp-action="Employee"
+                           asp-route-id="@subordinate.Id"
+                           class="hr-report-card">
+                            <div class="av av-rounded"
+                                 style="background: @AvatarBg(subordinate.FullName)">
+                                @Initials(subordinate.FullName)
+                            </div>
+                            <div>
+                                <span class="hr-report-name">@subordinate.FullName</span>
+                                <span class="hr-report-sub-text">
+                                    @subordinate.PositionTitle &mdash; @subordinate.DepartmentName
+                                </span>
+                                @if (subordinate.HasSubordinates)
+                                {
+                                    <span class="hr-sub-badge">
+                                        <i class="fas fa-users" style="font-size:10px;"></i>
+                                        @subordinate.SubordinateCount subordinates
+                                    </span>
+                                }
+                            </div>
+                        </a>
+                    }
                 </div>
             </div>
         </div>
@@ -157,7 +176,8 @@
     else
     {
         <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> This employee has no direct reports.
+            <i class="fas fa-info-circle"></i>
+            This employee has no direct reports.
         </div>
     }
 </div>

@@ -1,0 +1,1172 @@
+﻿/* ============================================================
+   Employee Management — Scoped Styles
+   Namespace: emp-*
+   Drop into wwwroot/css/employee.css and add to your layout
+   ============================================================ */
+
+/* ── Token overrides sit on top of your site-wide tokens ─── */
+/* If your _Layout already defines --bg, --surface, --text,
+   --accent etc. via body / body.dark-mode, the emp-* styles
+   below inherit them automatically.
+   If not, the fallback values below keep everything working.  */
+
+/* ── Page shell ──────────────────────────────────────────── */
+.emp-page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 36px 28px;
+    animation: empFadeUp 0.3s ease both;
+}
+
+@keyframes empFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ── Page header ─────────────────────────────────────────── */
+.emp-page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.emp-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent, #0181b0);
+    margin: 0 0 4px;
+}
+
+.emp-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--text, #0d1117);
+    line-height: 1.15;
+    margin: 0;
+}
+
+.emp-sub {
+    font-size: 14px;
+    color: var(--text-muted, #8a95a3);
+    margin: 4px 0 0;
+}
+
+/* Dark mode */
+body.dark-mode .emp-title {
+    color: var(--text, #e8edf5);
+}
+
+body.dark-mode .emp-sub {
+    color: var(--text-muted, #4e5d73);
+}
+
+/* ── Primary button ──────────────────────────────────────── */
+.emp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: -0.01em;
+    line-height: 1;
+}
+
+    .emp-btn svg {
+        width: 15px;
+        height: 15px;
+        flex-shrink: 0;
+    }
+
+.emp-btn-primary {
+    background: linear-gradient(135deg, var(--accent, #0181b0), #016a93);
+    color: #fff;
+}
+
+    .emp-btn-primary:hover,
+    .emp-btn-primary:focus {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(1, 129, 176, 0.38);
+        color: #fff;
+        text-decoration: none;
+    }
+
+/* ── Stats row ───────────────────────────────────────────── */
+.emp-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.emp-stat-card {
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, rgba(0, 0, 0, 0.07));
+    border-radius: 18px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: var(--shadow-xs, 0 1px 3px rgba(0,0,0,0.06));
+    transition: all 0.18s ease;
+}
+
+    .emp-stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md, 0 4px 12px rgba(0,0,0,0.09));
+        border-color: var(--border-med, rgba(0, 0, 0, 0.12));
+    }
+
+.emp-stat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+    .emp-stat-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+.emp-icon-blue {
+    background: rgba(1, 129, 176, 0.10);
+    color: var(--accent, #0181b0);
+}
+
+.emp-icon-green {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+}
+
+.emp-icon-red {
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+}
+
+.emp-icon-amber {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+}
+
+body.dark-mode .emp-icon-blue {
+    background: rgba(34, 170, 212, 0.13);
+    color: #22aad4;
+}
+
+body.dark-mode .emp-icon-green {
+    background: rgba(52, 211, 153, 0.13);
+    color: #34d399;
+}
+
+body.dark-mode .emp-icon-red {
+    background: rgba(248, 113, 113, 0.13);
+    color: #f87171;
+}
+
+body.dark-mode .emp-icon-amber {
+    background: rgba(251, 191, 36, 0.13);
+    color: #fbbf24;
+}
+
+.emp-stat-label {
+    font-size: 12px;
+    color: var(--text-muted, #8a95a3);
+    font-weight: 500;
+    margin-bottom: 2px;
+    letter-spacing: 0.01em;
+}
+
+.emp-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--text, #0d1117);
+    line-height: 1;
+}
+
+body.dark-mode .emp-stat-value {
+    color: var(--text, #e8edf5);
+}
+
+.emp-stat-delta {
+    font-size: 12px;
+    color: #10b981;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+body.dark-mode .emp-stat-delta {
+    color: #34d399;
+}
+
+/* ── Main card ───────────────────────────────────────────── */
+.emp-card {
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, rgba(0,0,0,0.07));
+    border-radius: 20px;
+    box-shadow: var(--shadow-xs, 0 1px 3px rgba(0,0,0,0.06));
+    overflow: hidden;
+}
+
+/* ── Card header ─────────────────────────────────────────── */
+.emp-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px 24px 18px;
+    border-bottom: 1px solid var(--border, rgba(0,0,0,0.07));
+}
+
+.emp-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    color: var(--text, #0d1117);
+}
+
+body.dark-mode .emp-card-title {
+    color: var(--text, #e8edf5);
+}
+
+.emp-card-title svg {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted, #8a95a3);
+}
+
+.emp-card-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ── Search ──────────────────────────────────────────────── */
+.emp-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+    .emp-search-wrap > svg {
+        position: absolute;
+        left: 11px;
+        width: 15px;
+        height: 15px;
+        color: var(--text-muted, #8a95a3);
+        pointer-events: none;
+    }
+
+.emp-search-input {
+    background: var(--surface-2, #f7f9fc);
+    border: 1px solid var(--border, rgba(0,0,0,0.07));
+    border-radius: 10px;
+    padding: 9px 14px 9px 34px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text, #0d1117);
+    width: 240px;
+    transition: all 0.18s ease;
+    outline: none;
+}
+
+    .emp-search-input::placeholder {
+        color: var(--text-muted, #8a95a3);
+    }
+
+    .emp-search-input:focus {
+        border-color: var(--accent, #0181b0);
+        background: var(--surface, #fff);
+        box-shadow: 0 0 0 3px rgba(1, 129, 176, 0.10);
+        width: 280px;
+    }
+
+body.dark-mode .emp-search-input {
+    background: var(--surface-2, #161d2e);
+    border-color: var(--border, rgba(255,255,255,0.06));
+    color: var(--text, #e8edf5);
+}
+
+    body.dark-mode .emp-search-input:focus {
+        background: var(--surface, #111827);
+        border-color: var(--accent, #22aad4);
+        box-shadow: 0 0 0 3px rgba(34, 170, 212, 0.12);
+    }
+
+/* ── Filter pills ────────────────────────────────────────── */
+.emp-filter-pills {
+    display: flex;
+    gap: 6px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border, rgba(0,0,0,0.07));
+    flex-wrap: wrap;
+}
+
+.emp-pill {
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.18s ease;
+    color: var(--text-secondary, #4a5568);
+    background: var(--surface-2, #f7f9fc);
+    font-family: inherit;
+}
+
+    .emp-pill:hover {
+        border-color: var(--border-med, rgba(0,0,0,0.12));
+        color: var(--text, #0d1117);
+    }
+
+    .emp-pill.active {
+        background: rgba(1, 129, 176, 0.10);
+        color: var(--accent, #0181b0);
+        border-color: rgba(1, 129, 176, 0.25);
+    }
+
+body.dark-mode .emp-pill {
+    background: var(--surface-3, #1e2740);
+    color: var(--text-secondary, #94a3b8);
+}
+
+    body.dark-mode .emp-pill:hover {
+        color: var(--text, #e8edf5);
+    }
+
+    body.dark-mode .emp-pill.active {
+        background: rgba(34, 170, 212, 0.13);
+        color: var(--accent, #22aad4);
+        border-color: rgba(34, 170, 212, 0.28);
+    }
+
+.emp-pill-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-3, #edf0f4);
+    color: var(--text-muted, #8a95a3);
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 99px;
+    padding: 1px 7px;
+    margin-left: 4px;
+}
+
+.emp-pill.active .emp-pill-count {
+    background: rgba(1, 129, 176, 0.18);
+    color: var(--accent, #0181b0);
+}
+
+body.dark-mode .emp-pill-count {
+    background: var(--surface-2, #161d2e);
+}
+
+body.dark-mode .emp-pill.active .emp-pill-count {
+    background: rgba(34, 170, 212, 0.18);
+    color: var(--accent, #22aad4);
+}
+
+/* ── Table wrapper ───────────────────────────────────────── */
+.emp-table-wrap {
+    overflow-x: auto;
+}
+
+#empTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    #empTable thead tr th {
+        padding: 16px 20px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-muted, #8a95a3);
+        text-align: left;
+        white-space: nowrap;
+        background: var(--surface, #fff);
+        border-bottom: 1px solid var(--border, rgba(0,0,0,0.07));
+    }
+
+body.dark-mode #empTable thead tr th {
+    background: var(--surface, #111827);
+    color: var(--text-muted, #4e5d73);
+}
+
+#empTable thead tr th:first-child {
+    padding-left: 24px;
+}
+
+#empTable thead tr th:last-child {
+    padding-right: 24px;
+}
+
+.th-actions {
+    text-align: right;
+}
+
+#empTable tbody tr {
+    transition: background 0.15s ease;
+}
+
+    #empTable tbody tr:hover {
+        background: var(--surface-2, #f7f9fc);
+    }
+
+body.dark-mode #empTable tbody tr:hover {
+    background: var(--surface-2, #161d2e);
+}
+
+#empTable tbody tr td {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border, rgba(0,0,0,0.07));
+    font-size: 14px;
+    color: var(--text-secondary, #4a5568);
+    vertical-align: middle;
+    background: transparent;
+}
+
+body.dark-mode #empTable tbody tr td {
+    color: var(--text-secondary, #94a3b8);
+}
+
+#empTable tbody tr td:first-child {
+    padding-left: 24px;
+}
+
+#empTable tbody tr td:last-child {
+    padding-right: 24px;
+}
+
+#empTable tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ── Employee name cell ──────────────────────────────────── */
+.emp-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.emp-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.03em;
+}
+
+.emp-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text, #0d1117);
+    line-height: 1.2;
+}
+
+body.dark-mode .emp-name {
+    color: var(--text, #e8edf5);
+}
+
+.emp-email {
+    font-size: 12px;
+    color: var(--text-muted, #8a95a3);
+    margin-top: 1px;
+    font-family: 'DM Mono', 'Courier New', monospace;
+}
+
+/* ── Column helpers ──────────────────────────────────────── */
+.emp-col-mono {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    font-size: 13px;
+    color: var(--text-muted, #8a95a3);
+}
+
+.emp-col-dept {
+    font-weight: 500;
+    color: var(--text, #0d1117);
+    font-size: 14px;
+}
+
+body.dark-mode .emp-col-dept {
+    color: var(--text, #e8edf5);
+}
+
+.emp-col-secondary {
+    font-size: 13px;
+    color: var(--text-secondary, #4a5568);
+}
+
+/* ── Role badge ──────────────────────────────────────────── */
+.emp-role-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--surface-3, #edf0f4);
+    color: var(--text-secondary, #4a5568);
+    border: 1px solid var(--border, rgba(0,0,0,0.07));
+    white-space: nowrap;
+}
+
+body.dark-mode .emp-role-badge {
+    background: var(--surface-3, #1e2740);
+    color: var(--text-secondary, #94a3b8);
+    border-color: var(--border, rgba(255,255,255,0.06));
+}
+
+/* ── Status badge ────────────────────────────────────────── */
+.emp-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.emp-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.emp-badge-active {
+    background: rgba(16, 185, 129, 0.12);
+    color: #059669;
+}
+
+    .emp-badge-active .emp-badge-dot {
+        background: #10b981;
+    }
+
+body.dark-mode .emp-badge-active {
+    background: rgba(52, 211, 153, 0.12);
+    color: #34d399;
+}
+
+    body.dark-mode .emp-badge-active .emp-badge-dot {
+        background: #34d399;
+    }
+
+.emp-badge-inactive {
+    background: rgba(239, 68, 68, 0.10);
+    color: #dc2626;
+}
+
+    .emp-badge-inactive .emp-badge-dot {
+        background: #ef4444;
+    }
+
+body.dark-mode .emp-badge-inactive {
+    background: rgba(248, 113, 113, 0.12);
+    color: #f87171;
+}
+
+    body.dark-mode .emp-badge-inactive .emp-badge-dot {
+        background: #f87171;
+    }
+
+/* ── Action buttons ──────────────────────────────────────── */
+.emp-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
+}
+
+.emp-act-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    background: transparent;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+    .emp-act-btn svg {
+        width: 15px;
+        height: 15px;
+    }
+
+.emp-act-view {
+    color: #06b6d4;
+}
+
+    .emp-act-view:hover {
+        background: rgba(6, 182, 212, 0.12);
+        color: #06b6d4;
+    }
+
+.emp-act-edit {
+    color: #f59e0b;
+}
+
+    .emp-act-edit:hover {
+        background: rgba(245, 158, 11, 0.12);
+        color: #f59e0b;
+    }
+
+.emp-act-del {
+    color: #ef4444;
+}
+
+    .emp-act-del:hover {
+        background: rgba(239, 68, 68, 0.12);
+        color: #ef4444;
+    }
+
+body.dark-mode .emp-act-view {
+    color: #38bdf8;
+}
+
+    body.dark-mode .emp-act-view:hover {
+        background: rgba(56, 189, 248, 0.12);
+        color: #38bdf8;
+    }
+
+body.dark-mode .emp-act-edit {
+    color: #fbbf24;
+}
+
+    body.dark-mode .emp-act-edit:hover {
+        background: rgba(251, 191, 36, 0.12);
+        color: #fbbf24;
+    }
+
+body.dark-mode .emp-act-del {
+    color: #f87171;
+}
+
+    body.dark-mode .emp-act-del:hover {
+        background: rgba(248, 113, 113, 0.12);
+        color: #f87171;
+    }
+
+/* ── Table footer ────────────────────────────────────────── */
+.emp-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    border-top: 1px solid var(--border, rgba(0,0,0,0.07));
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.emp-count {
+    font-size: 13px;
+    color: var(--text-muted, #8a95a3);
+}
+
+    .emp-count strong {
+        color: var(--text, #0d1117);
+    }
+
+body.dark-mode .emp-count strong {
+    color: var(--text, #e8edf5);
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.emp-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    gap: 12px;
+    text-align: center;
+}
+
+.emp-empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--surface-2, #f7f9fc);
+    border: 1px solid var(--border, rgba(0,0,0,0.07));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted, #8a95a3);
+    margin-bottom: 4px;
+}
+
+    .emp-empty-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+
+.emp-empty-title {
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    color: var(--text, #0d1117);
+}
+
+body.dark-mode .emp-empty-title {
+    color: var(--text, #e8edf5);
+}
+
+.emp-empty-sub {
+    font-size: 14px;
+    color: var(--text-muted, #8a95a3);
+    max-width: 280px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .emp-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .emp-page {
+        padding: 20px 16px;
+    }
+
+    .emp-page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .emp-btn-primary {
+        justify-content: center;
+    }
+
+    .emp-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .emp-search-input,
+    .emp-search-input:focus {
+        width: 100%;
+    }
+
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .emp-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+//Edit
+/* ============================================================
+   Employee Edit Form — emp-* scoped additions
+   File: wwwroot/css/employee-edit.css
+   Link after employee.css in your layout or bundle
+   ============================================================ */
+/* ── Breadcrumb ──────────────────────────────────────────── */
+.emp-bc {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    margin-bottom: 24px;
+    color: var(--text-muted, #8a95a3);
+}
+
+.emp-bc a {
+    color: var(--accent, #0181b0);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.18s ease;
+}
+
+    .emp-bc a:hover {
+        color: var(--accent-hover, #016a93);
+    }
+
+.emp-bc svg {
+    width: 14px;
+    height: 14px;
+    color: var(--text-muted, #8a95a3);
+}
+
+/* ── Flash messages ──────────────────────────────────────── */
+.emp-flash {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    border-left: 4px solid;
+}
+
+    .emp-flash svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+.emp-flash--success {
+    background: rgba(16,185,129,0.10);
+    color: #065f46;
+    border-left-color: #10b981;
+}
+
+.emp-flash--danger {
+    background: rgba(239,68,68,0.10);
+    color: #991b1b;
+    border-left-color: #ef4444;
+}
+
+body.dark-mode .emp-flash--success {
+    background: rgba(52,211,153,0.12);
+    color: #34d399;
+}
+
+body.dark-mode .emp-flash--danger {
+    background: rgba(248,113,113,0.12);
+    color: #f87171;
+}
+
+/* ── Edit page header ────────────────────────────────────── */
+.emp-edit-hd {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.emp-edit-identity {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.emp-edit-av {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+    user-select: none;
+    transition: background 0.2s ease;
+}
+
+/* ── Two-column form grid ────────────────────────────────── */
+.emp-edit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+    .emp-edit-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Card (re-use emp-card from employee.css) ────────────── */
+/* emp-card, emp-card-header, emp-card-title already defined  */
+.emp-form-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Two-col row inside a card ───────────────────────────── */
+.emp-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 600px) {
+    .emp-form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Field + label + error ───────────────────────────────── */
+.emp-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.emp-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary, #4a5568);
+    letter-spacing: -0.01em;
+}
+
+.emp-req {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+.emp-field-err {
+    font-size: 12px;
+    color: #ef4444;
+    font-weight: 500;
+    min-height: 16px;
+    display: block;
+}
+
+body.dark-mode .emp-field-err {
+    color: #f87171;
+}
+
+/* ── Text / email / tel input ────────────────────────────── */
+.emp-input {
+    background: var(--surface-2, #f7f9fc);
+    border: 1.5px solid var(--border, rgba(0,0,0,0.07));
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text, #0d1117);
+    outline: none;
+    transition: all 0.18s ease;
+    width: 100%;
+}
+
+    .emp-input::placeholder {
+        color: var(--text-muted, #8a95a3);
+    }
+
+    .emp-input:focus {
+        border-color: var(--accent, #0181b0);
+        background: var(--surface, #fff);
+        box-shadow: 0 0 0 3px rgba(1,129,176,0.10);
+    }
+
+    .emp-input.input-validation-error {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 3px rgba(239,68,68,0.10);
+    }
+
+body.dark-mode .emp-input {
+    background: var(--surface-2, #161d2e);
+    border-color: var(--border, rgba(255,255,255,0.06));
+    color: var(--text, #e8edf5);
+}
+
+    body.dark-mode .emp-input:focus {
+        background: var(--surface, #111827);
+        border-color: var(--accent, #22aad4);
+        box-shadow: 0 0 0 3px rgba(34,170,212,0.12);
+    }
+
+/* ── Input with left icon ────────────────────────────────── */
+.emp-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.emp-input-icon {
+    position: absolute;
+    left: 12px;
+    width: 15px;
+    height: 15px;
+    color: var(--text-muted, #8a95a3);
+    pointer-events: none;
+    flex-shrink: 0;
+}
+
+.emp-input--icon {
+    padding-left: 36px;
+}
+
+/* ── Select ──────────────────────────────────────────────── */
+.emp-select {
+    background: var(--surface-2, #f7f9fc);
+    border: 1.5px solid var(--border, rgba(0,0,0,0.07));
+    border-radius: 10px;
+    padding: 10px 36px 10px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text, #0d1117);
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    width: 100%;
+}
+
+    .emp-select:focus {
+        border-color: var(--accent, #0181b0);
+        background-color: var(--surface, #fff);
+        box-shadow: 0 0 0 3px rgba(1,129,176,0.10);
+    }
+
+body.dark-mode .emp-select {
+    background-color: var(--surface-2, #161d2e);
+    border-color: var(--border, rgba(255,255,255,0.06));
+    color: var(--text, #e8edf5);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234e5d73' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+}
+
+/* ── Status radio chips ──────────────────────────────────── */
+.emp-status-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.emp-status-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 16px;
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid var(--border, rgba(0,0,0,0.10));
+    background: var(--surface-2, #f7f9fc);
+    color: var(--text-secondary, #4a5568);
+    transition: all 0.18s ease;
+    user-select: none;
+}
+
+    .emp-status-chip:hover {
+        border-color: var(--accent, #0181b0);
+        color: var(--accent, #0181b0);
+    }
+
+.emp-status-chip--on {
+    background: rgba(1,129,176,0.10);
+    border-color: rgba(1,129,176,0.35);
+    color: var(--accent, #0181b0);
+    font-weight: 600;
+}
+
+body.dark-mode .emp-status-chip {
+    background: var(--surface-3, #1e2740);
+    border-color: var(--border, rgba(255,255,255,0.06));
+    color: var(--text-secondary, #94a3b8);
+}
+
+body.dark-mode .emp-status-chip--on {
+    background: rgba(34,170,212,0.13);
+    border-color: rgba(34,170,212,0.35);
+    color: var(--accent, #22aad4);
+}
+
+/* Visually hidden radio input — chip acts as the control */
+.emp-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── Form action bar ─────────────────────────────────────── */
+.emp-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 4px;
+}
+
+/* ── Outline button variant ──────────────────────────────── */
+.emp-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--border, rgba(0,0,0,0.10));
+    background: transparent;
+    color: var(--text-secondary, #4a5568);
+    text-decoration: none;
+    transition: all 0.18s ease;
+}
+
+    .emp-btn-outline:hover {
+        border-color: var(--accent, #0181b0);
+        color: var(--accent, #0181b0);
+        background: rgba(1,129,176,0.05);
+        text-decoration: none;
+    }
+
+    .emp-btn-outline svg {
+        width: 15px;
+        height: 15px;
+    }

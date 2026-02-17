@@ -1,42 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.Title - Employee Management System</title>
-
+    <title>@ViewBag.Title - ERMS</title>
+    
     <!-- Bootstrap 3 CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
-    <!-- jQuery (MUST come first) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Bootstrap 3 JS -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-    <link href="~/Content/Site.css" rel="stylesheet" />
-
+    
+    <!-- Custom Modern CSS -->
+    <link href="~/css/site.css" rel="stylesheet" />
+    
     @RenderSection("Styles", required: false)
 </head>
 <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+    <!-- Ultra Modern Navigation Bar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top modern-navbar">
         <div class="container-fluid">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Employee Management System", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("ERMS", "Index", "Hierarchy", new { area = "" }, new { @class = "navbar-brand" })
             </div>
+
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 @if (Context.Session.GetString("UserId") != null)
                 {
-                    <ul class="nav navbar-nav">
+                    <ul class="nav navbar-nav navbar-left">
                         @if (Context.Session.GetString("Role") == "Admin")
                         {
+                            <li>@Html.ActionLink("Hierarchy", "Index", "Hierarchy")</li>
                             <li>@Html.ActionLink("Employees", "Index", "Employee")</li>
                             <li>@Html.ActionLink("Profile", "Profile", "Profile")</li>
+                            <li>@Html.ActionLink("Department", "Index", "Department")</li>
+                            <li>@Html.ActionLink("Position", "Index", "Position")</li>
+                            <li>@Html.ActionLink("Profile", "Profile", "Profile")</li>
+                            
                         }
                         else if (Context.Session.GetString("Role") == "Manager")
                         {
@@ -49,17 +52,32 @@
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
                         }
                     </ul>
+                    
                     <ul class="nav navbar-nav navbar-right">
-                        <li class="navbar-text">
-                            <span class="glyphicon glyphicon-user"></span>
-                            Welcome, <strong>@Context.Session.GetString("FullName")</strong>
-                            <span class="label label-info">@Context.Session.GetString("Role")</span>
+                        <!-- User Info Pill -->
+                        <li class="user-info-pill">
+                            <span class="user-avatar">
+                                <span class="glyphicon glyphicon-user"></span>
+                            </span>
+                            <span class="user-details">
+                                <span class="user-name">@Context.Session.GetString("FullName")</span>
+                                <span class="user-role">@Context.Session.GetString("Role")</span>
+                            </span>
                         </li>
+                        
+                        <!-- Theme Toggle -->
                         <li>
-                            <form method="post" asp-controller="Auth" asp-action="Logout" style="margin: 8px 15px;">
+                            <a href="#" id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+                                <span class="glyphicon glyphicon-adjust"></span>
+                            </a>
+                        </li>
+                        
+                        <!-- Logout Button -->
+                        <li>
+                            <form method="post" asp-controller="Auth" asp-action="Logout" class="navbar-form-inline">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    <span class="glyphicon glyphicon-log-out"></span> Logout
+                                <button type="submit" class="icon-btn logout-btn" title="Logout" aria-label="Logout">
+                                    <span class="glyphicon glyphicon-log-out"></span>
                                 </button>
                             </form>
                         </li>
@@ -68,21 +86,113 @@
                 else
                 {
                     <ul class="nav navbar-nav navbar-right">
-                        <li>@Html.ActionLink("Login", "Login", "Auth")</li>
+                        <!-- Theme Toggle -->
+                        <li>
+                            <a href="#" id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+                                <span class="glyphicon glyphicon-adjust"></span>
+                            </a>
+                        </li>
+                        
+                        <!-- Login Link -->
+                        <li>
+                            <a asp-controller="Auth" asp-action="Login" class="login-link">
+                                <span class="glyphicon glyphicon-log-in"></span> Login
+                            </a>
+                        </li>
                     </ul>
                 }
             </div>
         </div>
     </nav>
-    <div class="container-fluid body-content" style="margin-top: 70px;">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p class="text-center text-muted">&copy; @DateTime.Now.Year - Employee Management System</p>
-        </footer>
-    </div>
-    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="container-fluid">
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- Modern Footer -->
+    <footer class="modern-footer">
+        <div class="container-fluid">
+            <p>© @DateTime.Now.Year ERMS. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- jQuery (Required for Bootstrap) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Bootstrap 3 JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <!-- Dark Mode Toggle Script -->
+    <script>
+        (function() {
+            'use strict';
+
+            const toggle = document.getElementById('themeToggle');
+            if (!toggle) return;
+
+            const body = document.body;
+            const STORAGE_KEY = 'erms-theme';
+
+            function setTheme(theme) {
+                if (theme === 'dark') {
+                    body.classList.add('dark-mode');
+                } else {
+                    body.classList.remove('dark-mode');
+                }
+                localStorage.setItem(STORAGE_KEY, theme);
+            }
+
+            function getCurrentTheme() {
+                const savedTheme = localStorage.getItem(STORAGE_KEY);
+                if (savedTheme) return savedTheme;
+                
+                return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches 
+                    ? 'dark' 
+                    : 'light';
+            }
+
+            // Initialize theme
+            setTheme(getCurrentTheme());
+
+            // Toggle on click
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
+                setTheme(newTheme);
+            });
+
+            // System preference listener
+            if (window.matchMedia) {
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+                    if (!localStorage.getItem(STORAGE_KEY)) {
+                        setTheme(e.matches ? 'dark' : 'light');
+                    }
+                });
+            }
+
+            // Smooth transition after load
+            setTimeout(function() {
+                body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
+            }, 50);
+        })();
+    </script>
+
+    <!-- Active Nav State -->
+    <script>
+        $(document).ready(function() {
+            var path = window.location.pathname;
+            $('.navbar-nav > li > a').each(function() {
+                var href = $(this).attr('href');
+                if (href && path.indexOf(href) === 0 && href !== '/') {
+                    $(this).parent().addClass('active');
+                }
+            });
+        });
+    </script>
+
     @RenderSection("scripts", required: false)
 </body>
 </html>

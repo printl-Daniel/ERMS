@@ -1,56 +1,82 @@
-﻿@* Views/Hierarchy/_HierarchyNode.cshtml *@
+@* Views/Hierarchy/_HierarchyNode.cshtml *@
 @model ERMS.ViewModels.Hierarchy.HierarchyNodeViewModel
 
-<div class="hierarchy-node level-@Model.Level">
-    <div class="card employee-card mb-2">
-        <div class="card-body p-3">
-            <div class="d-flex align-items-center">
-                <img src="@Model.DisplayProfilePicture"
-                     alt="@Model.FullName"
-                     class="employee-avatar me-3"
-                     onerror="this.src='/images/default-avatar.png'">
-				<div class="flex-grow-1">
-                        <a asp-controller="Hierarchy"
-                           asp-action="Employee"
-                           asp-route-id="@Model.Id"
-                           class="text-decoration-none">
-                            @Model.FullName
-                        </a>
-                        @if (Model.HasSubordinates)
-                        {
-                            <span class="subordinate-badge ms-2">
-                                <i class="fas fa-users"></i> @Model.SubordinateCount
-                            </span>
-                        }
-                    </h6>
-                    <p class="mb-0 text-muted small">
-                        <i class="fas fa-briefcase"></i> @Model.PositionTitle
-                        <span class="mx-2">|</span>
-                        <i class="fas fa-building"></i> @Model.DepartmentName
-                    </p>
-                </div>
-                <div class="text-end">
-                    <small class="text-muted d-block">
-                        <i class="fas fa-envelope"></i> @Model.Email
-                    </small>
-                    @if (Model.HasPhoneNumber)
-                    {
-                        <small class="text-muted d-block">
-                            <i class="fas fa-phone"></i> @Model.PhoneNumber
-                        </small>
-                    }
-                </div>
+@{
+    var name     = Model.FullName ?? "?";
+    var parts    = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    var initials = parts.Length >= 2
+        ? $"{char.ToUpper(parts[0][0])}{char.ToUpper(parts[^1][0])}"
+        : name.Length > 0 ? char.ToUpper(name[0]).ToString() : "?";
+
+    string[] palette = { "#0181b0","#10b981","#f59e0b","#8b5cf6","#06b6d4","#ef4444","#ec4899","#6366f1" };
+    int ci = 0; foreach (char c in name) ci += c;
+    var bg = palette[ci % palette.Length];
+}
+
+<div class="org-chart-node" data-level="@Model.Level" data-employee-id="@Model.Id">
+
+    <div class="node-card">
+
+        <div class="node-avatar-container">
+            <div class="av av-md av-rounded" style="background: @bg">@initials</div>
+            @if (Model.HasSubordinates)
+            {
+                <span class="team-badge">@Model.SubordinateCount</span>
+            }
+        </div>
+
+        <div class="node-content">
+            <h3 class="node-name">
+                <a asp-controller="Hierarchy"
+                   asp-action="Employee"
+                   asp-route-id="@Model.Id"
+                   class="name-link">@Model.FullName</a>
+            </h3>
+            <p class="node-title">@Model.PositionTitle</p>
+            <span class="node-department">@Model.DepartmentName</span>
+
+            <div class="node-actions">
+                <button class="action-btn"
+                        title="@Model.Email"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top">
+                    <i class="fas fa-envelope"></i>
+                </button>
+
+                @if (Model.HasPhoneNumber)
+                {
+                    <button class="action-btn"
+                            title="@Model.PhoneNumber"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                }
+
+                @if (Model.HasSubordinates)
+                {
+                    <button class="action-btn expand-btn"
+                            type="button"
+                            aria-expanded="true"
+                            aria-controls="subordinates-@Model.Id"
+                            data-target="subordinates-@Model.Id">
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                }
             </div>
         </div>
     </div>
 
     @if (Model.HasSubordinates && Model.Subordinates != null && Model.Subordinates.Any())
     {
-        <div class="subordinates">
+        <div class="subordinates-grid hr-expanded"
+             id="subordinates-@Model.Id"
+             data-parent-level="@Model.Level">
             @foreach (var subordinate in Model.Subordinates)
             {
                 @await Html.PartialAsync("_HierarchyNode", subordinate)
             }
         </div>
     }
+
 </div>

@@ -14,11 +14,8 @@
     int idx = 0;
 }
 
-
-@section styles {
-    <link rel="stylesheet" href="~/css/Employee.css" />
-}
 <div class="emp-page">
+
     <div class="emp-page-header">
         <div>
             <p class="emp-eyebrow">Human Resources</p>
@@ -34,6 +31,7 @@
             Add Employee
         </a>
     </div>
+
     <div class="emp-stats">
         <div class="emp-stat-card">
             <div class="emp-stat-icon emp-icon-blue">
@@ -94,7 +92,9 @@
             </div>
         </div>
     </div>
+
     <div class="emp-card">
+
         <div class="emp-card-header">
             <span class="emp-card-title">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -119,7 +119,6 @@
             </div>
         </div>
 
-  
         <div class="emp-filter-pills">
             <button class="emp-pill active" data-filter="all">
                 All <span class="emp-pill-count">@total</span>
@@ -134,7 +133,6 @@
 
         @if (Model != null && Model.Any())
         {
-           
             <div class="emp-table-wrap">
                 <table id="empTable">
                     <thead>
@@ -177,7 +175,6 @@
                                     </div>
                                 </td>
 
-                     
                                 <td class="emp-col-mono hide-mobile">@employee.PhoneNumber</td>
 
                                 <td class="emp-col-dept">@employee.Department</td>
@@ -248,7 +245,6 @@
                 </table>
             </div>
 
-          
             <div class="emp-table-footer">
                 <span class="emp-count" id="empCount">
                     Showing <strong>@total</strong> employees
@@ -257,7 +253,6 @@
         }
         else
         {
-
             <div class="emp-empty">
                 <div class="emp-empty-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -285,3 +280,44 @@
     </div>
 </div>
 
+@section scripts {
+<script>
+(function () {
+    var searchInput = document.getElementById('empSearchInput');
+    var pills       = document.querySelectorAll('.emp-pill');
+    var rows        = document.querySelectorAll('#empTable tbody tr');
+    var countEl     = document.getElementById('empCount');
+    var currentFilter = 'all';
+
+    function applyFilters() {
+        var query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        var visible = 0;
+
+        rows.forEach(function (row) {
+            var matchSearch = !query || row.dataset.search.includes(query);
+            var matchStatus = currentFilter === 'all' || row.dataset.status === currentFilter;
+            var show = matchSearch && matchStatus;
+            row.style.display = show ? '' : 'none';
+            if (show) visible++;
+        });
+
+        if (countEl) {
+            countEl.innerHTML = 'Showing <strong>' + visible + '</strong> of <strong>' + rows.length + '</strong> employees';
+        }
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+    }
+
+    pills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+            pills.forEach(function (p) { p.classList.remove('active'); });
+            pill.classList.add('active');
+            currentFilter = pill.dataset.filter;
+            applyFilters();
+        });
+    });
+}());
+</script>
+}

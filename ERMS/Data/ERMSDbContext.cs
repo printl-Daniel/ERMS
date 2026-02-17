@@ -1,9 +1,9 @@
-﻿using ERMS.Models;
+using ERMS.Models;
 using Microsoft.EntityFrameworkCore;
 using static ERMS.Enums.EmployeeEnum;
+
 namespace ERMS.Data
 {
-
     public class ERMSDbContext : DbContext
     {
         public ERMSDbContext(DbContextOptions<ERMSDbContext> options)
@@ -15,6 +15,7 @@ namespace ERMS.Data
         public DbSet<Position> Positions { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; } // NEW
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +35,13 @@ namespace ERMS.Data
                 .HasForeignKey<User>(u => u.EmployeeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // Configure PasswordResetToken relationship - NEW
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasOne(t => t.User)
+                .WithMany()
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Unique constraints
             modelBuilder.Entity<Employee>()
                 .HasIndex(e => e.Email)
@@ -43,10 +51,17 @@ namespace ERMS.Data
                 .HasIndex(u => u.Username)
                 .IsUnique();
 
+            // Index for password reset tokens - NEW
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasIndex(t => t.Token)
+                .IsUnique();
+
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasIndex(t => t.UserId);
+
             // Seed data
             SeedData(modelBuilder);
         }
-
 
         //SEEDER
         private void SeedData(ModelBuilder modelBuilder)
@@ -275,7 +290,5 @@ namespace ERMS.Data
                 }
             );
         }
-
     }
-    
 }

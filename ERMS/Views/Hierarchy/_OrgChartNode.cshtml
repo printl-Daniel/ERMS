@@ -1,0 +1,80 @@
+@* Views/Hierarchy/_OrgChartNode.cshtml *@
+@* Renders one node + its children recursively using pure CSS flexbox tree *@
+@model ERMS.ViewModels.Hierarchy.OrgChartNodeViewModel
+
+@{
+    var node  = Model.Node;
+    var depth = Model.Depth;
+
+    string[] avatarPalette = {
+        "#0181b0","#10b981","#f59e0b","#8b5cf6",
+        "#06b6d4","#ef4444","#ec4899","#6366f1"
+    };
+    string[] depthAccents = {
+        "#0181b0","#10b981","#f59e0b","#8b5cf6","#06b6d4","#ef4444"
+    };
+
+    string AvatarBg(string name) {
+        int ci = 0; foreach (char c in (name ?? "")) ci += c;
+        return avatarPalette[ci % avatarPalette.Length];
+    }
+    string Initials(string name) {
+        var p = (name ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return p.Length >= 2
+            ? $"{char.ToUpper(p[0][0])}{char.ToUpper(p[^1][0])}"
+            : (name?.Length > 0 ? char.ToUpper(name[0]).ToString() : "?");
+    }
+
+    var accent   = depthAccents[depth % depthAccents.Length];
+    var avatarBg = AvatarBg(node.Name);
+    var initials = Initials(node.Name);
+    var hasKids  = node.Children != null && node.Children.Any();
+}
+
+<div class="oc-node @(depth == 0 ? "oc-root" : "")">
+
+    <a class="oc-card" href="/Hierarchy/Employee/@node.Id" style="--oc-accent: @accent">
+
+        <div class="oc-card-accent"></div>
+
+        <div class="oc-card-body">
+            <div class="oc-avatar" style="background: @avatarBg">@initials</div>
+
+            <div class="oc-info">
+                <span class="oc-name">@node.Name</span>
+                @if (!string.IsNullOrWhiteSpace(node.Title))
+                {
+                    <span class="oc-title">@node.Title</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(node.Department))
+                {
+                    <span class="oc-dept">@node.Department</span>
+                }
+            </div>
+        </div>
+
+        @if (hasKids)
+        {
+            <div class="oc-card-footer">
+                <span class="oc-team-count">
+                    <i class="fas fa-users"></i>
+                    @node.Children!.Count direct reports
+                </span>
+            </div>
+        }
+    </a>
+
+    @if (hasKids)
+    {
+        <div class="oc-children">
+            @foreach (var child in node.Children!)
+            {
+                @await Html.PartialAsync("_OrgChartNode", new ERMS.ViewModels.Hierarchy.OrgChartNodeViewModel {
+                    Node   = child,
+                    Depth  = depth + 1
+                })
+            }
+        </div>
+    }
+
+</div>

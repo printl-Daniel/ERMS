@@ -1,10 +1,8 @@
 ﻿using ERMS.DTOs.Employee;
 using ERMS.Models;
-using ERMS.Repositories.Implementations;
 using ERMS.Repositories.Interfaces;
 using ERMS.Services.Interfaces;
 using ERMS.ViewModels.Employee;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Cryptography;
 using System.Text;
 using static ERMS.Enums.EmployeeEnum;
