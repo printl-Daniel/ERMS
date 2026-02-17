@@ -35,7 +35,6 @@
                         {
                             <li>@Html.ActionLink("Hierarchy", "Index", "Hierarchy")</li>
                             <li>@Html.ActionLink("Employees", "Index", "Employee")</li>
-                            <li>@Html.ActionLink("Profile", "Profile", "Profile")</li>
                             <li>@Html.ActionLink("Department", "Index", "Department")</li>
                             <li>@Html.ActionLink("Position", "Index", "Position")</li>
                             <li>@Html.ActionLink("Profile", "Profile", "Profile")</li>
@@ -62,6 +61,7 @@
                             <span class="user-details">
                                 <span class="user-name">@Context.Session.GetString("FullName")</span>
                                 <span class="user-role">@Context.Session.GetString("Role")</span>
+
                             </span>
                         </li>
                         

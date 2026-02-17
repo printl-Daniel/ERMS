@@ -1170,3 +1170,668 @@ body.dark-mode .emp-status-chip--on {
         width: 15px;
         height: 15px;
     }
+
+/* ================================================================
+   employee-pages.css
+   Shared styles for Create, CreateResult, and Details views.
+   All colour references use the app's existing CSS variables so
+   dark-mode ( body.dark-mode ) is handled automatically.
+   Font: Sora (display) + DM Sans (body) + DM Mono (code/numbers)
+================================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap');
+
+/* ── Scope ─────────────────────────────────────────────────── */
+.ep-wrap {
+    font-family: 'DM Sans', sans-serif;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 44px 0 100px;
+}
+
+.ep-wrap-sm {
+    max-width: 740px;
+}
+
+/* ── Page heading ───────────────────────────────────────────── */
+.ep-page-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+}
+
+.ep-page-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin-bottom: 32px;
+}
+
+/* ── Card ───────────────────────────────────────────────────── */
+.ep-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: box-shadow .2s ease;
+}
+
+    .ep-card:hover {
+        box-shadow: var(--shadow-md);
+    }
+
+.ep-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px 18px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+}
+
+.ep-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+}
+
+.ep-card-body {
+    padding: 28px;
+}
+
+/* ── Section divider inside form ────────────────────────────── */
+.ep-section-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    margin: 36px 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .ep-section-title:first-child {
+        margin-top: 0;
+    }
+
+    .ep-section-title::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+.ep-section-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--accent-bg);
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+/* ── Form fields ────────────────────────────────────────────── */
+.ep-field {
+    margin-bottom: 20px;
+}
+
+.ep-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 7px;
+}
+
+.ep-input,
+.ep-select,
+.ep-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    padding: 11px 14px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color .18s, box-shadow .18s;
+    outline: none;
+    display: block;
+}
+
+    .ep-input::placeholder,
+    .ep-textarea::placeholder {
+        color: var(--text-muted);
+        opacity: .6;
+    }
+
+    .ep-input:focus,
+    .ep-select:focus,
+    .ep-textarea:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 4px var(--accent-bg);
+        background: var(--surface);
+    }
+
+    .ep-input.is-invalid,
+    .ep-select.is-invalid {
+        border-color: #ef4444;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, .08);
+    }
+
+.ep-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+    cursor: pointer;
+}
+
+.ep-textarea {
+    resize: vertical;
+    min-height: 88px;
+}
+
+.ep-field-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+.ep-field-error {
+    font-size: 12px;
+    color: #ef4444;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ── 2-col grid ─────────────────────────────────────────────── */
+.ep-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 20px;
+}
+
+@media (max-width: 640px) {
+    .ep-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Alerts ─────────────────────────────────────────────────── */
+.ep-alert {
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border: none;
+    border-left: 3px solid;
+    line-height: 1.5;
+}
+
+.ep-alert-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.ep-alert-content strong {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.ep-alert-content ul {
+    margin: 6px 0 0 16px;
+    padding: 0;
+    font-size: 13px;
+}
+
+.ep-alert.danger {
+    background: rgba(239,68,68,.08);
+    color: #b91c1c;
+    border-left-color: #ef4444;
+}
+
+body.dark-mode .ep-alert.danger {
+    background: rgba(239,68,68,.12);
+    color: #fca5a5;
+}
+
+.ep-alert.info {
+    background: rgba(14,165,233,.08);
+    color: #0369a1;
+    border-left-color: #0ea5e9;
+}
+
+body.dark-mode .ep-alert.info {
+    background: rgba(14,165,233,.12);
+    color: #7dd3fc;
+}
+
+.ep-alert.warning {
+    background: rgba(245,158,11,.08);
+    color: #92400e;
+    border-left-color: #f59e0b;
+}
+
+body.dark-mode .ep-alert.warning {
+    background: rgba(245,158,11,.12);
+    color: #fcd34d;
+}
+
+.ep-alert.success {
+    background: rgba(16,185,129,.08);
+    color: #065f46;
+    border-left-color: #10b981;
+}
+
+body.dark-mode .ep-alert.success {
+    background: rgba(16,185,129,.12);
+    color: #6ee7b7;
+}
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.ep-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 36px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+/* ── Result page ────────────────────────────────────────────── */
+.ep-result-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 44px 28px 36px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ep-result-icon {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    margin-bottom: 18px;
+}
+
+    .ep-result-icon.success {
+        background: rgba(16,185,129,.12);
+        color: #10b981;
+    }
+
+body.dark-mode .ep-result-icon.success {
+    background: rgba(16,185,129,.18);
+    color: #34d399;
+}
+
+.ep-result-icon.fail {
+    background: rgba(239,68,68,.1);
+    color: #ef4444;
+}
+
+.ep-result-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+}
+
+.ep-result-sub {
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+/* Credentials block */
+.ep-creds {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 24px 0;
+}
+
+.ep-creds-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+}
+
+    .ep-creds-row:last-child {
+        border-bottom: none;
+    }
+
+.ep-creds-key {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    min-width: 140px;
+}
+
+.ep-creds-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    word-break: break-all;
+}
+
+    .ep-creds-val.highlight {
+        background: rgba(245,158,11,.12);
+        color: #92400e;
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px dashed rgba(245,158,11,.4);
+    }
+
+body.dark-mode .ep-creds-val.highlight {
+    background: rgba(245,158,11,.15);
+    color: #fcd34d;
+}
+
+/* Manual credentials fallback box */
+.ep-manual-creds {
+    background: var(--surface);
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-top: 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 2;
+    color: var(--text);
+}
+
+/* ── Details page ───────────────────────────────────────────── */
+.ep-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ep-hero-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.ep-hero-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent) 0%, #0ea5e9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    letter-spacing: -0.02em;
+}
+
+.ep-hero-name {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+
+.ep-hero-position {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.ep-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.ep-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.ep-chip-success {
+    background: rgba(16,185,129,.1);
+    color: #059669;
+}
+
+.ep-chip-danger {
+    background: rgba(239,68,68,.1);
+    color: #dc2626;
+}
+
+.ep-chip-info {
+    background: var(--accent-bg);
+    color: var(--accent);
+}
+
+body.dark-mode .ep-chip-success {
+    background: rgba(16,185,129,.18);
+    color: #34d399;
+}
+
+body.dark-mode .ep-chip-danger {
+    background: rgba(239,68,68,.18);
+    color: #fca5a5;
+}
+
+.ep-hero-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Info grid inside details */
+.ep-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+}
+
+@media (max-width: 600px) {
+    .ep-info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ep-info-cell {
+    background: var(--surface);
+    padding: 18px 24px;
+    transition: background .15s;
+}
+
+    .ep-info-cell:hover {
+        background: var(--bg);
+    }
+
+.ep-info-key {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+}
+
+.ep-info-val {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+    .ep-info-val a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+        .ep-info-val a:hover {
+            text-decoration: underline;
+        }
+
+    .ep-info-val code {
+        font-family: 'DM Mono', monospace;
+        font-size: 13px;
+        background: var(--bg);
+        padding: 2px 8px;
+        border-radius: 5px;
+        border: 1px solid var(--border);
+        color: var(--text);
+    }
+
+/* ── Direct reports table ───────────────────────────────────── */
+.ep-table-wrap {
+    overflow-x: auto;
+    border-top: 1px solid var(--border);
+}
+
+.ep-reports-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 28px 0;
+}
+
+.ep-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-bg);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 7px;
+    border-radius: 20px;
+}
+
+.ep-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-top: 16px;
+}
+
+    .ep-table thead tr {
+        background: var(--bg);
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .ep-table th {
+        padding: 11px 20px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-muted);
+        white-space: nowrap;
+    }
+
+    .ep-table td {
+        padding: 14px 20px;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+    }
+
+    .ep-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .ep-table tbody tr:hover td {
+        background: var(--bg);
+    }
+
+/* ── Animations ─────────────────────────────────────────────── */
+@keyframes epFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ep-card {
+    animation: epFadeUp .35s ease both;
+}
+
+    .ep-card:nth-child(1) {
+        animation-delay: .04s;
+    }
+
+    .ep-card:nth-child(2) {
+        animation-delay: .10s;
+    }
+
+    .ep-card:nth-child(3) {
+        animation-delay: .16s;
+    }
+
+    .ep-card:nth-child(4) {
+        animation-delay: .22s;
+    }

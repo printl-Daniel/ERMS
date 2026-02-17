@@ -145,6 +145,24 @@ namespace ERMS.Helpers.Mappers
             };
         }
 
+        public static DeleteEmployeeViewModel ToDeleteViewModel(this EmployeeResponseDto employee, int subordinateCount = 0)
+        {
+            return new DeleteEmployeeViewModel
+            {
+                Id = employee.Id,
+                FullName = employee.FullName,
+                Email = employee.Email,
+                PhoneNumber = employee.PhoneNumber,
+                Department = employee.DepartmentName,
+                Position = employee.PositionTitle,
+                Manager = employee.ManagerName,
+                Status = employee.Status.ToString(),
+                Role = employee.Role,
+                HireDate = employee.HireDate,
+                SubordinateCount = subordinateCount
+            };
+        }
+
         //LIST
         public static List<EmployeeListViewModel> ToListViewModels(this IEnumerable<EmployeeResponseDto> employees)
         {

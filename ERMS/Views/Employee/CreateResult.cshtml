@@ -1,98 +1,122 @@
 @model ERMS.ViewModels.Employee.CreateEmployeeResultViewModel
 @{
-    ViewBag.Title = "Employee Created Successfully";
+    ViewBag.Title = Model.Success ? "Employee Created" : "Creation Failed";
 }
 
-<div class="row">
-    <div class="col-md-8 col-md-offset-2">
-        <div class="panel panel-@(Model.Success ? "success" : "danger")">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    <span class="glyphicon glyphicon-@(Model.Success ? "ok-circle" : "remove-circle")"></span>
-                    @(Model.Success ? "Employee Created Successfully" : "Employee Creation Failed")
-                </h3>
+<link rel="stylesheet" href="~/css/Employee.css" />
+
+<div class="ep-wrap ep-wrap-sm">
+
+    <p class="ep-page-eyebrow">Employees</p>
+    <h1 class="ep-page-title">@(Model.Success ? "Employee Created" : "Something Went Wrong")</h1>
+
+    <!-- ── Hero card ── -->
+    <div class="ep-card">
+        <div class="ep-result-hero">
+            <div class="ep-result-icon @(Model.Success ? "success" : "fail")">
+                <span class="glyphicon glyphicon-@(Model.Success ? "ok" : "remove")"></span>
             </div>
-            <div class="panel-body">
-                @if (Model.Success)
+            <div class="ep-result-title">
+                @(Model.Success ? "All done!" : "Creation Failed")
+            </div>
+            <div class="ep-result-sub">@Model.Message</div>
+        </div>
+
+        @if (Model.Success)
+        {
+            <div class="ep-card-body">
+
+                <!-- Credentials block -->
+                <p class="ep-section-label" style="margin-bottom: 12px;">
+                    <span class="ep-section-icon"><span class="glyphicon glyphicon-user"></span></span>
+                    &nbsp; Employee Credentials
+                </p>
+
+                <div class="ep-creds">
+                    <div class="ep-creds-row">
+                        <span class="ep-creds-key">Full Name</span>
+                        <span class="ep-creds-val">@Model.EmployeeName</span>
+                    </div>
+                    <div class="ep-creds-row">
+                        <span class="ep-creds-key">Email Address</span>
+                        <span class="ep-creds-val">@Model.Email</span>
+                    </div>
+                    <div class="ep-creds-row">
+                        <span class="ep-creds-key">Username</span>
+                        <span class="ep-creds-val">@Model.Username</span>
+                    </div>
+                    <div class="ep-creds-row">
+                        <span class="ep-creds-key">Temporary Password</span>
+                        <span class="ep-creds-val highlight">@Model.GeneratedPassword</span>
+                    </div>
+                </div>
+
+                <!-- Email status -->
+                @if (Model.EmailSent)
                 {
-                    <div class="alert alert-success">
-                        <h4><span class="glyphicon glyphicon-ok"></span> Success!</h4>
-                        <p>@Model.Message</p>
-                    </div>
-
-                    <div class="well">
-                        <h4><span class="glyphicon glyphicon-user"></span> Employee Details</h4>
-                        <dl class="dl-horizontal" style="margin-top: 20px;">
-                            <dt>Employee Name:</dt>
-                            <dd><strong>@Model.EmployeeName</strong></dd>
-
-                            <dt>Email Address:</dt>
-                            <dd>@Model.Email</dd>
-
-                            <dt>Username:</dt>
-                            <dd><code style="font-size: 14px;">@Model.Username</code></dd>
-
-                            <dt>Temporary Password:</dt>
-                            <dd>
-                                <code style="font-size: 14px; background-color: #fff3cd; color: #856404; padding: 5px 10px; border-radius: 3px;">
-                                    @Model.GeneratedPassword
-                                </code>
-                            </dd>
-                        </dl>
-                    </div>
-
-                    @if (Model.EmailSent)
-                    {
-                        <div class="alert alert-info">
-                            <span class="glyphicon glyphicon-envelope"></span>
-                            <strong>Email Sent Successfully!</strong>
-                            <p>Login credentials have been sent to <strong>@Model.Email</strong></p>
+                    <div class="ep-alert success">
+                        <span class="ep-alert-icon glyphicon glyphicon-envelope"></span>
+                        <div class="ep-alert-content">
+                            <strong>Credentials emailed</strong>
+                            Login details have been sent to <strong>@Model.Email</strong>.
                         </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-warning">
-                            <span class="glyphicon glyphicon-warning-sign"></span>
-                            <strong>Email Delivery Failed!</strong>
-                            <p>The email could not be sent. Please manually provide the credentials to the employee.</p>
-                            <hr />
-                            <p><strong>Important:</strong> Make sure to copy the password below as it will not be shown again:</p>
-                            <div style="background-color: #fff; padding: 15px; border: 2px dashed #f0ad4e; border-radius: 5px; margin-top: 10px;">
-                                <strong>Username:</strong> <code>@Model.Username</code><br />
-                                <strong>Password:</strong> <code style="font-size: 16px;">@Model.GeneratedPassword</code>
-                            </div>
-                        </div>
-                    }
-
-                    <div class="alert alert-warning">
-                        <span class="glyphicon glyphicon-exclamation-sign"></span>
-                        <strong>Security Notice:</strong>
-                        <p>The employee should change their password immediately upon first login for security purposes.</p>
                     </div>
                 }
                 else
                 {
-                    <div class="alert alert-danger">
-                        <h4><span class="glyphicon glyphicon-remove"></span> Error!</h4>
-                        <p>@Model.Message</p>
+                    <div class="ep-alert warning">
+                        <span class="ep-alert-icon glyphicon glyphicon-warning-sign"></span>
+                        <div class="ep-alert-content">
+                            <strong>Email delivery failed</strong>
+                            Please share the credentials below directly with the employee.
+                            The password will <strong>not</strong> be shown again.
+                            <div class="ep-manual-creds" style="margin-top: 12px;">
+                                <div><strong>Username:</strong> &nbsp;@Model.Username</div>
+                                <div><strong>Password:</strong> &nbsp;@Model.GeneratedPassword</div>
+                            </div>
+                        </div>
                     </div>
                 }
 
-                <div class="form-group" style="margin-top: 30px;">
-                    <a href="@Url.Action("Index", "Employee")" class="btn btn-primary">
-                        <span class="glyphicon glyphicon-list"></span> Back to Employee List
-                    </a>
-                    <a href="@Url.Action("Create", "Employee")" class="btn btn-success">
-                        <span class="glyphicon glyphicon-plus"></span> Add Another Employee
-                    </a>
-                    @if (Model.Success)
-                    {
-                        <a href="@Url.Action("Details", "Employee", new { id = Model.EmployeeId })" class="btn btn-info">
-                            <span class="glyphicon glyphicon-eye-open"></span> View Employee Details
-                        </a>
-                    }
+                <!-- Security notice -->
+                <div class="ep-alert warning">
+                    <span class="ep-alert-icon glyphicon glyphicon-lock"></span>
+                    <div class="ep-alert-content">
+                        <strong>Security notice</strong>
+                        The employee should change their password immediately upon first login.
+                    </div>
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <div class="ep-card-body">
+                <div class="ep-alert danger">
+                    <span class="ep-alert-icon glyphicon glyphicon-exclamation-sign"></span>
+                    <div class="ep-alert-content">
+                        <strong>Error</strong>
+                        @Model.Message
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     </div>
+
+    <!-- ── Actions ── -->
+    <div class="ep-actions">
+        <a href="@Url.Action("Index", "Employee")" class="btn btn-default btn-lg">
+            <span class="glyphicon glyphicon-list"></span> Back to List
+        </a>
+        <a href="@Url.Action("Create", "Employee")" class="btn btn-primary btn-lg">
+            <span class="glyphicon glyphicon-plus"></span> Add Another
+        </a>
+        @if (Model.Success)
+        {
+            <a href="@Url.Action("Details", "Employee", new { id = Model.EmployeeId })" class="btn btn-info btn-lg">
+                <span class="glyphicon glyphicon-eye-open"></span> View Employee
+            </a>
+        }
+    </div>
+
 </div>

@@ -219,22 +219,25 @@ namespace ERMS.Controllers
             return View(viewModel);
         }
 
+        // Replace your existing Delete GET + POST with these two actions
+        // inside EmployeeController.cs
+
         // GET: Employee/Delete/5
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
             if (!IsAdmin())
-            {
                 return RedirectToAction("Login", "Auth");
-            }
 
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
             if (employee == null)
-            {
                 return NotFound();
-            }
 
-            return View(employee);
+            // Count direct reports so the confirm page can warn the admin
+            var subordinates = await _employeeRepository.GetSubordinatesAsync(id);
+            var viewModel = employee.ToDeleteViewModel(subordinates.Count());
+
+            return View(viewModel);
         }
 
         // POST: Employee/Delete/5
@@ -243,19 +246,14 @@ namespace ERMS.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (!IsAdmin())
-            {
                 return RedirectToAction("Login", "Auth");
-            }
 
             var result = await _employeeService.DeleteEmployeeAsync(id);
+
             if (result)
-            {
                 TempData["SuccessMessage"] = Messages.Success.EmployeeDeleted;
-            }
             else
-            {
                 TempData["ErrorMessage"] = Messages.Error.EmployeeDeleteFailed;
-            }
 
             return RedirectToAction(nameof(Index));
         }

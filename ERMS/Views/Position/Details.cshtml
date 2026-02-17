@@ -1,48 +1,88 @@
 @model ERMS.ViewModels.Position.PositionListViewModel
-
 @{
     ViewData["Title"] = "Position Details";
 }
 
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3>Position Details</h3>
+<link rel="stylesheet" href="~/css/Department-Position.css" />
+
+<div class="pp-wrap pp-wrap-sm">
+
+    <div class="pp-header">
+        <div>
+            <p class="pp-eyebrow">Positions</p>
+            <h1 class="pp-title">@Model.Title</h1>
+        </div>
+    </div>
+
+    <!-- Info card -->
+    <div class="pp-card">
+        <div class="pp-card-head">
+            <span class="pp-card-label">
+                <span class="pp-card-icon"><span class="glyphicon glyphicon-info-sign"></span></span>
+                Position Details
+            </span>
+            @if (Model.EmployeeCount > 0)
+            {
+                <span class="pp-chip pp-chip-accent">
+                    @Model.EmployeeCount employee@(Model.EmployeeCount == 1 ? "" : "s") assigned
+                </span>
+            }
+            else
+            {
+                <span class="pp-chip pp-chip-muted">No employees assigned</span>
+            }
+        </div>
+
+        <div class="pp-info-grid">
+            <div class="pp-info-cell">
+                <div class="pp-info-key">Title</div>
+                <div class="pp-info-val">@Model.Title</div>
+            </div>
+            <div class="pp-info-cell">
+                <div class="pp-info-key">Base Salary</div>
+                <div class="pp-info-val mono">@Model.BaseSalary.ToString("C")</div>
+            </div>
+            <div class="pp-info-cell full">
+                <div class="pp-info-key">Description</div>
+                <div class="pp-info-val">
+                    @if (!string.IsNullOrWhiteSpace(Model.Description))
+                    {
+                        @Model.Description
+                    }
+                    else
+                    {
+                        <span style="color:var(--text-muted); font-style:italic;">No description provided.</span>
+                    }
                 </div>
-                <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-3">Title</dt>
-                        <dd class="col-sm-9">@Model.Title</dd>
-
-                        <dt class="col-sm-3">Description</dt>
-                        <dd class="col-sm-9">@Model.Description</dd>
-
-                        <dt class="col-sm-3">Base Salary</dt>
-                        <dd class="col-sm-9">@Model.BaseSalary.ToString("C")</dd>
-
-                        <dt class="col-sm-3">Number of Employees</dt>
-                        <dd class="col-sm-9">
-                            <span class="badge bg-info">@Model.EmployeeCount</span>
-                        </dd>
-                    </dl>
-
-                    <div class="d-flex justify-content-between mt-4">
-                        <a asp-action="Index" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Back to List
-                        </a>
-                        <div>
-                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
-                                <i class="bi bi-pencil"></i> Edit
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
-                                <i class="bi bi-trash"></i> Delete
-                            </a>
-                        </div>
-                    </div>
+            </div>
+            <div class="pp-info-cell full">
+                <div class="pp-info-key">Employees in This Position</div>
+                <div class="pp-info-val">
+                    @if (Model.EmployeeCount > 0)
+                    {
+                        <span class="pp-chip pp-chip-accent">@Model.EmployeeCount assigned</span>
+                    }
+                    else
+                    {
+                        <span class="pp-chip pp-chip-muted">None assigned</span>
+                    }
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="pp-actions">
+        <a asp-action="Index" class="btn btn-default btn-lg">
+            <span class="glyphicon glyphicon-arrow-left"></span> Back to List
+        </a>
+        <div class="pp-actions-right">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg">
+                <span class="glyphicon glyphicon-pencil"></span> Edit
+            </a>
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-lg">
+                <span class="glyphicon glyphicon-trash"></span> Delete
+            </a>
+        </div>
+    </div>
+
 </div>

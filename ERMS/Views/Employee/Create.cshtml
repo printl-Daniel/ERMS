@@ -3,166 +3,171 @@
     ViewBag.Title = "Add New Employee";
 }
 
-<div class="row">
-    <div class="col-md-10 col-md-offset-1">
-        <div class="panel panel-success">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    <span class="glyphicon glyphicon-user-plus"></span> Add New Employee
-                </h3>
+<link rel="stylesheet" href="~/css/Employee.css" />
+
+<div class="ep-wrap">
+
+    <p class="ep-page-eyebrow">Employees</p>
+    <h1 class="ep-page-title">Add New Employee</h1>
+
+    <form asp-action="Create" asp-controller="Employee" method="post" id="createForm">
+        @Html.AntiForgeryToken()
+
+        <!-- Validation errors -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="ep-alert danger">
+                <span class="ep-alert-icon glyphicon glyphicon-exclamation-sign"></span>
+                <div class="ep-alert-content">
+                    <strong>Please correct the following errors:</strong>
+                    <ul>
+                        @foreach (var state in ViewData.ModelState.Values)
+                        {
+                            foreach (var error in state.Errors)
+                            {
+                                <li>@error.ErrorMessage</li>
+                            }
+                        }
+                    </ul>
+                </div>
             </div>
-            <div class="panel-body">
-                <form asp-action="Create" asp-controller="Employee" method="post">
-                    @Html.AntiForgeryToken()
-                    <!-- IMPROVED VALIDATION DISPLAY -->
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <div class="alert alert-danger">
-                            <h4>Please correct the following errors:</h4>
-                            <ul>
-                                @foreach (var modelState in ViewData.ModelState.Values)
-                                {
-                                    foreach (var error in modelState.Errors)
-                                    {
-                                        <li>@error.ErrorMessage</li>
-                                    }
-                                }
-                            </ul>
-                        </div>
-                    }
+        }
 
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-
-                    <h4 class="text-muted">Personal Information</h4>
-                    <hr />
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="FirstName"></label>
-                                <input asp-for="FirstName" class="form-control" placeholder="Enter first name" />
-                                <span asp-validation-for="FirstName" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="LastName"></label>
-                                <input asp-for="LastName" class="form-control" placeholder="Enter last name" />
-                                <span asp-validation-for="LastName" class="text-danger"></span>
-                            </div>
-                        </div>
+        <!-- ── Personal Information ── -->
+        <div class="ep-card">
+            <div class="ep-card-head">
+                <span class="ep-section-label">
+                    <span class="ep-section-icon"><span class="glyphicon glyphicon-user"></span></span>
+                    &nbsp; Personal Information
+                </span>
+            </div>
+            <div class="ep-card-body">
+                <div class="ep-grid-2">
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="FirstName">First Name</label>
+                        <input asp-for="FirstName" class="ep-input" placeholder="e.g. Maria" />
+                        <span asp-validation-for="FirstName" class="ep-field-error"></span>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Email"></label>
-                                <input asp-for="Email" type="email" class="form-control" placeholder="employee@company.com" />
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="PhoneNumber"></label>
-                                <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="+1234567890" />
-                                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                            </div>
-                        </div>
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="LastName">Last Name</label>
+                        <input asp-for="LastName" class="ep-input" placeholder="e.g. Santos" />
+                        <span asp-validation-for="LastName" class="ep-field-error"></span>
                     </div>
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="DateOfBirth"></label>
-                                <input asp-for="DateOfBirth" type="date" class="form-control" />
-                                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Address"></label>
-                                <input asp-for="Address" class="form-control" placeholder="123 Main St, City, State ZIP" />
-                                <span asp-validation-for="Address" class="text-danger"></span>
-                            </div>
-                        </div>
+                <div class="ep-grid-2">
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="Email">Email Address</label>
+                        <input asp-for="Email" type="email" class="ep-input" placeholder="employee@company.com" />
+                        <span asp-validation-for="Email" class="ep-field-error"></span>
                     </div>
-
-                    <h4 class="text-muted" style="margin-top: 30px;">Employment Details</h4>
-                    <hr />
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="HireDate"></label>
-                                <input asp-for="HireDate" type="date" class="form-control" />
-                                <span asp-validation-for="HireDate" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="DepartmentId"></label>
-                                <select asp-for="DepartmentId" asp-items="Model.Departments" class="form-control">
-                                    <option value="">-- Select Department --</option>
-                                </select>
-                                <span asp-validation-for="DepartmentId" class="text-danger"></span>
-                            </div>
-                        </div>
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="PhoneNumber">Phone Number</label>
+                        <input asp-for="PhoneNumber" type="tel" class="ep-input" placeholder="+63 912 345 6789" />
+                        <span asp-validation-for="PhoneNumber" class="ep-field-error"></span>
                     </div>
+                </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="PositionId"></label>
-                                <select asp-for="PositionId" asp-items="Model.Positions" class="form-control">
-                                    <option value="">-- Select Position --</option>
-                                </select>
-                                <span asp-validation-for="PositionId" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="ManagerId"></label>
-                                <select asp-for="ManagerId" asp-items="Model.Managers" class="form-control">
-                                    <option value="">-- No Manager --</option>
-                                </select>
-                                <span asp-validation-for="ManagerId" class="text-danger"></span>
-                            </div>
-                        </div>
+                <div class="ep-grid-2">
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="DateOfBirth">Date of Birth</label>
+                        <input asp-for="DateOfBirth" type="date" class="ep-input" />
+                        <span asp-validation-for="DateOfBirth" class="ep-field-error"></span>
                     </div>
-
-                    <h4 class="text-muted" style="margin-top: 30px;">System Access</h4>
-                    <hr />
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Role"></label>
-                                <select asp-for="Role" asp-items="Model.Roles" class="form-control">
-                                    <option value="">-- Select Role --</option>
-                                </select>
-                                <span asp-validation-for="Role" class="text-danger"></span>
-                                <small class="form-text text-muted">
-                                    This determines the employee's system access level.
-                                </small>
-                            </div>
-                        </div>
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="Address">Address</label>
+                        <input asp-for="Address" class="ep-input" placeholder="123 Main St, City, ZIP" />
+                        <span asp-validation-for="Address" class="ep-field-error"></span>
                     </div>
-
-                    <div class="alert alert-info" style="margin-top: 20px;">
-                        <span class="glyphicon glyphicon-info-sign"></span>
-                        <strong>Note:</strong> A username and temporary password will be automatically generated and sent to the employee's email address.
-                    </div>
-
-                    <div class="form-group" style="margin-top: 30px;">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <span class="glyphicon glyphicon-floppy-disk"></span> Create Employee
-                        </button>
-                        <a href="@Url.Action("Index", "Employee")" class="btn btn-default btn-lg">
-                            <span class="glyphicon glyphicon-remove"></span> Cancel
-                        </a>
-                    </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+
+        <!-- ── Employment Details ── -->
+        <div class="ep-card">
+            <div class="ep-card-head">
+                <span class="ep-section-label">
+                    <span class="ep-section-icon"><span class="glyphicon glyphicon-briefcase"></span></span>
+                    &nbsp; Employment Details
+                </span>
+            </div>
+            <div class="ep-card-body">
+                <div class="ep-grid-2">
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="HireDate">Hire Date</label>
+                        <input asp-for="HireDate" type="date" class="ep-input" />
+                        <span asp-validation-for="HireDate" class="ep-field-error"></span>
+                    </div>
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="DepartmentId">Department</label>
+                        <select asp-for="DepartmentId" asp-items="Model.Departments" class="ep-select">
+                            <option value="">Select department…</option>
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="ep-field-error"></span>
+                    </div>
+                </div>
+
+                <div class="ep-grid-2">
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="PositionId">Position</label>
+                        <select asp-for="PositionId" asp-items="Model.Positions" class="ep-select">
+                            <option value="">Select position…</option>
+                        </select>
+                        <span asp-validation-for="PositionId" class="ep-field-error"></span>
+                    </div>
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="ManagerId">Reporting Manager</label>
+                        <select asp-for="ManagerId" asp-items="Model.Managers" class="ep-select">
+                            <option value="">No manager</option>
+                        </select>
+                        <span asp-validation-for="ManagerId" class="ep-field-error"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── System Access ── -->
+        <div class="ep-card">
+            <div class="ep-card-head">
+                <span class="ep-section-label">
+                    <span class="ep-section-icon"><span class="glyphicon glyphicon-lock"></span></span>
+                    &nbsp; System Access
+                </span>
+            </div>
+            <div class="ep-card-body">
+                <div class="ep-grid-2">
+                    <div class="ep-field">
+                        <label class="ep-label" asp-for="Role">Access Role</label>
+                        <select asp-for="Role" asp-items="Model.Roles" class="ep-select">
+                            <option value="">Select role…</option>
+                        </select>
+                        <span asp-validation-for="Role" class="ep-field-error"></span>
+                        <p class="ep-field-hint">Determines what the employee can see and do in the system.</p>
+                    </div>
+                </div>
+
+                <div class="ep-alert info" style="margin-top: 8px; margin-bottom: 0;">
+                    <span class="ep-alert-icon glyphicon glyphicon-envelope"></span>
+                    <div class="ep-alert-content">
+                        A username and temporary password will be auto-generated and emailed to the employee upon creation.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Actions ── -->
+        <div class="ep-actions">
+            <button type="submit" class="btn btn-primary btn-lg">
+                <span class="glyphicon glyphicon-floppy-disk"></span> Create Employee
+            </button>
+            <a href="@Url.Action("Index", "Employee")" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-remove"></span> Cancel
+            </a>
+        </div>
+
+    </form>
 </div>
+
+@section scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
