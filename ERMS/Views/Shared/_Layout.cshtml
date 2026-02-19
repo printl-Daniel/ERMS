@@ -4,13 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - ERMS</title>
-    
+
     <!-- Bootstrap 3 CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    
+
     <!-- Custom Modern CSS -->
     <link href="~/css/site.css" rel="stylesheet" />
-    
     @RenderSection("Styles", required: false)
 </head>
 <body>
@@ -28,30 +27,32 @@
             </div>
 
             <div class="collapse navbar-collapse" id="navbar-collapse">
-                @if (Context.Session.GetString("UserId") != null)
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
+                    var fullName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
+                    var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+
                     <ul class="nav navbar-nav navbar-left">
-                        @if (Context.Session.GetString("Role") == "Admin")
+                        @if (role == "Admin")
                         {
                             <li>@Html.ActionLink("Hierarchy", "Index", "Hierarchy")</li>
                             <li>@Html.ActionLink("Employees", "Index", "Employee")</li>
                             <li>@Html.ActionLink("Department", "Index", "Department")</li>
                             <li>@Html.ActionLink("Position", "Index", "Position")</li>
                             <li>@Html.ActionLink("Profile", "Profile", "Profile")</li>
-                            
                         }
-                        else if (Context.Session.GetString("Role") == "Manager")
+                        else if (role == "Manager")
                         {
                             <li>@Html.ActionLink("Dashboard", "Dashboard", "Manager")</li>
                             <li>@Html.ActionLink("Employees", "Index", "Employee")</li>
+                            <li>@Html.ActionLink("Profile", "Profile", "Profile")</li>
                         }
                         else
                         {
-                            <li>@Html.ActionLink("My Profile", "Profile", "Employee")</li>
                             <li>@Html.ActionLink("Home", "Index", "Home")</li>
                         }
                     </ul>
-                    
+
                     <ul class="nav navbar-nav navbar-right">
                         <!-- User Info Pill -->
                         <li class="user-info-pill">
@@ -59,20 +60,19 @@
                                 <span class="glyphicon glyphicon-user"></span>
                             </span>
                             <span class="user-details">
-                                <span class="user-name">@Context.Session.GetString("FullName")</span>
-                                <span class="user-role">@Context.Session.GetString("Role")</span>
-
+                                <span class="user-name">@fullName</span>
+                                <span class="user-role">@role</span>
                             </span>
                         </li>
-                        
+
                         <!-- Theme Toggle -->
                         <li>
                             <a href="#" id="themeToggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
                                 <span class="glyphicon glyphicon-adjust"></span>
                             </a>
                         </li>
-                        
-                        <!-- Logout Button -->
+
+                        <!-- Logout -->
                         <li>
                             <form method="post" asp-controller="Auth" asp-action="Logout" class="navbar-form-inline">
                                 @Html.AntiForgeryToken()
@@ -92,8 +92,8 @@
                                 <span class="glyphicon glyphicon-adjust"></span>
                             </a>
                         </li>
-                        
-                        <!-- Login Link -->
+
+                        <!-- Login -->
                         <li>
                             <a asp-controller="Auth" asp-action="Login" class="login-link">
                                 <span class="glyphicon glyphicon-log-in"></span> Login
@@ -105,93 +105,43 @@
         </div>
     </nav>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <main class="main-content">
         <div class="container-fluid">
             @RenderBody()
         </div>
     </main>
 
-    <!-- Modern Footer -->
+    <!-- Footer -->
     <footer class="modern-footer">
         <div class="container-fluid">
             <p>© @DateTime.Now.Year ERMS. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- jQuery (Required for Bootstrap) -->
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+      <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <!-- Bootstrap 3 JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-
-    <!-- Dark Mode Toggle Script -->
-    <script>
-        (function() {
-            'use strict';
-
-            const toggle = document.getElementById('themeToggle');
-            if (!toggle) return;
-
-            const body = document.body;
-            const STORAGE_KEY = 'erms-theme';
-
-            function setTheme(theme) {
-                if (theme === 'dark') {
-                    body.classList.add('dark-mode');
-                } else {
-                    body.classList.remove('dark-mode');
-                }
-                localStorage.setItem(STORAGE_KEY, theme);
-            }
-
-            function getCurrentTheme() {
-                const savedTheme = localStorage.getItem(STORAGE_KEY);
-                if (savedTheme) return savedTheme;
-                
-                return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches 
-                    ? 'dark' 
-                    : 'light';
-            }
-
-            // Initialize theme
-            setTheme(getCurrentTheme());
-
-            // Toggle on click
-            toggle.addEventListener('click', function(e) {
-                e.preventDefault();
-                const newTheme = body.classList.contains('dark-mode') ? 'light' : 'dark';
-                setTheme(newTheme);
-            });
-
-            // System preference listener
-            if (window.matchMedia) {
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
-                    if (!localStorage.getItem(STORAGE_KEY)) {
-                        setTheme(e.matches ? 'dark' : 'light');
-                    }
-                });
-            }
-
-            // Smooth transition after load
-            setTimeout(function() {
-                body.style.transition = 'background-color 0.3s ease, color 0.3s ease';
-            }, 50);
-        })();
-    </script>
-
-    <!-- Active Nav State -->
-    <script>
-        $(document).ready(function() {
-            var path = window.location.pathname;
-            $('.navbar-nav > li > a').each(function() {
-                var href = $(this).attr('href');
-                if (href && path.indexOf(href) === 0 && href !== '/') {
-                    $(this).parent().addClass('active');
-                }
-            });
-        });
-    </script>
+    <script src="~/js/site.js"></script>
+    @if (TempData["Success"] != null)
+    {
+        <script>showToast('success', '@Html.Raw(TempData["Success"].ToString().Replace("'", "\\'"))');</script>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <script>showToast('error', '@Html.Raw(TempData["Error"].ToString().Replace("'", "\\'"))');</script>
+    }
+    @if (TempData["Warning"] != null)
+    {
+        <script>showToast('warning', '@Html.Raw(TempData["Warning"].ToString().Replace("'", "\\'"))');</script>
+    }
+    @if (TempData["Info"] != null)
+    {
+        <script>showToast('info', '@Html.Raw(TempData["Info"].ToString().Replace("'", "\\'"))');</script>
+    }
 
     @RenderSection("scripts", required: false)
 </body>

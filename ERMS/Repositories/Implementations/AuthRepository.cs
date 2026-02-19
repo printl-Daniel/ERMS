@@ -94,8 +94,8 @@ namespace ERMS.Repositories.Implementations
             if (user == null) return false;
 
             user.PasswordHash = newPasswordHash;
-            user.UpdatedAt = DateTime.UtcNow;
-
+            user.IsFirstLogin = false;
+            user.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();
             return true;
         }
@@ -128,6 +128,18 @@ namespace ERMS.Repositories.Implementations
         {
             // DEMO ONLY - In production, use BCrypt.Net.BCrypt.Verify(password, passwordHash)
             return password == passwordHash;
+        }
+
+        public async Task<bool> SetFirstLoginCompleteAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.IsFirstLogin = false;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

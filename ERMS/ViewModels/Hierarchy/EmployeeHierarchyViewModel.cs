@@ -4,6 +4,7 @@ namespace ERMS.ViewModels.Hierarchy
 {
     public class EmployeeHierarchyViewModel
     {
+        public string ProfilePicturePath { get; set; }
         public HierarchyNodeViewModel Employee { get; set; }
         public List<HierarchyNodeViewModel> ManagerChain { get; set; }
         public List<HierarchyNodeViewModel> DirectReports { get; set; }

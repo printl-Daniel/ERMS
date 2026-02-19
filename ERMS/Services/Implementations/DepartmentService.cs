@@ -1,9 +1,9 @@
-﻿using ERMS.DTOs;
+﻿using ERMS.Constants;
+using ERMS.DTOs;
 using ERMS.DTOs.Department;
-using ERMS.Models;
+using ERMS.Helpers.Mappers;
 using ERMS.Repositories.Interfaces;
 using ERMS.Services.Interfaces;
-
 
 namespace ERMS.Services.Implementations
 {
@@ -19,81 +19,46 @@ namespace ERMS.Services.Implementations
         public async Task<IEnumerable<DepartmentDto>> GetAllAsync()
         {
             var departments = await _repository.GetAllActiveAsync();
-            return departments.Select(d => new DepartmentDto
-            {
-                Id = d.Id,
-                Name = d.Name,
-                Description = d.Description
-            });
+            return departments.Select(d => d.ToDto());
         }
 
         public async Task<DepartmentDto> GetByIdAsync(int id)
         {
             var department = await _repository.GetByIdActiveAsync(id);
             if (department == null)
-                return null;
-
-            return new DepartmentDto
-            {
-                Id = department.Id,
-                Name = department.Name,
-                Description = department.Description
-            };
+                throw new InvalidOperationException(Messages.Error.Department.NotFound);
+            return department.ToDto();
         }
 
         public async Task<DepartmentDto> CreateAsync(CreateDepartmentDto dto)
         {
             if (await _repository.NameExistsAsync(dto.Name))
-                throw new InvalidOperationException("A department with this name already exists");
+                throw new InvalidOperationException(Messages.Error.Department.NameExists);
 
-            var department = new Department
-            {
-                Name = dto.Name,
-                Description = dto.Description,
-                IsDeleted = false
-            };
-
-            var created = await _repository.CreateAsync(department);
-
-            return new DepartmentDto
-            {
-                Id = created.Id,
-                Name = created.Name,
-                Description = created.Description
-            };
+            var created = await _repository.CreateAsync(dto.ToEntity());
+            return created.ToDto();
         }
 
         public async Task<DepartmentDto> UpdateAsync(UpdateDepartmentDto dto)
         {
             var department = await _repository.GetByIdActiveAsync(dto.Id);
             if (department == null)
-                throw new InvalidOperationException("Department not found");
+                throw new InvalidOperationException(Messages.Error.Department.NotFound);
 
-            // Check if name already exists (excluding current department)
             if (await _repository.NameExistsAsync(dto.Name, dto.Id))
-                throw new InvalidOperationException("A department with this name already exists");
+                throw new InvalidOperationException(Messages.Error.Department.NameExists);
 
             department.Name = dto.Name;
             department.Description = dto.Description;
 
             var updated = await _repository.UpdateAsync(department);
-
-            return new DepartmentDto
-            {
-                Id = updated.Id,
-                Name = updated.Name,
-                Description = updated.Description
-            };
+            return updated.ToDto();
         }
 
-        public async Task<bool> DeleteAsync(int id)
-        {
-            return await _repository.SoftDeleteAsync(id);
-        }
+        public async Task<bool> DeleteAsync(int id) =>
+            await _repository.SoftDeleteAsync(id);
 
-        public async Task<bool> ExistsAsync(int id)
-        {
-            return await _repository.ExistsAsync(id);
-        }
+        public async Task<bool> ExistsAsync(int id) =>
+            await _repository.ExistsAsync(id);
     }
 }

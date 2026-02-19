@@ -3,10 +3,12 @@
     ViewBag.Title = "Employees";
     var total      = Model?.Count() ?? 0;
     var active     = Model?.Count(e => e.Status == "Active") ?? 0;
+    var onLeave    = Model?.Count(e => e.Status == "OnLeave") ?? 0;
+    var suspended  = Model?.Count(e => e.Status == "Suspended") ?? 0;
+    var terminated = Model?.Count(e => e.Status == "Terminated") ?? 0;
     var inactive   = total - active;
     var depts      = Model?.Select(e => e.Department).Distinct().Count() ?? 0;
 
-    // Avatar colour palette (cycles by index)
     string[] avatarColors = {
         "#0181b0","#10b981","#f59e0b","#ef4444",
         "#8b5cf6","#06b6d4","#ec4899","#6366f1"
@@ -14,10 +16,10 @@
     int idx = 0;
 }
 
-
 @section styles {
     <link rel="stylesheet" href="~/css/Employee.css" />
 }
+
 <div class="emp-page">
     <div class="emp-page-header">
         <div>
@@ -34,6 +36,7 @@
             Add Employee
         </a>
     </div>
+
     <div class="emp-stats">
         <div class="emp-stat-card">
             <div class="emp-stat-icon emp-icon-blue">
@@ -94,6 +97,7 @@
             </div>
         </div>
     </div>
+
     <div class="emp-card">
         <div class="emp-card-header">
             <span class="emp-card-title">
@@ -119,7 +123,6 @@
             </div>
         </div>
 
-  
         <div class="emp-filter-pills">
             <button class="emp-pill active" data-filter="all">
                 All <span class="emp-pill-count">@total</span>
@@ -127,14 +130,19 @@
             <button class="emp-pill" data-filter="Active">
                 Active <span class="emp-pill-count">@active</span>
             </button>
-            <button class="emp-pill" data-filter="Inactive">
-                Inactive <span class="emp-pill-count">@inactive</span>
+            <button class="emp-pill" data-filter="OnLeave">
+                On Leave <span class="emp-pill-count">@onLeave</span>
+            </button>
+            <button class="emp-pill" data-filter="Suspended">
+                Suspended <span class="emp-pill-count">@suspended</span>
+            </button>
+            <button class="emp-pill" data-filter="Terminated">
+                Terminated <span class="emp-pill-count">@terminated</span>
             </button>
         </div>
 
         @if (Model != null && Model.Any())
         {
-           
             <div class="emp-table-wrap">
                 <table id="empTable">
                     <thead>
@@ -153,7 +161,7 @@
                     <tbody>
                         @foreach (var employee in Model)
                         {
-                            var color  = avatarColors[idx % avatarColors.Length];
+                            var color = avatarColors[idx % avatarColors.Length];
                             var initials = (employee.FullName?.Length > 0
                                 ? string.Concat(employee.FullName.Split(' ')
                                     .Where(w => w.Length > 0)
@@ -177,7 +185,6 @@
                                     </div>
                                 </td>
 
-                     
                                 <td class="emp-col-mono hide-mobile">@employee.PhoneNumber</td>
 
                                 <td class="emp-col-dept">@employee.Department</td>
@@ -193,17 +200,33 @@
                                 </td>
 
                                 <td>
-                                    @if (employee.Status == "Active")
+                                    @switch (employee.Status)
                                     {
-                                        <span class="emp-badge emp-badge-active">
-                                            <span class="emp-badge-dot"></span>Active
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="emp-badge emp-badge-inactive">
-                                            <span class="emp-badge-dot"></span>@employee.Status
-                                        </span>
+                                        case "Active":
+                                            <span class="emp-badge emp-badge-active">
+                                                <span class="emp-badge-dot"></span>Active
+                                            </span>
+                                            break;
+                                        case "OnLeave":
+                                            <span class="emp-badge emp-badge-onleave">
+                                                <span class="emp-badge-dot"></span>On Leave
+                                            </span>
+                                            break;
+                                        case "Suspended":
+                                            <span class="emp-badge emp-badge-suspended">
+                                                <span class="emp-badge-dot"></span>Suspended
+                                            </span>
+                                            break;
+                                        case "Terminated":
+                                            <span class="emp-badge emp-badge-terminated">
+                                                <span class="emp-badge-dot"></span>Terminated
+                                            </span>
+                                            break;
+                                        default:
+                                            <span class="emp-badge emp-badge-inactive">
+                                                <span class="emp-badge-dot"></span>@employee.Status
+                                            </span>
+                                            break;
                                     }
                                 </td>
 
@@ -230,8 +253,7 @@
                                             </svg>
                                         </a>
                                         <a href="@Url.Action("Delete", "Employee", new { id = employee.Id })"
-                                           class="emp-act-btn emp-act-del" title="Delete"
-                                           onclick="return confirm('Delete @Html.Raw(employee.FullName?.Replace("'", "\\'"))? This cannot be undone.');">
+                                           class="emp-act-btn emp-act-del" title="Delete">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <polyline points="3 6 5 6 21 6" />
@@ -248,7 +270,6 @@
                 </table>
             </div>
 
-          
             <div class="emp-table-footer">
                 <span class="emp-count" id="empCount">
                     Showing <strong>@total</strong> employees
@@ -257,7 +278,6 @@
         }
         else
         {
-
             <div class="emp-empty">
                 <div class="emp-empty-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -285,3 +305,6 @@
     </div>
 </div>
 
+@section scripts {
+    <script src="~/js/Employee.js"></script>
+}

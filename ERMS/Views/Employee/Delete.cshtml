@@ -13,157 +13,75 @@
     }
 }
 
-<link rel="stylesheet" href="~/css/employee-pages.css" />
-
-<style>
-    /* ── Delete-page extras (reuses all ep-* variables) ── */
-
-    .del-danger-banner {
-        display: flex;
-        align-items: flex-start;
-        gap: 14px;
-        background: rgba(239, 68, 68, .07);
-        border: 1.5px solid rgba(239, 68, 68, .25);
-        border-radius: 14px;
-        padding: 18px 20px;
-        margin-bottom: 24px;
-    }
-
-    body.dark-mode .del-danger-banner {
-        background: rgba(239, 68, 68, .12);
-        border-color: rgba(239, 68, 68, .35);
-    }
-
-    .del-danger-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
-        background: rgba(239, 68, 68, .12);
-        color: #ef4444;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        flex-shrink: 0;
-    }
-
-    .del-danger-title {
-        font-family: 'Sora', sans-serif;
-        font-size: 15px;
-        font-weight: 700;
-        color: #b91c1c;
-        margin-bottom: 3px;
-    }
-
-    body.dark-mode .del-danger-title { color: #fca5a5; }
-
-    .del-danger-text {
-        font-size: 13px;
-        color: #b91c1c;
-        line-height: 1.5;
-    }
-
-    body.dark-mode .del-danger-text { color: #fca5a5; }
-
-    /* Subordinate warning chip */
-    .del-sub-warn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: rgba(245, 158, 11, .1);
-        color: #92400e;
-        border: 1px solid rgba(245, 158, 11, .3);
-        border-radius: 8px;
-        font-size: 12px;
-        font-weight: 600;
-        padding: 6px 12px;
-        margin-top: 10px;
-    }
-
-    body.dark-mode .del-sub-warn {
-        background: rgba(245, 158, 11, .15);
-        color: #fcd34d;
-        border-color: rgba(245, 158, 11, .35);
-    }
-
-    /* Hero avatar — red tint for delete context */
-    .del-hero-avatar {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-    }
-
-    /* Confirm button */
-    .btn-delete-confirm {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 11px 22px;
-        font-size: 14px;
-        font-weight: 700;
-        font-family: 'DM Sans', sans-serif;
-        cursor: pointer;
-        transition: all .2s;
-        letter-spacing: -0.01em;
-    }
-
-    .btn-delete-confirm:hover {
-        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(239, 68, 68, .35);
-        color: #fff;
-    }
-</style>
+@section styles {
+    <link rel="stylesheet" href="~/css/Employee.css" />
+}
 
 <div class="ep-wrap ep-wrap-sm">
 
     <p class="ep-page-eyebrow">Employees</p>
     <h1 class="ep-page-title">Delete Employee</h1>
 
-    <!-- Danger banner -->
-    <div class="del-danger-banner">
-        <div class="del-danger-icon">
-            <span class="glyphicon glyphicon-trash"></span>
+    {{! ── Danger banner ── }}
+    <div class="del-banner">
+        <div class="del-banner-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+            </svg>
         </div>
         <div>
-            <div class="del-danger-title">This action is permanent</div>
-            <div class="del-danger-text">
+            <div class="del-banner-title">This action is permanent</div>
+            <div class="del-banner-text">
                 Deleting this employee will remove their account and all associated data.
                 This cannot be undone.
             </div>
             @if (Model.SubordinateCount > 0)
             {
-                <div class="del-sub-warn">
-                    <span class="glyphicon glyphicon-warning-sign" style="font-size:11px;"></span>
+                <div class="del-banner-warn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;flex-shrink:0;">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
                     @Model.SubordinateCount direct report@(Model.SubordinateCount > 1 ? "s" : "") will be unassigned
                 </div>
             }
         </div>
     </div>
 
-    <!-- Employee summary card -->
+    {{! ── Employee summary card ── }}
     <div class="ep-card">
 
-        <!-- Hero -->
-        <div class="ep-hero" style="border-bottom: 1px solid var(--border);">
+        <div class="ep-hero">
             <div class="ep-hero-left">
-                <div class="ep-hero-avatar del-hero-avatar">@initials</div>
+                <div class="ep-hero-avatar">@initials</div>
                 <div>
                     <div class="ep-hero-name">@Model.FullName</div>
                     <div class="ep-hero-position">@Model.Position &nbsp;·&nbsp; @Model.Department</div>
                     <div class="ep-chips">
-                        @if (Model.Status == "Active")
+                        @switch (Model.Status)
                         {
-                            <span class="ep-chip ep-chip-success">
-                                <span class="glyphicon glyphicon-ok" style="font-size:9px;"></span>
-                                Active
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="ep-chip ep-chip-danger">@Model.Status</span>
+                            case "Active":
+                                <span class="ep-chip ep-chip-success">Active</span>
+                                break;
+                            case "OnLeave":
+                                <span class="ep-chip ep-chip-warning">On Leave</span>
+                                break;
+                            case "Suspended":
+                                <span class="ep-chip ep-chip-purple">Suspended</span>
+                                break;
+                            case "Terminated":
+                                <span class="ep-chip ep-chip-danger">Terminated</span>
+                                break;
+                            default:
+                                <span class="ep-chip ep-chip-danger">@Model.Status</span>
+                                break;
                         }
                         <span class="ep-chip ep-chip-info">@Model.Role</span>
                     </div>
@@ -171,7 +89,6 @@
             </div>
         </div>
 
-        <!-- Info grid -->
         <div class="ep-info-grid">
             <div class="ep-info-cell">
                 <div class="ep-info-key">Email</div>
@@ -194,19 +111,31 @@
         </div>
     </div>
 
-    <!-- Confirm form -->
+    {{! ── Confirm form ── }}
     <form asp-action="Delete" asp-controller="Employee" method="post">
         @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
 
         <div class="ep-actions">
-            <button type="submit" class="btn-delete-confirm">
-                <span class="glyphicon glyphicon-trash"></span>
+            <button type="submit" class="emp-btn del-btn-confirm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                    <path d="M10 11v6" />
+                    <path d="M14 11v6" />
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+                </svg>
                 Yes, Delete Employee
             </button>
             <a href="@Url.Action("Details", "Employee", new { id = Model.Id })"
-               class="btn btn-default btn-lg">
-                <span class="glyphicon glyphicon-arrow-left"></span> Cancel
+               class="emp-btn emp-btn-outline">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
+                Cancel
             </a>
         </div>
     </form>

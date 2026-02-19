@@ -15,34 +15,42 @@ namespace ERMS.Data
         public DbSet<Position> Positions { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; } // NEW
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure self-referencing relationship for Employee hierarchy
+            // ── Query Filters ────────────────────────────────────────────
+            modelBuilder.Entity<Employee>()
+                .HasQueryFilter(e => !e.IsDeleted);
+
+            modelBuilder.Entity<User>()
+                .HasQueryFilter(u => !u.Employee.IsDeleted);
+
+            modelBuilder.Entity<PasswordResetToken>()
+                .HasQueryFilter(t => !t.User.Employee.IsDeleted);
+
+            // ── Relationships ────────────────────────────────────────────
             modelBuilder.Entity<Employee>()
                 .HasOne(e => e.Manager)
                 .WithMany(e => e.Subordinates)
                 .HasForeignKey(e => e.ManagerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure one-to-one relationship between Employee and User
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Employee)
                 .WithOne(e => e.User)
                 .HasForeignKey<User>(u => u.EmployeeId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Configure PasswordResetToken relationship - NEW
             modelBuilder.Entity<PasswordResetToken>()
                 .HasOne(t => t.User)
                 .WithMany()
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Unique constraints
+            // ── Unique Constraints ───────────────────────────────────────
             modelBuilder.Entity<Employee>()
                 .HasIndex(e => e.Email)
                 .IsUnique();
@@ -51,7 +59,6 @@ namespace ERMS.Data
                 .HasIndex(u => u.Username)
                 .IsUnique();
 
-            // Index for password reset tokens - NEW
             modelBuilder.Entity<PasswordResetToken>()
                 .HasIndex(t => t.Token)
                 .IsUnique();
@@ -59,14 +66,17 @@ namespace ERMS.Data
             modelBuilder.Entity<PasswordResetToken>()
                 .HasIndex(t => t.UserId);
 
-            // Seed data
             SeedData(modelBuilder);
         }
 
-        //SEEDER
-        private void SeedData(ModelBuilder modelBuilder)
+        private static void SeedData(ModelBuilder modelBuilder)
         {
-            // Seed Departments (unchanged)
+            ///{"admin":"$2a$11$AQNqLKYnGield/qiZvl4I.b/iBG0JEqZc64bSPyEGQRaXShJ2b1b.","manager":"$2a$11$AiKPk1mSOuunTlOiFoFBuu0buClsKdlOLdOUXI59FlLSpn2ZuWdsG","employee":"$2a$11$7hfhstr70d1K/tgEgsk2dOe7MA0dO5UpX.ZIPVYrxWgawp0.Ho68K"}
+            const string adminHash = "$2a$11$AQNqLKYnGield/qiZvl4I.b/iBG0JEqZc64bSPyEGQRaXShJ2b1b.";
+            const string managerHash = "$2a$11$AiKPk1mSOuunTlOiFoFBuu0buClsKdlOLdOUXI59FlLSpn2ZuWdsG";
+            const string employeeHash = "$2a$11$7hfhstr70d1K/tgEgsk2dOe7MA0dO5UpX.ZIPVYrxWgawp0.Ho68K";
+
+            // ── Departments ──────────────────────────────────────────────
             modelBuilder.Entity<Department>().HasData(
                 new Department { Id = 1, Name = "Executive", Description = "C-Level executives" },
                 new Department { Id = 2, Name = "Human Resources", Description = "HR and talent management" },
@@ -75,7 +85,7 @@ namespace ERMS.Data
                 new Department { Id = 5, Name = "Marketing", Description = "Marketing and communications" }
             );
 
-            // Seed Positions (unchanged)
+            // ── Positions ────────────────────────────────────────────────
             modelBuilder.Entity<Position>().HasData(
                 new Position { Id = 1, Title = "CEO", Description = "Chief Executive Officer", BaseSalary = 250000m },
                 new Position { Id = 2, Title = "HR Manager", Description = "Human Resources Manager", BaseSalary = 90000m },
@@ -87,7 +97,7 @@ namespace ERMS.Data
                 new Position { Id = 8, Title = "Marketing Manager", Description = "Marketing Team Manager", BaseSalary = 90000m }
             );
 
-            // Seed Employees (with new fields)
+            // ── Employees ────────────────────────────────────────────────
             modelBuilder.Entity<Employee>().HasData(
                 new Employee
                 {
@@ -102,7 +112,8 @@ namespace ERMS.Data
                     PositionId = 1,
                     ManagerId = null,
                     Address = "123 Main St, City, State 12345",
-                    DateOfBirth = new DateTime(1980, 5, 15)
+                    DateOfBirth = new DateTime(1980, 5, 15),
+                    IsDeleted = false
                 },
                 new Employee
                 {
@@ -117,7 +128,8 @@ namespace ERMS.Data
                     PositionId = 2,
                     ManagerId = 1,
                     Address = "456 Oak Ave, City, State 12345",
-                    DateOfBirth = new DateTime(1985, 8, 22)
+                    DateOfBirth = new DateTime(1985, 8, 22),
+                    IsDeleted = false
                 },
                 new Employee
                 {
@@ -132,7 +144,8 @@ namespace ERMS.Data
                     PositionId = 3,
                     ManagerId = 1,
                     Address = "789 Pine Rd, City, State 12345",
-                    DateOfBirth = new DateTime(1983, 3, 10)
+                    DateOfBirth = new DateTime(1983, 3, 10),
+                    IsDeleted = false
                 },
                 new Employee
                 {
@@ -147,7 +160,8 @@ namespace ERMS.Data
                     PositionId = 6,
                     ManagerId = 1,
                     Address = "321 Elm St, City, State 12345",
-                    DateOfBirth = new DateTime(1987, 11, 30)
+                    DateOfBirth = new DateTime(1987, 11, 30),
+                    IsDeleted = false
                 },
                 new Employee
                 {
@@ -162,7 +176,8 @@ namespace ERMS.Data
                     PositionId = 8,
                     ManagerId = 1,
                     Address = "654 Maple Dr, City, State 12345",
-                    DateOfBirth = new DateTime(1986, 7, 18)
+                    DateOfBirth = new DateTime(1986, 7, 18),
+                    IsDeleted = false
                 },
                 new Employee
                 {
@@ -177,7 +192,8 @@ namespace ERMS.Data
                     PositionId = 4,
                     ManagerId = 3,
                     Address = "987 Cedar Ln, City, State 12345",
-                    DateOfBirth = new DateTime(1990, 2, 14)
+                    DateOfBirth = new DateTime(1990, 2, 14),
+                    IsDeleted = false
                 },
                 new Employee
                 {
@@ -192,7 +208,8 @@ namespace ERMS.Data
                     PositionId = 5,
                     ManagerId = 3,
                     Address = "147 Birch St, City, State 12345",
-                    DateOfBirth = new DateTime(1995, 9, 5)
+                    DateOfBirth = new DateTime(1995, 9, 5),
+                    IsDeleted = false
                 },
                 new Employee
                 {
@@ -207,7 +224,8 @@ namespace ERMS.Data
                     PositionId = 7,
                     ManagerId = 4,
                     Address = "258 Willow Way, City, State 12345",
-                    DateOfBirth = new DateTime(1992, 4, 25)
+                    DateOfBirth = new DateTime(1992, 4, 25),
+                    IsDeleted = false
                 },
                 new Employee
                 {
@@ -222,72 +240,19 @@ namespace ERMS.Data
                     PositionId = 7,
                     ManagerId = 4,
                     Address = "369 Spruce Ave, City, State 12345",
-                    DateOfBirth = new DateTime(1993, 12, 8)
+                    DateOfBirth = new DateTime(1993, 12, 8),
+                    IsDeleted = false
                 }
             );
 
-            // Seed Users (unchanged)
+            // ── Users ────────────────────────────────────────────────────
             modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    Username = "admin",
-                    PasswordHash = "admin123",
-                    Role = UserRole.Admin,
-                    IsActive = true,
-                    CreatedAt = new DateTime(2024, 1, 1),
-                    EmployeeId = 1
-                },
-                new User
-                {
-                    Id = 2,
-                    Username = "sarah.j",
-                    PasswordHash = "manager123",
-                    Role = UserRole.Manager,
-                    IsActive = true,
-                    CreatedAt = new DateTime(2024, 1, 1),
-                    EmployeeId = 2
-                },
-                new User
-                {
-                    Id = 3,
-                    Username = "michael.c",
-                    PasswordHash = "manager123",
-                    Role = UserRole.Manager,
-                    IsActive = true,
-                    CreatedAt = new DateTime(2024, 1, 1),
-                    EmployeeId = 3
-                },
-                new User
-                {
-                    Id = 4,
-                    Username = "emily.d",
-                    PasswordHash = "manager123",
-                    Role = UserRole.Manager,
-                    IsActive = true,
-                    CreatedAt = new DateTime(2024, 1, 1),
-                    EmployeeId = 4
-                },
-                new User
-                {
-                    Id = 5,
-                    Username = "james.b",
-                    PasswordHash = "employee123",
-                    Role = UserRole.Employee,
-                    IsActive = true,
-                    CreatedAt = new DateTime(2024, 1, 1),
-                    EmployeeId = 6
-                },
-                new User
-                {
-                    Id = 6,
-                    Username = "lisa.g",
-                    PasswordHash = "employee123",
-                    Role = UserRole.Employee,
-                    IsActive = true,
-                    CreatedAt = new DateTime(2024, 1, 1),
-                    EmployeeId = 7
-                }
+                new User { Id = 1, Username = "admin", IsFirstLogin = false, PasswordHash = adminHash, Role = UserRole.Admin, IsActive = true, CreatedAt = new DateTime(2024, 1, 1), EmployeeId = 1 },
+                new User { Id = 2, Username = "sarah.j", IsFirstLogin = false, PasswordHash = managerHash, Role = UserRole.Manager, IsActive = true, CreatedAt = new DateTime(2024, 1, 1), EmployeeId = 2 },
+                new User { Id = 3, Username = "michael.c", IsFirstLogin = false, PasswordHash = managerHash, Role = UserRole.Manager, IsActive = true, CreatedAt = new DateTime(2024, 1, 1), EmployeeId = 3 },
+                new User { Id = 4, Username = "emily.d", IsFirstLogin = false, PasswordHash = managerHash, Role = UserRole.Manager, IsActive = true, CreatedAt = new DateTime(2024, 1, 1), EmployeeId = 4 },
+                new User { Id = 5, Username = "james.b", IsFirstLogin = false, PasswordHash = employeeHash, Role = UserRole.Employee, IsActive = true, CreatedAt = new DateTime(2024, 1, 1), EmployeeId = 6 },
+                new User { Id = 6, Username = "lisa.g", IsFirstLogin = false, PasswordHash = employeeHash, Role = UserRole.Employee, IsActive = true, CreatedAt = new DateTime(2024, 1, 1), EmployeeId = 7 }
             );
         }
     }

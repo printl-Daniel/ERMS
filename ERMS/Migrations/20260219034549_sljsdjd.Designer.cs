@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERMS.Migrations
 {
     [DbContext(typeof(ERMSDbContext))]
-    [Migration("20260217013850_sdkjd")]
-    partial class sdkjd
+    [Migration("20260219034549_sljsdjd")]
+    partial class sljsdjd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,6 +103,9 @@ namespace ERMS.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
@@ -116,6 +119,9 @@ namespace ERMS.Migrations
 
                     b.Property<DateTime>("HireDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -163,6 +169,7 @@ namespace ERMS.Migrations
                             Email = "john.smith@company.com",
                             FirstName = "John",
                             HireDate = new DateTime(2020, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             LastName = "Smith",
                             PhoneNumber = "555-0001",
                             PositionId = 1,
@@ -177,6 +184,7 @@ namespace ERMS.Migrations
                             Email = "sarah.johnson@company.com",
                             FirstName = "Sarah",
                             HireDate = new DateTime(2020, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             LastName = "Johnson",
                             ManagerId = 1,
                             PhoneNumber = "555-0002",
@@ -192,6 +200,7 @@ namespace ERMS.Migrations
                             Email = "michael.chen@company.com",
                             FirstName = "Michael",
                             HireDate = new DateTime(2020, 2, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             LastName = "Chen",
                             ManagerId = 1,
                             PhoneNumber = "555-0003",
@@ -207,6 +216,7 @@ namespace ERMS.Migrations
                             Email = "emily.davis@company.com",
                             FirstName = "Emily",
                             HireDate = new DateTime(2020, 4, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             LastName = "Davis",
                             ManagerId = 1,
                             PhoneNumber = "555-0004",
@@ -222,6 +232,7 @@ namespace ERMS.Migrations
                             Email = "david.wilson@company.com",
                             FirstName = "David",
                             HireDate = new DateTime(2020, 5, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             LastName = "Wilson",
                             ManagerId = 1,
                             PhoneNumber = "555-0005",
@@ -237,6 +248,7 @@ namespace ERMS.Migrations
                             Email = "james.brown@company.com",
                             FirstName = "James",
                             HireDate = new DateTime(2021, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             LastName = "Brown",
                             ManagerId = 3,
                             PhoneNumber = "555-0006",
@@ -252,6 +264,7 @@ namespace ERMS.Migrations
                             Email = "lisa.garcia@company.com",
                             FirstName = "Lisa",
                             HireDate = new DateTime(2022, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             LastName = "Garcia",
                             ManagerId = 3,
                             PhoneNumber = "555-0007",
@@ -267,6 +280,7 @@ namespace ERMS.Migrations
                             Email = "robert.martinez@company.com",
                             FirstName = "Robert",
                             HireDate = new DateTime(2021, 8, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             LastName = "Martinez",
                             ManagerId = 4,
                             PhoneNumber = "555-0008",
@@ -282,6 +296,7 @@ namespace ERMS.Migrations
                             Email = "jennifer.taylor@company.com",
                             FirstName = "Jennifer",
                             HireDate = new DateTime(2022, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
                             LastName = "Taylor",
                             ManagerId = 4,
                             PhoneNumber = "555-0009",
@@ -443,6 +458,9 @@ namespace ERMS.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("IsFirstLogin")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -474,7 +492,8 @@ namespace ERMS.Migrations
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 1,
                             IsActive = true,
-                            PasswordHash = "admin123",
+                            IsFirstLogin = false,
+                            PasswordHash = "$2a$11$AQNqLKYnGield/qiZvl4I.b/iBG0JEqZc64bSPyEGQRaXShJ2b1b.",
                             Role = 0,
                             Username = "admin"
                         },
@@ -484,7 +503,8 @@ namespace ERMS.Migrations
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 2,
                             IsActive = true,
-                            PasswordHash = "manager123",
+                            IsFirstLogin = false,
+                            PasswordHash = "$2a$11$AiKPk1mSOuunTlOiFoFBuu0buClsKdlOLdOUXI59FlLSpn2ZuWdsG",
                             Role = 1,
                             Username = "sarah.j"
                         },
@@ -494,7 +514,8 @@ namespace ERMS.Migrations
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 3,
                             IsActive = true,
-                            PasswordHash = "manager123",
+                            IsFirstLogin = false,
+                            PasswordHash = "$2a$11$AiKPk1mSOuunTlOiFoFBuu0buClsKdlOLdOUXI59FlLSpn2ZuWdsG",
                             Role = 1,
                             Username = "michael.c"
                         },
@@ -504,7 +525,8 @@ namespace ERMS.Migrations
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 4,
                             IsActive = true,
-                            PasswordHash = "manager123",
+                            IsFirstLogin = false,
+                            PasswordHash = "$2a$11$AiKPk1mSOuunTlOiFoFBuu0buClsKdlOLdOUXI59FlLSpn2ZuWdsG",
                             Role = 1,
                             Username = "emily.d"
                         },
@@ -514,7 +536,8 @@ namespace ERMS.Migrations
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 6,
                             IsActive = true,
-                            PasswordHash = "employee123",
+                            IsFirstLogin = false,
+                            PasswordHash = "$2a$11$7hfhstr70d1K/tgEgsk2dOe7MA0dO5UpX.ZIPVYrxWgawp0.Ho68K",
                             Role = 2,
                             Username = "james.b"
                         },
@@ -524,7 +547,8 @@ namespace ERMS.Migrations
                             CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmployeeId = 7,
                             IsActive = true,
-                            PasswordHash = "employee123",
+                            IsFirstLogin = false,
+                            PasswordHash = "$2a$11$7hfhstr70d1K/tgEgsk2dOe7MA0dO5UpX.ZIPVYrxWgawp0.Ho68K",
                             Role = 2,
                             Username = "lisa.g"
                         });

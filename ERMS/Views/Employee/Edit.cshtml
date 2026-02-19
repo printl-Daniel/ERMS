@@ -3,10 +3,10 @@
 @{
     ViewBag.Title = "Edit Employee";
 
-    string[] palette = { "#0181b0","#10b981","#f59e0b","#8b5cf6","#06b6d4","#ef4444","#ec4899","#6366f1" };
+    string[] palette = { "#0181b0", "#10b981", "#f59e0b", "#8b5cf6", "#06b6d4", "#ef4444", "#ec4899", "#6366f1" };
     int ci = 0; foreach (char c in (Model.FullName)) ci += c;
     var avatarBg = palette[ci % palette.Length];
-    var parts    = Model.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+    var parts = Model.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
     var initials = parts.Length >= 2
         ? $"{char.ToUpper(parts[0][0])}{char.ToUpper(parts[^1][0])}"
         : Model.FullName.Length > 0 ? char.ToUpper(Model.FullName[0]).ToString() : "?";
@@ -20,10 +20,10 @@
 
     @* ── Breadcrumb ──────────────────────────────────── *@
     <nav class="emp-bc">
-        <a href="@Url.Action("Index","Employee")">Employees</a>
+        <a href="@Url.Action("Index", "Employee")">Employees</a>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
              stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 18 15 12 9 6"/>
+            <polyline points="9 18 15 12 9 6" />
         </svg>
         <span>Edit</span>
     </nav>
@@ -34,8 +34,8 @@
         <div class="emp-flash emp-flash--success">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                <polyline points="22 4 12 14.01 9 11.01"/>
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
             @TempData["Success"]
         </div>
@@ -45,9 +45,9 @@
         <div class="emp-flash emp-flash--danger">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
             </svg>
             @TempData["Error"]
         </div>
@@ -63,11 +63,11 @@
                 <p class="emp-sub">ID &nbsp;#@Model.Id</p>
             </div>
         </div>
-        <a href="@Url.Action("Index","Employee")" class="emp-btn emp-btn-outline">
+        <a href="@Url.Action("Index", "Employee")" class="emp-btn emp-btn-outline">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                  stroke-linecap="round" stroke-linejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"/>
-                <polyline points="12 19 5 12 12 5"/>
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
             </svg>
             Back to list
         </a>
@@ -83,9 +83,9 @@
             <div class="emp-flash emp-flash--danger">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="12" y1="8" x2="12" y2="12"/>
-                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
                 <div>
                     <strong>Please fix the following errors:</strong>
@@ -102,8 +102,8 @@
                     <span class="emp-card-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
                         </svg>
                         Personal Information
                     </span>
@@ -140,8 +140,8 @@
                                 <svg class="emp-input-icon" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor" stroke-width="2"
                                      stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                    <polyline points="22,6 12,13 2,6"/>
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                    <polyline points="22,6 12,13 2,6" />
                                 </svg>
                                 <input asp-for="Email" type="email"
                                        class="emp-input emp-input--icon"
@@ -156,7 +156,7 @@
                                 <svg class="emp-input-icon" viewBox="0 0 24 24" fill="none"
                                      stroke="currentColor" stroke-width="2"
                                      stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.29 6.29l1.02-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.35 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.29 6.29l1.02-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
                                 </svg>
                                 <input asp-for="PhoneNumber" type="tel"
                                        class="emp-input emp-input--icon"
@@ -176,8 +176,8 @@
                     <span class="emp-card-title">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                              stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
                         </svg>
                         Employment Details
                     </span>
@@ -226,10 +226,21 @@
                             <div class="emp-status-group">
                                 @foreach (var opt in ERMS.ViewModels.Employee.EmployeeEditViewModel.StatusOptions)
                                 {
-                                    <label class="emp-status-chip @(opt.Value == Model.Status ? "emp-status-chip--on" : "")">
-                                        <input type="radio" asp-for="Status"
-                                               value="@opt.Value"
-                                               class="emp-sr-only" />
+                                    var isSelected = opt.Value == Model.Status;
+                                    <label class="emp-status-chip @(isSelected ? "emp-status-chip--on" : "")">
+                                        @if (isSelected)
+                                        {
+                                            <input type="radio" asp-for="Status"
+                                                   value="@opt.Value"
+                                                   class="emp-sr-only"
+                                                   checked />
+                                        }
+                                        else
+                                        {
+                                            <input type="radio" asp-for="Status"
+                                                   value="@opt.Value"
+                                                   class="emp-sr-only" />
+                                        }
                                         @opt.Text
                                     </label>
                                 }
@@ -245,15 +256,15 @@
 
         @* ── Actions bar ──────────────────────────────── *@
         <div class="emp-form-actions">
-            <a href="@Url.Action("Index","Employee")" class="emp-btn emp-btn-outline">
+            <a href="@Url.Action("Index", "Employee")" class="emp-btn emp-btn-outline">
                 Cancel
             </a>
             <button type="submit" class="emp-btn emp-btn-primary">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                      stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                    <polyline points="17 21 17 13 7 13 7 21"/>
-                    <polyline points="7 3 7 8 15 8"/>
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
                 </svg>
                 Save Changes
             </button>
@@ -263,47 +274,51 @@
 </div>
 
 @section scripts {
-<script>
-(function () {
-    var palette = ["#0181b0","#10b981","#f59e0b","#8b5cf6","#06b6d4","#ef4444","#ec4899","#6366f1"];
+    <script>
+        (function () {
+            var palette = ["#0181b0","#10b981","#f59e0b","#8b5cf6","#06b6d4","#ef4444","#ec4899","#6366f1"];
 
-    function getInitials(name) {
-        var p = name.trim().split(/\s+/).filter(Boolean);
-        return p.length >= 2
-            ? (p[0][0] + p[p.length - 1][0]).toUpperCase()
-            : (name.length ? name[0].toUpperCase() : '?');
-    }
-    function getBg(name) {
-        var ci = 0;
-        for (var i = 0; i < name.length; i++) ci += name.charCodeAt(i);
-        return palette[ci % palette.length];
-    }
+            function getInitials(name) {
+                var p = name.trim().split(/\s+/).filter(Boolean);
+                return p.length >= 2
+                    ? (p[0][0] + p[p.length - 1][0]).toUpperCase()
+                    : (name.length ? name[0].toUpperCase() : '?');
+            }
+            function getBg(name) {
+                var ci = 0;
+                for (var i = 0; i < name.length; i++) ci += name.charCodeAt(i);
+                return palette[ci % palette.length];
+            }
 
-    var firstEl  = document.getElementById('FirstName');
-    var lastEl   = document.getElementById('LastName');
-    var avatarEl = document.getElementById('liveAvatar');
-    var nameEl   = document.getElementById('liveName');
+            var firstEl  = document.getElementById('FirstName');
+            var lastEl   = document.getElementById('LastName');
+            var avatarEl = document.getElementById('liveAvatar');
+            var nameEl   = document.getElementById('liveName');
 
-    function syncHeader() {
-        var full = ((firstEl.value || '') + ' ' + (lastEl.value || '')).trim();
-        if (!full) return;
-        avatarEl.textContent      = getInitials(full);
-        avatarEl.style.background = getBg(full);
-        nameEl.textContent        = full;
-    }
+            function syncHeader() {
+                var full = ((firstEl.value || '') + ' ' + (lastEl.value || '')).trim();
+                if (!full) return;
+                avatarEl.textContent      = getInitials(full);
+                avatarEl.style.background = getBg(full);
+                nameEl.textContent        = full;
+            }
 
-    firstEl.addEventListener('input', syncHeader);
-    lastEl.addEventListener('input',  syncHeader);
+            firstEl.addEventListener('input', syncHeader);
+            lastEl.addEventListener('input',  syncHeader);
 
-    // Status chip toggle
-    document.querySelectorAll('.emp-status-chip').forEach(function (chip) {
-        chip.addEventListener('click', function () {
-            document.querySelectorAll('.emp-status-chip').forEach(function (c) {
-                c.classList.remove('emp-status-chip--on');
+            // Status chip toggle
+            document.querySelectorAll('.emp-status-chip').forEach(function (chip) {
+                chip.addEventListener('click', function () {
+                    document.querySelectorAll('.emp-status-chip').forEach(function (c) {
+                        c.classList.remove('emp-status-chip--on');
+                    });
+                    this.classList.add('emp-status-chip--on');
+
+                    // ✅ Actually check the radio so the value is submitted
+                    var radio = this.querySelector('input[type="radio"]');
+                    if (radio) radio.checked = true;
+                });
             });
-            this.classList.add('emp-status-chip--on');
-        });
-    });
-}());
-</script>
+        }());
+    </script>
 }

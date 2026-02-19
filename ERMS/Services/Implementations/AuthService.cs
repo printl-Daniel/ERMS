@@ -1,7 +1,10 @@
-﻿using ERMS.DTOs.Auth;
+﻿using BCrypt.Net;
+using ERMS.Constants;
+using ERMS.DTOs.Auth;
+using ERMS.Helpers;
+using ERMS.Helpers.Mappers;
 using ERMS.Repositories.Interfaces;
 using ERMS.Services.Interfaces;
-using System.Security.Cryptography;
 
 namespace ERMS.Services.Implementations
 {
@@ -10,149 +13,112 @@ namespace ERMS.Services.Implementations
         private readonly IAuthRepository _authRepository;
         private readonly IEmailService _emailService;
         private readonly IConfiguration _configuration;
-        private readonly ILogger<AuthService> _logger;
 
-        // ✅ Anti-spam: Cooldown period in minutes
         private const int RESET_REQUEST_COOLDOWN_MINUTES = 5;
 
         public AuthService(
             IAuthRepository authRepository,
             IEmailService emailService,
-            IConfiguration configuration,
-            ILogger<AuthService> logger)
+            IConfiguration configuration)
         {
             _authRepository = authRepository;
             _emailService = emailService;
             _configuration = configuration;
-            _logger = logger;
         }
 
         public async Task<LoginResponseDto> LoginAsync(LoginDto loginDto)
         {
-            var user = await _authRepository.ValidateUserAsync(loginDto.Username, loginDto.Password);
+            var username = loginDto.Username?.Trim();
+            if (string.IsNullOrWhiteSpace(username))
+                return Fail(Messages.Error.Auth.InvalidCredentials);
 
-            if (user == null)
-            {
-                return new LoginResponseDto
-                {
-                    Success = false,
-                    Message = "Invalid username or password"
-                };
-            }
+            var user = await _authRepository.GetUserByUsernameAsync(username);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+                return Fail(Messages.Error.Auth.InvalidCredentials);
 
             if (!user.IsActive)
+                return Fail(Messages.Error.Auth.AccountDeactivated);
+
+            // ── First login → generate reset token, skip signing in ──
+            if (user.IsFirstLogin)
             {
+                await _authRepository.InvalidateOldTokensAsync(user.Id);
+
+                var token = PasswordHelper.GenerateSecureToken();
+                var expiry = DateTime.UtcNow.AddHours(1);
+                await _authRepository.CreatePasswordResetTokenAsync(user.Id, token, expiry);
+
                 return new LoginResponseDto
                 {
-                    Success = false,
-                    Message = "Your account has been deactivated. Please contact HR."
+                    Success = true,
+                    IsFirstLogin = true,
+                    FirstLoginToken = token
                 };
             }
 
-            return new LoginResponseDto
-            {
-                Success = true,
-                Message = "Login successful",
-                Role = user.Role.ToString(),
-                UserId = user.Id,
-                EmployeeId = user.EmployeeId,
-                FullName = user.Employee.FullName
-            };
+            return AuthMapper.ToLoginResponse(user);
         }
 
-        public async Task<bool> LogoutAsync()
-        {
-            return await Task.FromResult(true);
-        }
+        public async Task<bool> LogoutAsync() => await Task.FromResult(true);
 
         public async Task<ForgotPasswordResponseDto> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordDto)
         {
             try
             {
-                // ✅ CHANGED: Find user by EMAIL instead of username
-                var user = await _authRepository.GetUserByEmailAsync(forgotPasswordDto.Email);
+                var email = forgotPasswordDto.Email?.Trim().ToLowerInvariant();
 
-                // Always return success to prevent email enumeration
+                if (string.IsNullOrWhiteSpace(email))
+                    return new ForgotPasswordResponseDto { Success = false, Message = Messages.Error.Auth.EmailRequired };
+
+                var user = await _authRepository.GetUserByEmailAsync(email);
+
                 if (user == null)
                 {
-                    _logger.LogWarning($"Password reset requested for non-existent email: {forgotPasswordDto.Email}");
-
-                    // ✅ Add artificial delay to prevent email enumeration timing attacks
                     await Task.Delay(TimeSpan.FromSeconds(2));
-
                     return new ForgotPasswordResponseDto
                     {
-                        Success = true,
-                        Message = "If an account with that email exists, a password reset link has been sent."
+                        Success = false,
+                        Message = Messages.Error.Auth.EmailNotFound
                     };
                 }
 
-                // ✅ ANTI-SPAM: Check if user recently requested a reset
                 var recentToken = await _authRepository.GetMostRecentPasswordResetTokenAsync(user.Id);
                 if (recentToken != null && !recentToken.IsUsed)
                 {
-                    var timeSinceLastRequest = DateTime.UtcNow - recentToken.CreatedAt;
-                    if (timeSinceLastRequest.TotalMinutes < RESET_REQUEST_COOLDOWN_MINUTES)
+                    var elapsed = DateTime.UtcNow - recentToken.CreatedAt;
+                    if (elapsed.TotalMinutes < RESET_REQUEST_COOLDOWN_MINUTES)
                     {
-                        var remainingMinutes = RESET_REQUEST_COOLDOWN_MINUTES - (int)timeSinceLastRequest.TotalMinutes;
-                        _logger.LogWarning($"User with email {forgotPasswordDto.Email} attempted to request password reset within cooldown period");
-
+                        var remaining = RESET_REQUEST_COOLDOWN_MINUTES - (int)elapsed.TotalMinutes;
                         return new ForgotPasswordResponseDto
                         {
                             Success = false,
-                            Message = $"A password reset link was recently sent to your email. Please wait {remainingMinutes} more minute(s) before requesting another."
+                            Message = string.Format(Messages.Warning.Auth.ResetCooldown, remaining)
                         };
                     }
                 }
 
-                // Invalidate old tokens
                 await _authRepository.InvalidateOldTokensAsync(user.Id);
 
-                // Generate secure token
-                var token = GenerateSecureToken();
-                var expiresAt = DateTime.UtcNow.AddHours(1); // Token valid for 1 hour
+                var resetToken = PasswordHelper.GenerateSecureToken();
+                var resetExpiry = DateTime.UtcNow.AddHours(1);
+                await _authRepository.CreatePasswordResetTokenAsync(user.Id, resetToken, resetExpiry);
 
-                // Save token to database
-                await _authRepository.CreatePasswordResetTokenAsync(user.Id, token, expiresAt);
-
-                // Generate reset link with URL-encoded token
                 var baseUrl = _configuration["AppSettings:BaseUrl"] ?? "https://localhost:7280";
-                var encodedToken = Uri.EscapeDataString(token);
+                var encodedToken = Uri.EscapeDataString(resetToken);
                 var resetLink = $"{baseUrl}/Auth/ResetPassword?token={encodedToken}";
 
-                // ✅ Send email to the employee's email address
-                var emailSent = await _emailService.SendPasswordResetEmailAsync(
-                    user.Employee.Email,
-                    resetLink,
-                    user.Employee.FullName
-                );
+                var sent = await _emailService.SendPasswordResetEmailAsync(
+                    user.Employee.Email, resetLink, user.Employee.FullName);
 
-                if (!emailSent)
-                {
-                    _logger.LogError($"Failed to send password reset email to {user.Employee.Email}");
-                    return new ForgotPasswordResponseDto
-                    {
-                        Success = false,
-                        Message = "Failed to send reset email. Please try again later or contact your administrator."
-                    };
-                }
+                if (!sent)
+                    return new ForgotPasswordResponseDto { Success = false, Message = Messages.Error.Auth.EmailSendFailed };
 
-                _logger.LogInformation($"Password reset email sent successfully to {user.Employee.Email}");
-
-                return new ForgotPasswordResponseDto
-                {
-                    Success = true,
-                    Message = "If an account with that email exists, a password reset link has been sent."
-                };
+                return EnumerationSafeSuccess();
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError($"Error in ForgotPasswordAsync: {ex.Message}");
-                return new ForgotPasswordResponseDto
-                {
-                    Success = false,
-                    Message = "An error occurred. Please try again later."
-                };
+                return new ForgotPasswordResponseDto { Success = false, Message = Messages.Error.Auth.GenericError };
             }
         }
 
@@ -160,70 +126,31 @@ namespace ERMS.Services.Implementations
         {
             try
             {
-                // Validate token
                 var resetToken = await _authRepository.GetPasswordResetTokenAsync(resetPasswordDto.Token);
 
                 if (resetToken == null || resetToken.IsUsed)
-                {
-                    _logger.LogWarning($"Invalid or already used reset token attempted");
-                    return new ResetPasswordResponseDto
-                    {
-                        Success = false,
-                        Message = "Invalid or expired reset token."
-                    };
-                }
+                    return new ResetPasswordResponseDto { Success = false, Message = Messages.Error.Auth.InvalidToken };
 
                 if (resetToken.ExpiresAt < DateTime.UtcNow)
-                {
-                    _logger.LogWarning($"Expired reset token attempted for user {resetToken.UserId}");
-                    return new ResetPasswordResponseDto
-                    {
-                        Success = false,
-                        Message = "This reset link has expired. Please request a new one."
-                    };
-                }
+                    return new ResetPasswordResponseDto { Success = false, Message = Messages.Error.Auth.ExpiredToken };
 
-                // Hash the new password
-                // ⚠️ IMPORTANT: Use BCrypt in production!
-                // Install: dotnet add package BCrypt.Net-Next
-                // var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(resetPasswordDto.NewPassword);
-                var newPasswordHash = HashPassword(resetPasswordDto.NewPassword);
+                var newPasswordHash = BCrypt.Net.BCrypt.HashPassword(resetPasswordDto.NewPassword);
+                var updated = await _authRepository.UpdatePasswordAsync(resetToken.UserId, newPasswordHash);
 
-                // Update password
-                var passwordUpdated = await _authRepository.UpdatePasswordAsync(
-                    resetToken.UserId,
-                    newPasswordHash
-                );
+                if (!updated)
+                    return new ResetPasswordResponseDto { Success = false, Message = Messages.Error.Auth.PasswordUpdateFailed };
 
-                if (!passwordUpdated)
-                {
-                    _logger.LogError($"Failed to update password for user {resetToken.UserId}");
-                    return new ResetPasswordResponseDto
-                    {
-                        Success = false,
-                        Message = "Failed to update password. Please try again."
-                    };
-                }
-
-                // Mark token as used
                 await _authRepository.MarkTokenAsUsedAsync(resetToken.Id);
-
-                _logger.LogInformation($"Password successfully reset for user {resetToken.UserId}");
 
                 return new ResetPasswordResponseDto
                 {
                     Success = true,
-                    Message = "Your password has been reset successfully. You can now login with your new password."
+                    Message = Messages.Success.Auth.PasswordResetSuccess
                 };
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError($"Error in ResetPasswordAsync: {ex.Message}");
-                return new ResetPasswordResponseDto
-                {
-                    Success = false,
-                    Message = "An error occurred. Please try again later."
-                };
+                return new ResetPasswordResponseDto { Success = false, Message = Messages.Error.Auth.GenericError };
             }
         }
 
@@ -232,38 +159,24 @@ namespace ERMS.Services.Implementations
             try
             {
                 var resetToken = await _authRepository.GetPasswordResetTokenAsync(token);
-
-                return resetToken != null
-                    && !resetToken.IsUsed
-                    && resetToken.ExpiresAt > DateTime.UtcNow;
+                return resetToken != null && !resetToken.IsUsed && resetToken.ExpiresAt > DateTime.UtcNow;
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError($"Error validating reset token: {ex.Message}");
                 return false;
             }
         }
 
-        private string GenerateSecureToken()
-        {
-            var randomBytes = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomBytes);
-            }
-            // Make token URL-friendly by replacing problematic characters
-            return Convert.ToBase64String(randomBytes)
-                .Replace("+", "-")
-                .Replace("/", "_")
-                .Replace("=", "");
-        }
+        // ── PRIVATES ─────────────────────────────────────────────────────────────
 
-        private string HashPassword(string password)
-        {
-            // ⚠️ DEMO ONLY - DO NOT USE IN PRODUCTION!
-            // In production, use: BCrypt.Net.BCrypt.HashPassword(password)
-            // Install NuGet: dotnet add package BCrypt.Net-Next
-            return password;
-        }
+        private static LoginResponseDto Fail(string message) =>
+            new LoginResponseDto { Success = false, Message = message };
+
+        private static ForgotPasswordResponseDto EnumerationSafeSuccess() =>
+            new ForgotPasswordResponseDto
+            {
+                Success = true,
+                Message = Messages.Success.Auth.PasswordResetSent
+            };
     }
 }

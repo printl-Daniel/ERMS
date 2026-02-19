@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using static ERMS.Enums.EmployeeEnum;
 
 namespace ERMS.ViewModels.Employee
 {
@@ -55,11 +56,11 @@ namespace ERMS.ViewModels.Employee
             = Enumerable.Empty<SelectListItem>();
 
         public static readonly IReadOnlyList<SelectListItem> StatusOptions =
-        [
-            new("Active",     "Active"),
-            new("Inactive",   "Inactive"),
-            new("On Leave",   "On Leave"),
-            new("Terminated", "Terminated"),
-        ];
+     Enum.GetValues<EmployeeStatus>()
+         .Select(s => new SelectListItem(
+             text: s == EmployeeStatus.OnLeave ? "On Leave" : s.ToString(), 
+             value: s.ToString()                                              
+         ))
+         .ToList();
     }
 }

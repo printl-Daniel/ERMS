@@ -16,5 +16,7 @@ namespace ERMS.Repositories.Interfaces
         Task<bool> UpdatePasswordAsync(int userId, string newPasswordHash);
         Task<bool> InvalidateOldTokensAsync(int userId);
         Task<PasswordResetToken> GetMostRecentPasswordResetTokenAsync(int userId);
+
+        Task<bool> SetFirstLoginCompleteAsync(int userId);
     }
 }

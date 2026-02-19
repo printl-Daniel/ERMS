@@ -19,21 +19,12 @@ namespace ERMS.Controllers
             _authService = authService;
         }
 
-        // ── LOGIN GET ────────────────────────────────────────────────────────────
-        // Facebook behaviour:
-        //   • Already logged in  → skip the login page entirely, go straight to home
-        //   • Not logged in      → wipe any stale / partial cookie, show the form
         [HttpGet]
         public async Task<IActionResult> Login(string? returnUrl = null)
         {
-            // 1. Already authenticated → bounce straight to their dashboard
             if (User.Identity?.IsAuthenticated == true)
-            {
                 return RedirectToDashboard();
-            }
 
-            // 2. Not authenticated → clear any stale cookie + session before
-            //    showing the form so the next login starts completely clean
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
 
@@ -41,12 +32,6 @@ namespace ERMS.Controllers
             return View();
         }
 
-        // ── LOGIN POST ───────────────────────────────────────────────────────────
-        // Facebook behaviour:
-        //   • Bad credentials      → stay on login, show error, keep form values
-        //   • Good credentials     → sign in, write session, redirect to dashboard
-        //   • "Remember Me" ticked → cookie survives browser close (persistent)
-        //   • "Remember Me" off    → session cookie only, gone when browser closes
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
@@ -54,8 +39,7 @@ namespace ERMS.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var loginDto = model.ViewModelToDto();
-            var result = await _authService.LoginAsync(loginDto);
+            var result = await _authService.LoginAsync(model.ViewModelToDto());
 
             if (!result.Success)
             {
@@ -63,7 +47,15 @@ namespace ERMS.Controllers
                 return View(model);
             }
 
-            // ── Build claims identity ────────────────────────────────────────────
+            // ── First login → skip session/cookie, go straight to ResetPassword ──
+            if (result.IsFirstLogin)
+            {
+                TempData["InfoMessage"] = "Please set a new password before continuing.";
+                var encodedToken = Uri.EscapeDataString(result.FirstLoginToken);
+                return Redirect($"/Auth/ResetPassword?token={encodedToken}");
+            }
+
+            // ── Normal login → build claims and sign in ──
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()),
@@ -72,44 +64,29 @@ namespace ERMS.Controllers
                 new Claim("EmployeeId",              result.EmployeeId.ToString())
             };
 
-            var claimsIdentity = new ClaimsIdentity(
-                claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            // ── Cookie lifetime (Facebook-style) ────────────────────────────────
-            //   RememberMe = true  → persistent 30-day cookie  (stays after browser close)
-            //   RememberMe = false → session cookie            (deleted on browser close)
-            var authProperties = new AuthenticationProperties
-            {
-                IsPersistent = model.RememberMe,
-                ExpiresUtc = model.RememberMe
-                                    ? DateTimeOffset.UtcNow.AddDays(30)   // long-lived
-                                    : DateTimeOffset.UtcNow.AddMinutes(30), // session-length
-                AllowRefresh = true  // sliding expiry resets on each request
-            };
-
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
+                new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)),
+                new AuthenticationProperties
+                {
+                    IsPersistent = model.RememberMe,
+                    ExpiresUtc = model.RememberMe
+                                     ? DateTimeOffset.UtcNow.AddDays(30)
+                                     : DateTimeOffset.UtcNow.AddMinutes(30),
+                    AllowRefresh = true
+                });
 
-            // ── Mirror key values into session (kept for backward compat) ────────
             HttpContext.Session.SetString("UserId", result.UserId.ToString());
             HttpContext.Session.SetString("EmployeeId", result.EmployeeId.ToString());
             HttpContext.Session.SetString("FullName", result.FullName);
             HttpContext.Session.SetString("Role", result.Role);
 
-            // ── Redirect ─────────────────────────────────────────────────────────
-            // Honor returnUrl (e.g. user tried to open /Employee/Index while
-            // logged out — send them there after login, like Facebook does).
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                 return Redirect(returnUrl);
 
             return RedirectToDashboard(result.Role);
         }
 
-        // ── LOGOUT POST ──────────────────────────────────────────────────────────
-        // Facebook behaviour: POST-only, wipes everything, lands on login page.
-        // The login page's GET will then clear any remnants (double safety).
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
@@ -121,12 +98,8 @@ namespace ERMS.Controllers
             return RedirectToAction("Login");
         }
 
-        // ── FORGOT PASSWORD ──────────────────────────────────────────────────────
         [HttpGet]
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
+        public IActionResult ForgotPassword() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -135,8 +108,7 @@ namespace ERMS.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var forgotPasswordDto = new ForgotPasswordDto { Email = model.Email };
-            var result = await _authService.ForgotPasswordAsync(forgotPasswordDto);
+            var result = await _authService.ForgotPasswordAsync(new ForgotPasswordDto { Email = model.Email });
 
             if (result.Success)
             {
@@ -151,7 +123,6 @@ namespace ERMS.Controllers
         [HttpGet]
         public IActionResult ForgotPasswordConfirmation() => View();
 
-        // ── RESET PASSWORD ───────────────────────────────────────────────────────
         [HttpGet]
         public async Task<IActionResult> ResetPassword(string token)
         {
@@ -170,6 +141,10 @@ namespace ERMS.Controllers
                 return RedirectToAction("Login");
             }
 
+            // Pass through any first-login info message
+            if (TempData["InfoMessage"] != null)
+                ViewData["InfoMessage"] = TempData["InfoMessage"];
+
             return View(new ResetPasswordViewModel { Token = decodedToken });
         }
 
@@ -180,14 +155,12 @@ namespace ERMS.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var dto = new ResetPasswordDto
+            var result = await _authService.ResetPasswordAsync(new ResetPasswordDto
             {
                 Token = model.Token,
                 NewPassword = model.NewPassword,
                 ConfirmPassword = model.ConfirmPassword
-            };
-
-            var result = await _authService.ResetPasswordAsync(dto);
+            });
 
             if (result.Success)
             {
@@ -202,23 +175,18 @@ namespace ERMS.Controllers
         [HttpGet]
         public IActionResult ResetPasswordConfirmation() => View();
 
-        // ── ACCESS DENIED ────────────────────────────────────────────────────────
         [HttpGet]
         public IActionResult AccessDenied() => View();
 
-        // ── HELPERS ──────────────────────────────────────────────────────────────
+        // ── PRIVATES ─────────────────────────────────────────────────────────────
 
-        /// <summary>
-        /// Redirect to the correct dashboard based on the current user's role claim.
-        /// Pass a role string directly when the claim isn't written yet (post-login).
-        /// </summary>
         private IActionResult RedirectToDashboard(string? role = null)
         {
             role ??= User.FindFirst(ClaimTypes.Role)?.Value;
 
             return role switch
             {
-                "Admin" => RedirectToAction("Index", "Employee"),
+                "Admin" => RedirectToAction("Index", "Hierarchy"),
                 "Manager" => RedirectToAction("Dashboard", "Manager"),
                 _ => RedirectToAction("Profile", "Employee")
             };

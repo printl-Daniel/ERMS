@@ -23,6 +23,7 @@ namespace ERMS.Repositories.Implementations
                 .Include(e => e.Manager)
                 .Include(e => e.User)
                 .Include(e => e.Subordinates)
+                    .ThenInclude(s => s.Position)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
@@ -89,7 +90,18 @@ namespace ERMS.Repositories.Implementations
             if (employee == null)
                 return false;
 
-            _context.Employees.Remove(employee);
+            // Unassign subordinates to avoid FK constraint violation
+            var subordinates = await _context.Employees
+                .Where(e => e.ManagerId == id)
+                .ToListAsync();
+
+            foreach (var sub in subordinates)
+                sub.ManagerId = null;
+
+            // Soft delete instead of hard delete
+            employee.IsDeleted = true;
+            employee.DeletedAt = DateTime.Now;
+
             await _context.SaveChangesAsync();
             return true;
         }
@@ -98,8 +110,6 @@ namespace ERMS.Repositories.Implementations
         {
             return await _context.Employees.AnyAsync(e => e.Email == email);
         }
-
-
 
         public async Task<IEnumerable<Employee>> GetAllWithRelationsAsync()
         {
@@ -160,7 +170,6 @@ namespace ERMS.Repositories.Implementations
 
             chain.Add(employee);
 
-            // Traverse up the management chain
             while (employee.Manager != null)
             {
                 employee = await GetByIdWithHierarchyAsync(employee.Manager.Id);
@@ -176,11 +185,8 @@ namespace ERMS.Repositories.Implementations
             var query = _context.Employees
                 .Where(e => e.Status == Enums.EmployeeEnum.EmployeeStatus.Active);
 
-            // Exclude the employee themselves (can't be their own manager)
             if (excludeEmployeeId.HasValue)
-            {
                 query = query.Where(e => e.Id != excludeEmployeeId.Value);
-            }
 
             var managers = await query
                 .OrderBy(e => e.FirstName)
@@ -192,7 +198,6 @@ namespace ERMS.Repositories.Implementations
                 })
                 .ToListAsync();
 
-            // Add "No Manager" option at the beginning
             managers.Insert(0, new SelectListItem
             {
                 Value = "",

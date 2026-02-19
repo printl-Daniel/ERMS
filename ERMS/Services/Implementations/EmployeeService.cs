@@ -1,10 +1,11 @@
-﻿using ERMS.DTOs.Employee;
+﻿using ERMS.Constants;
+using ERMS.DTOs.Employee;
+using ERMS.Helpers;
+using ERMS.Helpers.Mappers;
 using ERMS.Models;
 using ERMS.Repositories.Interfaces;
 using ERMS.Services.Interfaces;
 using ERMS.ViewModels.Employee;
-using System.Security.Cryptography;
-using System.Text;
 using static ERMS.Enums.EmployeeEnum;
 
 namespace ERMS.Services.Implementations
@@ -15,8 +16,8 @@ namespace ERMS.Services.Implementations
         private readonly IUserRepository _userRepository;
         private readonly IEmailService _emailService;
         private readonly IDepartmentRepository _departmentRepository;
-
         private readonly IPositionRepository _positionRepository;
+
         public EmployeeService(
             IEmployeeRepository employeeRepository,
             IUserRepository userRepository,
@@ -34,95 +35,71 @@ namespace ERMS.Services.Implementations
         public async Task<IEnumerable<EmployeeResponseDto>> GetAllEmployeesAsync()
         {
             var employees = await _employeeRepository.GetAllAsync();
-            return employees.Select(MapToResponseDto);
+            return employees.Select(EmployeeMapper.MapToResponseDto);
         }
 
         public async Task<EmployeeResponseDto> GetEmployeeByIdAsync(int id)
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
-            return employee != null ? MapToResponseDto(employee) : null;
+            return employee != null ? EmployeeMapper.MapToResponseDto(employee) : null;
+        }
+
+        public async Task<UpdateEmployeeDto> GetEmployeeForEditAsync(int id)
+        {
+            var employee = await _employeeRepository.GetByIdAsync(id);
+            return employee?.ToEditDto();
+        }
+
+        public async Task<EmployeeDetailsViewModel> GetEmployeeDetailsAsync(int id)
+        {
+            var employee = await _employeeRepository.GetByIdAsync(id);
+            if (employee == null) return null;
+
+            var dto = EmployeeMapper.MapToResponseDto(employee);
+            return dto.ToDetailsViewModel(employee);
+        }
+
+        public async Task<DeleteEmployeeViewModel> GetEmployeeForDeleteAsync(int id)
+        {
+            var employee = await _employeeRepository.GetByIdAsync(id);
+            if (employee == null) return null;
+
+            var dto = EmployeeMapper.MapToResponseDto(employee);
+            var subordinateCount = employee.Subordinates?.Count() ?? 0;
+            return dto.ToDeleteViewModel(subordinateCount);
         }
 
         public async Task<CreateEmployeeResponseDto> CreateEmployeeAsync(CreateEmployeeDto dto)
         {
             try
             {
-                // Validate email doesn't already exist
                 if (await _employeeRepository.EmailExistsAsync(dto.Email))
-                {
-                    return new CreateEmployeeResponseDto
-                    {
-                        Success = false,
-                        Message = "An employee with this email already exists"
-                    };
-                }
+                    return EmployeeMapper.ToCreateFailResponse(Messages.Error.Employee.EmailExists);
 
-                // Create employee
-                var employee = new Employee
-                {
-                    FirstName = dto.FirstName,
-                    LastName = dto.LastName,
-                    Email = dto.Email,
-                    PhoneNumber = dto.PhoneNumber,
-                    HireDate = dto.HireDate,
-                    DepartmentId = dto.DepartmentId,
-                    PositionId = dto.PositionId,
-                    ManagerId = dto.ManagerId,
-                    Status = EmployeeStatus.Active
-                };
-
+                var employee = EmployeeMapper.ToEntity(dto);
                 var createdEmployee = await _employeeRepository.CreateAsync(employee);
 
-                // Generate username from email (take part before @)
-                var username = GenerateUsername(dto.Email);
+                var username = UserMapperHelper.GenerateUsername(dto.Email);
+                var generatedPassword = PasswordHelper.GenerateRandomPassword();
+                var hashedPassword = PasswordHelper.HashPassword(generatedPassword);
 
-                // Generate random password
-                var generatedPassword = GenerateRandomPassword();
+                if (!Enum.TryParse(dto.Role, out UserRole userRole))
+                    userRole = UserRole.Employee;
 
-                // Parse role
-                UserRole userRole;
-                if (!Enum.TryParse(dto.Role, out userRole))
-                {
-                    userRole = UserRole.Employee; // Default to Employee if parsing fails
-                }
-
-                // Hash the password
-                var hashedPassword = HashPassword(generatedPassword);
-
-                // Create user account
-                var user = new User
-                {
-                    Username = username,
-                    PasswordHash = hashedPassword, // Now properly hashed!
-                    Role = userRole,
-                    IsActive = true,
-                    CreatedAt = DateTime.Now,
-                    EmployeeId = createdEmployee.Id
-                };
-
+                var user = UserMapperHelper.ToEntity(username, hashedPassword, userRole, createdEmployee.Id);
                 await _userRepository.CreateAsync(user);
 
-                // Determine if employee is a manager
                 bool isManager = userRole == UserRole.Manager || userRole == UserRole.Admin;
 
-                // Send email with credentials
                 var emailSent = await _emailService.SendPasswordEmailAsync(
                     dto.Email,
                     $"{dto.FirstName} {dto.LastName}",
                     username,
-                    generatedPassword, // Send plain password in email (user will change it)
+                    generatedPassword,
                     isManager
                 );
 
-                return new CreateEmployeeResponseDto
-                {
-                    Success = true,
-                    Message = "Employee created successfully",
-                    EmployeeId = createdEmployee.Id,
-                    Username = username,
-                    GeneratedPassword = generatedPassword, // Return plain password to show admin
-                    EmailSent = emailSent
-                };
+                return EmployeeMapper.ToCreateResponse(createdEmployee, username, generatedPassword, emailSent);
             }
             catch (Exception ex)
             {
@@ -138,93 +115,26 @@ namespace ERMS.Services.Implementations
         {
             var employee = await _employeeRepository.GetByIdAsync(dto.Id);
             if (employee == null)
-                return false;
+                throw new InvalidOperationException(Messages.Error.Employee.NotFound);
 
-            employee.FirstName = dto.FirstName;
-            employee.LastName = dto.LastName;
-            employee.Email = dto.Email;
-            employee.PhoneNumber = dto.PhoneNumber;
-            employee.DepartmentId = dto.DepartmentId;
-            employee.PositionId = dto.PositionId;
-            employee.ManagerId = dto.ManagerId;
+            if (!Enum.TryParse<EmployeeStatus>(dto.Status, ignoreCase: true, out var status))
+                throw new InvalidOperationException(Messages.Error.InvalidInput);
 
-            EmployeeStatus status;
-            if (Enum.TryParse(dto.Status, out status))
-            {
-                employee.Status = status;
-            }
-
+            EmployeeMapper.ApplyUpdate(employee, dto, status);
             await _employeeRepository.UpdateAsync(employee);
             return true;
         }
 
         public async Task<bool> DeleteEmployeeAsync(int id)
         {
+            var employee = await _employeeRepository.GetByIdAsync(id);
+            if (employee == null)
+                return false;
+
+            if (employee.User != null)
+                employee.User.IsActive = false;
+
             return await _employeeRepository.DeleteAsync(id);
-        }
-
-        // Helper Methods
-        private string GenerateUsername(string email)
-        {
-            // Extract part before @ and make lowercase
-            var username = email.Split('@')[0].ToLower();
-
-            // Remove any dots or special characters
-            username = username.Replace(".", "").Replace("-", "");
-
-            return username;
-        }
-
-        private string GenerateRandomPassword(int length = 12)
-        {
-            const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%";
-            var random = new Random();
-            var password = new StringBuilder();
-
-            // Ensure at least one of each type
-            password.Append((char)random.Next('a', 'z' + 1)); // lowercase
-            password.Append((char)random.Next('A', 'Z' + 1)); // uppercase
-            password.Append((char)random.Next('0', '9' + 1)); // digit
-            password.Append("!@#"[random.Next(3)]); // special char
-
-            // Fill the rest randomly
-            for (int i = 4; i < length; i++)
-            {
-                password.Append(validChars[random.Next(validChars.Length)]);
-            }
-
-            // Shuffle the password
-            return new string(password.ToString().ToCharArray().OrderBy(x => random.Next()).ToArray());
-        }
-
-        // IMPORTANT: Hash password using SHA256
-        private string HashPassword(string password)
-        {
-            using (var sha256 = SHA256.Create())
-            {
-                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return Convert.ToBase64String(hashedBytes);
-            }
-        }
-
-        private EmployeeResponseDto MapToResponseDto(Employee employee)
-        {
-            return new EmployeeResponseDto
-            {
-                Id = employee.Id,
-                FirstName = employee.FirstName,
-                LastName = employee.LastName,
-                FullName = employee.FullName,
-                Email = employee.Email,
-                PhoneNumber = employee.PhoneNumber,
-                HireDate = employee.HireDate,
-                Status = employee.Status.ToString(),
-                DepartmentName = employee.Department?.Name,
-                PositionTitle = employee.Position?.Title,
-                ManagerName = employee.Manager?.FullName,
-                Username = employee.User?.Username,
-                Role = employee.User?.Role.ToString()
-            };
         }
 
         public async Task PopulateDropdowns(CreateEmployeeViewModel model, int? excludeEmployeeId = null)
@@ -234,5 +144,11 @@ namespace ERMS.Services.Implementations
             model.Managers = await _employeeRepository.GetManagerDropdownAsync(excludeEmployeeId);
         }
 
+        public async Task PopulateDropdowns(EmployeeEditViewModel model, int? excludeEmployeeId = null)
+        {
+            model.Departments = await _departmentRepository.GetDepartmentDropdownAsync();
+            model.Positions = await _positionRepository.GetPositionDropdownAsync();
+            model.Managers = await _employeeRepository.GetManagerDropdownAsync(excludeEmployeeId);
+        }
     }
 }

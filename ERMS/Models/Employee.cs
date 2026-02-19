@@ -33,6 +33,10 @@ namespace ERMS.Models
         public string? ProfilePicturePath { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
+        // SOFT DELTE
+        public bool IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
+
         // Foreign Keys
         [Required]
         public int DepartmentId { get; set; }

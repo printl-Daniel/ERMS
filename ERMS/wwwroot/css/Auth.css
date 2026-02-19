@@ -3,6 +3,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: calc(100vh - 144px);
     padding: 20px;
 }
 
@@ -58,11 +59,14 @@
     padding: 12px 16px;
     transition: all 0.2s ease;
     background-color: var(--surface);
+    color: var(--text);
+    width: 100%;
 }
 
     .login-form .form-control:focus {
         border-color: var(--accent);
         box-shadow: 0 0 0 4px rgba(1, 129, 176, 0.08);
+        outline: none;
     }
 
     .login-form .form-control::placeholder {
@@ -199,4 +203,436 @@ body.dark-mode .alert-danger {
         gap: 16px;
         align-items: flex-start;
     }
+}
+
+/* ── Forgot Password additions ── */
+.forgot-back-link {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 14px;
+}
+
+    .forgot-back-link .forgot-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+
+/* ── Reset Link Sent (ForgotPasswordConfirmation) ── */
+.brand-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, rgba(1, 129, 176, 0.12) 0%, rgba(6, 182, 212, 0.12) 100%);
+    border: 1.5px solid rgba(1, 129, 176, 0.2);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px auto;
+}
+
+    .brand-icon svg {
+        width: 26px;
+        height: 26px;
+        stroke: var(--accent);
+    }
+
+.info-box {
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.info-box-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+
+    .info-box-title svg {
+        width: 16px;
+        height: 16px;
+        stroke: var(--accent);
+        flex-shrink: 0;
+    }
+
+.info-box ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .info-box ul li {
+        font-size: 13px;
+        color: var(--text-muted);
+        padding-left: 16px;
+        position: relative;
+        line-height: 1.5;
+    }
+
+        .info-box ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background-color: var(--accent);
+            opacity: 0.6;
+        }
+
+/* btn-submit when used as <a> tag */
+a.btn-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    line-height: 1;
+}
+
+    a.btn-submit svg {
+        width: 18px;
+        height: 18px;
+        stroke: white;
+        flex-shrink: 0;
+    }
+
+    a.btn-submit:hover {
+        color: white;
+        text-decoration: none;
+    }
+
+.divider {
+    height: 1px;
+    background-color: var(--border);
+    margin: 20px 0;
+}
+
+.retry-section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+    .retry-section p {
+        margin: 0;
+        color: var(--text-muted);
+    }
+
+.retry-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity var(--transition-base);
+}
+
+    .retry-link svg {
+        width: 14px;
+        height: 14px;
+        stroke: var(--accent);
+    }
+
+    .retry-link:hover {
+        opacity: 0.8;
+        text-decoration: none;
+        color: var(--accent);
+    }
+
+
+/* ── Delete page ─────────────────────────────────────────── */
+.del-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-left: 4px solid #ef4444;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+}
+
+.del-banner-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(239, 68, 68, 0.12);
+    color: #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+    .del-banner-icon svg {
+        width: 17px;
+        height: 17px;
+    }
+
+.del-banner-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #dc2626;
+    margin-bottom: 4px;
+}
+
+.del-banner-text {
+    font-size: 13px;
+    color: var(--text-secondary, #4a5568);
+    line-height: 1.5;
+}
+
+.del-banner-warn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #b45309;
+    background: rgba(245, 158, 11, 0.10);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    padding: 4px 10px;
+    border-radius: 99px;
+}
+
+body.dark-mode .del-banner {
+    background: rgba(239, 68, 68, 0.10);
+    border-color: rgba(239, 68, 68, 0.20);
+}
+
+body.dark-mode .del-banner-title {
+    color: #f87171;
+}
+
+body.dark-mode .del-banner-warn {
+    color: #fbbf24;
+    background: rgba(245,158,11,0.12);
+}
+
+/* ── Delete confirm button ───────────────────────────────── */
+.del-btn-confirm {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #fff;
+}
+
+    .del-btn-confirm:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.38);
+        color: #fff;
+    }
+
+/* ── Extra chip colors ───────────────────────────────────── */
+.ep-chip-warning {
+    background: rgba(245, 158, 11, 0.10);
+    color: #b45309;
+}
+
+.ep-chip-purple {
+    background: rgba(139, 92, 246, 0.10);
+    color: #7c3aed;
+}
+
+body.dark-mode .ep-chip-warning {
+    background: rgba(251,191,36,0.13);
+    color: #fbbf24;
+}
+
+body.dark-mode .ep-chip-purple {
+    background: rgba(167,139,250,0.13);
+    color: #a78bfa;
+}
+
+/* ── Reset Password Confirmation countdown ── */
+.countdown-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 24px 0;
+}
+
+.ring-container {
+    position: relative;
+    width: 48px;
+    height: 48px;
+}
+
+.ring-svg {
+    width: 48px;
+    height: 48px;
+    transform: rotate(-90deg);
+}
+
+.ring-track {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 3;
+}
+
+.ring-progress {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.ring-number {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.countdown-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.trouble-text {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+    .trouble-text a {
+        color: var(--accent);
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+        .trouble-text a:hover {
+            opacity: 0.8;
+        }
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+    .input-wrapper .form-control {
+        padding-right: 48px;
+        width: 100%;
+    }
+
+.toggle-password {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+    .toggle-password svg {
+        width: 18px;
+        height: 18px;
+        stroke: var(--text-muted);
+        transition: stroke 0.2s;
+    }
+
+    .toggle-password:hover svg {
+        stroke: var(--accent);
+    }
+
+/* ── back-link ── */
+.back-link {
+    text-align: center;
+    font-size: 14px;
+}
+
+    .back-link a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent);
+        font-weight: 500;
+        text-decoration: none;
+        transition: opacity 0.2s;
+    }
+
+        .back-link a svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--accent);
+        }
+
+        .back-link a:hover {
+            opacity: 0.8;
+            text-decoration: none;
+        }
+
+
+.btn-submit-reset {
+    width: 100%; /* Full width like login button */
+    height: 48px; /* Same height as .btn-submit */
+    display: flex; /* Change from inline-flex */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--accent); /* Use your theme color */
+    color: #fff;
+    border: none;
+    border-radius: 10px; /* Match login style */
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .btn-submit-reset:hover {
+        background: linear-gradient(135deg, #0181b0 0%, #016a93 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(1, 129, 176, 0.3);
+    }
+
+    .btn-submit-reset svg {
+        width: 18px;
+        height: 18px;
+        stroke: white;
+        flex-shrink: 0;
+    }
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear,
+input::-webkit-credentials-auto-fill-button,
+input::-webkit-contacts-auto-fill-button {
+    display: none !important;
+    visibility: hidden;
+    pointer-events: none;
 }

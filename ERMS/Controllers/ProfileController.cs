@@ -1,5 +1,4 @@
-﻿// Controllers/ProfileController.cs
-using ERMS.Helpers.Mappers;
+﻿using ERMS.Helpers.Mappers;
 using ERMS.Services.Interfaces;
 using ERMS.ViewModels.Profile;
 using Microsoft.AspNetCore.Mvc;
@@ -21,22 +20,14 @@ namespace ERMS.Controllers
         public async Task<IActionResult> Profile()
         {
             var employeeIdString = HttpContext.Session.GetString("EmployeeId");
-
             if (string.IsNullOrEmpty(employeeIdString))
-            {
                 return RedirectToAction("Login", "Auth");
-            }
 
-            int employeeId = int.Parse(employeeIdString);
-            var profileDto = await _profileService.GetProfileAsync(employeeId);
-
+            var profileDto = await _profileService.GetProfileAsync(int.Parse(employeeIdString));
             if (profileDto == null)
-            {
                 return NotFound();
-            }
 
-            var viewModel = profileDto.ToViewModel();
-            return View(viewModel);
+            return View(profileDto.ToViewModel());
         }
 
         [HttpPost]
@@ -49,18 +40,8 @@ namespace ERMS.Controllers
                 return RedirectToAction("Profile");
             }
 
-            var dto = model.ToDto();
-            var result = await _profileService.UpdatePersonalInfoAsync(dto);
-
-            if (result.Success)
-            {
-                TempData["Success"] = result.Message;
-            }
-            else
-            {
-                TempData["Error"] = result.Message;
-            }
-
+            var result = await _profileService.UpdatePersonalInfoAsync(model.ToDto());
+            TempData[result.Success ? "Success" : "Error"] = result.Message;
             return RedirectToAction("Profile");
         }
 
@@ -75,20 +56,8 @@ namespace ERMS.Controllers
             }
 
             var employeeIdString = HttpContext.Session.GetString("EmployeeId");
-            int employeeId = int.Parse(employeeIdString);
-
-            var dto = model.ToDto(employeeId);
-            var result = await _profileService.UpdatePasswordAsync(dto);
-
-            if (result.Success)
-            {
-                TempData["Success"] = result.Message;
-            }
-            else
-            {
-                TempData["Error"] = result.Message;
-            }
-
+            var result = await _profileService.UpdatePasswordAsync(model.ToDto(int.Parse(employeeIdString)));
+            TempData[result.Success ? "Success" : "Error"] = result.Message;
             return RedirectToAction("Profile");
         }
 
@@ -102,7 +71,6 @@ namespace ERMS.Controllers
                 return RedirectToAction("Profile");
             }
 
-            // Validate file type
             var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
             var fileExtension = Path.GetExtension(model.ProfilePicture.FileName).ToLowerInvariant();
 
@@ -112,7 +80,6 @@ namespace ERMS.Controllers
                 return RedirectToAction("Profile");
             }
 
-            // Validate file size (max 5MB)
             if (model.ProfilePicture.Length > 5 * 1024 * 1024)
             {
                 TempData["Error"] = "File size must not exceed 5MB.";
@@ -121,33 +88,19 @@ namespace ERMS.Controllers
 
             try
             {
-                // Create uploads directory if it doesn't exist
                 var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "profiles");
                 Directory.CreateDirectory(uploadsFolder);
 
-                // Generate unique filename
                 var uniqueFileName = $"{model.EmployeeId}_{Guid.NewGuid()}{fileExtension}";
                 var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                // Save file
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
                     await model.ProfilePicture.CopyToAsync(fileStream);
-                }
 
-                // Update database
-                var relativePath = $"/uploads/profiles/{uniqueFileName}";
-                var dto = model.ToDto(relativePath);
-                var result = await _profileService.UpdateProfilePictureAsync(dto);
+                var result = await _profileService.UpdateProfilePictureAsync(
+                    model.ToDto($"/uploads/profiles/{uniqueFileName}"));
 
-                if (result.Success)
-                {
-                    TempData["Success"] = result.Message;
-                }
-                else
-                {
-                    TempData["Error"] = result.Message;
-                }
+                TempData[result.Success ? "Success" : "Error"] = result.Message;
             }
             catch (Exception ex)
             {

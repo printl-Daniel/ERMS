@@ -8,5 +8,7 @@
         public int UserId { get; set; }
         public int EmployeeId { get; set; }
         public string FullName { get; set; }
+        public bool IsFirstLogin { get; set; }
+        public string? FirstLoginToken { get; set; }
     }
 }

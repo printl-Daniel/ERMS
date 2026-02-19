@@ -17,6 +17,13 @@
             ? $"{char.ToUpper(p[0][0])}{char.ToUpper(p[^1][0])}"
             : (name ?? "?").Length > 0 ? char.ToUpper((name ?? "?")[0]).ToString() : "?";
     }
+
+    // Main employee photo helpers
+    var empName     = Model.Employee.FullName;
+    var empBg       = AvatarBg(empName);
+    var empInitials = Initials(empName);
+    var hasPhoto    = !string.IsNullOrWhiteSpace(Model.Employee.ProfilePicturePath);
+    var photoSrc    = hasPhoto ? Url.Content(Model.Employee.ProfilePicturePath) : null;
 }
 
 @section Styles {
@@ -42,10 +49,22 @@
     }
 
     <div class="hr-profile-card">
-        <div class="av av-xl av-rounded"
-             style="background: @AvatarBg(Model.Employee.FullName)">
-            @Initials(Model.Employee.FullName)
-        </div>
+        @if (hasPhoto)
+        {
+            <div class="av av-xl av-rounded av-photo">
+                <img src="@photoSrc"
+                     alt="@empName"
+                     class="av-img"
+                     onerror="this.closest('.av-photo').classList.remove('av-photo'); this.closest('.av').style.background='@empBg'; this.closest('.av').textContent='@empInitials'; this.remove();" />
+            </div>
+        }
+        else
+        {
+            <div class="av av-xl av-rounded"
+                 style="background: @empBg">
+                @empInitials
+            </div>
+        }
 
         <div class="hr-profile-info">
             <h3 class="hr-profile-name">@Model.Employee.FullName</h3>
@@ -112,13 +131,30 @@
                 <div class="hr-chain-wrap">
                     @for (int i = 0; i < Model.ManagerChain.Count; i++)
                     {
-                        var person = Model.ManagerChain[i];
+                        var person      = Model.ManagerChain[i];
+                        var pHasPhoto   = !string.IsNullOrWhiteSpace(person.ProfilePicturePath);
+                        var pPhotoSrc   = pHasPhoto ? Url.Content(person.ProfilePicturePath) : null;
+                        var pBg         = AvatarBg(person.FullName);
+                        var pInitials   = Initials(person.FullName);
+
                         <a asp-action="Employee" asp-route-id="@person.Id" class="hr-chain-link">
                             <div class="hr-chain-person">
-                                <div class="av av-rounded"
-                                     style="background: @AvatarBg(person.FullName)">
-                                    @Initials(person.FullName)
-                                </div>
+                                @if (pHasPhoto)
+                                {
+                                    <div class="av av-rounded av-photo">
+                                        <img src="@pPhotoSrc"
+                                             alt="@person.FullName"
+                                             class="av-img"
+                                             onerror="this.closest('.av-photo').classList.remove('av-photo'); this.closest('.av').style.background='@pBg'; this.closest('.av').textContent='@pInitials'; this.remove();" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="av av-rounded"
+                                         style="background: @pBg">
+                                        @pInitials
+                                    </div>
+                                }
                                 <span class="hr-chain-name">@person.FullName</span>
                                 <span class="hr-chain-title">@person.PositionTitle</span>
                             </div>
@@ -147,13 +183,30 @@
                 <div class="hr-reports-grid">
                     @foreach (var subordinate in Model.DirectReports)
                     {
+                        var sHasPhoto   = !string.IsNullOrWhiteSpace(subordinate.ProfilePicturePath);
+                        var sPhotoSrc   = sHasPhoto ? Url.Content(subordinate.ProfilePicturePath) : null;
+                        var sBg         = AvatarBg(subordinate.FullName);
+                        var sInitials   = Initials(subordinate.FullName);
+
                         <a asp-action="Employee"
                            asp-route-id="@subordinate.Id"
                            class="hr-report-card">
-                            <div class="av av-rounded"
-                                 style="background: @AvatarBg(subordinate.FullName)">
-                                @Initials(subordinate.FullName)
-                            </div>
+                            @if (sHasPhoto)
+                            {
+                                <div class="av av-rounded av-photo">
+                                    <img src="@sPhotoSrc"
+                                         alt="@subordinate.FullName"
+                                         class="av-img"
+                                         onerror="this.closest('.av-photo').classList.remove('av-photo'); this.closest('.av').style.background='@sBg'; this.closest('.av').textContent='@sInitials'; this.remove();" />
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="av av-rounded"
+                                     style="background: @sBg">
+                                    @sInitials
+                                </div>
+                            }
                             <div>
                                 <span class="hr-report-name">@subordinate.FullName</span>
                                 <span class="hr-report-sub-text">

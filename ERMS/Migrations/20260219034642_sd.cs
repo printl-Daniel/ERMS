@@ -5,7 +5,7 @@
 namespace ERMS.Migrations
 {
     /// <inheritdoc />
-    public partial class sjdd : Migration
+    public partial class sd : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

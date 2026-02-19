@@ -1,59 +1,41 @@
 @* Views/Hierarchy/OrgChart.cshtml *@
 @model ERMS.ViewModels.Hierarchy.OrgChartViewModel
-
 @{
     ViewData["Title"] = "Organization Chart";
-
-    string[] avatarPalette = {
-        "#0181b0","#10b981","#f59e0b","#8b5cf6",
-        "#06b6d4","#ef4444","#ec4899","#6366f1"
-    };
-
-    string[] depthAccents = {
-        "#0181b0","#10b981","#f59e0b","#8b5cf6","#06b6d4","#ef4444"
-    };
-
-    string AvatarBg(string name) {
-        int ci = 0; foreach (char c in (name ?? "")) ci += c;
-        return avatarPalette[ci % avatarPalette.Length];
-    }
-
-    string Initials(string name) {
-        var p = (name ?? "?").Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return p.Length >= 2
-            ? $"{char.ToUpper(p[0][0])}{char.ToUpper(p[^1][0])}"
-            : (name?.Length > 0 ? char.ToUpper(name[0]).ToString() : "?");
-    }
-
-    string DepthAccent(int depth) => depthAccents[depth % depthAccents.Length];
 }
-
 @section Styles {
     <link rel="stylesheet" href="~/css/Hierarchy.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 }
 
-<div class="orgchart-page">
+<div class="oc2-page">
 
-    <div class="orgchart-header">
-        <div>
-            <p class="orgchart-eyebrow">Organization</p>
-            <h1 class="orgchart-title">
+    <header class="oc2-header">
+        <div class="oc2-header-left">
+            <div class="oc2-header-badge">
                 <i class="fas fa-project-diagram"></i>
-                @Model.Title
-            </h1>
-            <p class="orgchart-sub">
-                @Model.TotalNodes employees across all departments
-            </p>
+            </div>
+            <div>
+                <p class="oc2-eyebrow">Organization</p>
+                <h1 class="oc2-title">@Model.Title</h1>
+            </div>
         </div>
-        <a asp-action="Index" class="btn-default">
-            <i class="fas fa-list"></i>
-            List View
-        </a>
-    </div>
+        <div class="oc2-header-right">
+            <span class="oc2-node-count">
+                <i class="fas fa-users"></i>
+                @Model.TotalNodes members
+            </span>
+            <a asp-action="Index" class="oc2-btn-outline">
+                <i class="fas fa-list-ul"></i>
+                List View
+            </a>
+        </div>
+    </header>
 
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible" role="alert">
+        <div class="oc2-alert" role="alert">
             <i class="fas fa-exclamation-circle"></i>
             @TempData["Error"]
             <button type="button" class="btn-close" data-bs-dismiss="alert">
@@ -64,24 +46,127 @@
 
     @if (Model.ChartData != null && Model.ChartData.Any())
     {
-        <div class="oc-scroll-wrap">
-            <div class="oc-tree">
-                @foreach (var root in Model.ChartData)
-                {
-                    @await Html.PartialAsync("_OrgChartNode", new ERMS.ViewModels.Hierarchy.OrgChartNodeViewModel {
-                        Node   = root,
-                        Depth  = 0
-                    })
-                }
+        <div class="oc2-scroll-wrap">
+            <div class="oc2-canvas">
+                <div class="oc2-tree">
+                    @foreach (var root in Model.ChartData)
+                    {
+                        @await Html.PartialAsync("_OrgChartNode", new ERMS.ViewModels.Hierarchy.OrgChartNodeViewModel {
+                            Node  = root,
+                            Depth = 0
+                        })
+                    }
+                </div>
             </div>
         </div>
     }
     else
     {
-        <div class="oc-empty">
-            <div class="oc-empty-icon"><i class="fas fa-project-diagram"></i></div>
-            <h3 class="oc-empty-title">No chart data</h3>
-            <p class="oc-empty-sub">The org chart has not been configured yet.</p>
+        <div class="oc2-empty">
+            <div class="oc2-empty-icon"><i class="fas fa-project-diagram"></i></div>
+            <h3 class="oc2-empty-title">No chart data</h3>
+            <p class="oc2-empty-sub">The org chart has not been configured yet.</p>
         </div>
     }
 </div>
+
+@section Scripts {
+<script>
+(function () {
+    // ── Draw SVG connector lines for every .oc2-children group ──
+    // Each group gets one <svg> canvas that draws:
+    //   1. A vertical stem down from the parent card centre
+    //   2. A horizontal bar connecting all child centres
+    //   3. A short vertical drop to each child card
+
+    const GAP = 48; // must match padding-top on .oc2-children in CSS
+
+    function drawConnectors() {
+        document.querySelectorAll('.oc2-children').forEach(function (group) {
+            // Remove any existing SVG from a previous draw
+            const old = group.querySelector('.oc2-connector-svg');
+            if (old) old.remove();
+
+            const children = Array.from(group.querySelectorAll(':scope > .oc2-node'));
+            if (!children.length) return;
+
+            // Parent card — sibling just above the group
+            const parentNode = group.closest('.oc2-node');
+            const parentCard = parentNode ? parentNode.querySelector(':scope > .oc2-card') : null;
+
+            const groupRect = group.getBoundingClientRect();
+
+            // Child card centre X positions (relative to group)
+            const childCentres = children.map(function (child) {
+                const card = child.querySelector(':scope > .oc2-card');
+                if (!card) return null;
+                const r = card.getBoundingClientRect();
+                return (r.left + r.width / 2) - groupRect.left;
+            }).filter(x => x !== null);
+
+            if (!childCentres.length) return;
+
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.classList.add('oc2-connector-svg');
+
+            const W = group.offsetWidth;
+            svg.setAttribute('viewBox', '0 0 ' + W + ' ' + GAP);
+            svg.setAttribute('width', W);
+            svg.setAttribute('height', GAP);
+
+            const lineColor = 'rgba(255,255,255,0.13)';
+            const strokeW   = '1.5';
+
+            function makeLine(x1, y1, x2, y2) {
+                const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                l.setAttribute('x1', x1); l.setAttribute('y1', y1);
+                l.setAttribute('x2', x2); l.setAttribute('y2', y2);
+                l.setAttribute('stroke', lineColor);
+                l.setAttribute('stroke-width', strokeW);
+                l.setAttribute('stroke-linecap', 'round');
+                return l;
+            }
+
+            // Parent stem: vertical from top of SVG canvas down to mid-point
+            const parentCentreX = parentCard
+                ? (() => {
+                    const pr = parentCard.getBoundingClientRect();
+                    return (pr.left + pr.width / 2) - groupRect.left;
+                })()
+                : W / 2;
+
+            const midY = GAP / 2;
+
+            // Stem down from parent card bottom
+            svg.appendChild(makeLine(parentCentreX, 0, parentCentreX, midY));
+
+            const firstX = childCentres[0];
+            const lastX  = childCentres[childCentres.length - 1];
+
+            if (childCentres.length > 1) {
+                // Horizontal bar
+                svg.appendChild(makeLine(firstX, midY, lastX, midY));
+            } else {
+                // Single child — extend stem straight down
+                svg.appendChild(makeLine(parentCentreX, midY, parentCentreX, GAP));
+            }
+
+            // Vertical drops to each child
+            childCentres.forEach(function (cx) {
+                svg.appendChild(makeLine(cx, midY, cx, GAP));
+            });
+
+            group.insertBefore(svg, group.firstChild);
+        });
+    }
+
+    // Draw on load, redraw on resize
+    drawConnectors();
+    let resizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(drawConnectors, 80);
+    });
+}());
+</script>
+}

@@ -1083,90 +1083,178 @@ body.dark-mode .hr-badge-toplevel {
 /* ════════════════════════════════════════════════════════════
    OrgChart — pure CSS/HTML tree, no D3
    ════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   OrgChart v2  —  Clean dark glass redesign
+   All classes prefixed oc2- to avoid conflicts with existing styles
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Page shell ──────────────────────────────────────────── */
-.orgchart-page {
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 36px 28px;
+/* ── Variables ─────────────────────────────────────────────────── */
+.oc2-page {
+    --oc2-bg: #0d1117;
+    --oc2-surface: #161b22;
+    --oc2-surface-2: #1c2330;
+    --oc2-border: rgba(255,255,255,0.07);
+    --oc2-border-hover: rgba(255,255,255,0.14);
+    --oc2-text-primary: #e6edf3;
+    --oc2-text-secondary: #7d8590;
+    --oc2-text-muted: #484f58;
+    --oc2-accent: #0181b0;
+    --oc2-accent-glow: rgba(1,129,176,0.18);
+    --oc2-line: rgba(255,255,255,0.08);
+    --oc2-radius: 12px;
+    --oc2-radius-sm: 8px;
+    --oc2-font: 'DM Sans', system-ui, sans-serif;
+    --oc2-font-mono: 'DM Mono', monospace;
+    font-family: var(--oc2-font);
+    background: var(--oc2-bg);
+    min-height: 100vh;
+    padding: 28px 32px 60px;
+    color: var(--oc2-text-primary);
 }
 
-/* ── Header ──────────────────────────────────────────────── */
-.orgchart-header {
+/* ── Header ────────────────────────────────────────────────────── */
+.oc2-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
     gap: 16px;
-    margin-bottom: 28px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
 }
 
-.orgchart-eyebrow {
+.oc2-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.oc2-header-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--oc2-accent-glow);
+    border: 1px solid rgba(1,129,176,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--oc2-accent);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.oc2-eyebrow {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--hr-accent);
-    margin: 0 0 4px;
+    color: var(--oc2-accent);
+    margin: 0 0 2px;
 }
 
-.orgchart-title {
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    color: var(--hr-text);
-    margin: 0 0 4px;
+.oc2-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--oc2-text-primary);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.oc2-header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.oc2-node-count {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--oc2-text-secondary);
+    background: var(--oc2-surface);
+    border: 1px solid var(--oc2-border);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-family: var(--oc2-font-mono);
+}
+
+.oc2-btn-outline {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    border-radius: var(--oc2-radius-sm);
+    border: 1px solid var(--oc2-border-hover);
+    background: var(--oc2-surface);
+    color: var(--oc2-text-primary);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color 0.18s, background 0.18s, color 0.18s;
+    font-family: var(--oc2-font);
+}
+
+    .oc2-btn-outline:hover {
+        border-color: var(--oc2-accent);
+        color: var(--oc2-accent);
+        background: var(--oc2-accent-glow);
+        text-decoration: none;
+    }
+
+/* ── Alert ─────────────────────────────────────────────────────── */
+.oc2-alert {
     display: flex;
     align-items: center;
     gap: 10px;
+    padding: 12px 16px;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: var(--oc2-radius-sm);
+    color: #fca5a5;
+    font-size: 13px;
+    margin-bottom: 24px;
 }
 
-    .orgchart-title i {
-        color: var(--hr-accent);
-        font-size: 22px;
-    }
-
-.orgchart-sub {
-    font-size: 14px;
-    color: var(--hr-text-muted);
-    margin: 0;
-}
-
-/* ── Scroll container ────────────────────────────────────── */
-.oc-scroll-wrap {
+/* ── Scroll canvas ─────────────────────────────────────────────── */
+.oc2-scroll-wrap {
     overflow-x: auto;
     overflow-y: visible;
     padding-bottom: 24px;
-    /* Subtle inset shadow to indicate scrollability */
-    border-radius: var(--hr-radius-xl);
-    border: 1px solid var(--hr-border);
-    background: var(--hr-surface);
-    box-shadow: var(--hr-shadow-xs);
-    padding: 40px 32px 48px;
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--oc2-border-hover) transparent;
 }
 
-/* ── Tree root ───────────────────────────────────────────── */
-.oc-tree {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    .oc2-scroll-wrap::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .oc2-scroll-wrap::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .oc2-scroll-wrap::-webkit-scrollbar-thumb {
+        background: var(--oc2-border-hover);
+        border-radius: 99px;
+    }
+
+.oc2-canvas {
     min-width: max-content;
+    padding: 8px 16px 32px;
 }
 
-/* ══════════════════════════════════════════════════════════
-   oc-node  — one person + their children subtree
-   Layout:
-     .oc-node
-       .oc-card          ← the visible card
-       .oc-children      ← horizontal row of child oc-nodes
-         .oc-node
-         .oc-node
-         ...
-   Connectors are CSS pseudo-elements on .oc-children and
-   its direct .oc-node children.
-   ══════════════════════════════════════════════════════════ */
+/* ── Tree layout ───────────────────────────────────────────────── */
+.oc2-tree {
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    align-items: flex-start;
+    justify-content: center;
+}
 
-.oc-node {
+/* Each node wraps the card + its children row */
+.oc2-node {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1174,334 +1262,362 @@ body.dark-mode .hr-badge-toplevel {
     padding: 0 12px;
 }
 
-    /* Vertical line DOWN from card to the horizontal bar */
-    .oc-node:has(.oc-children)::after {
-        content: '';
-        display: block;
-        width: 2px;
-        height: 28px;
-        background: var(--hr-border-med);
-        border-radius: 1px;
-        margin: 0 auto;
-    }
-
-/* ── Children row ────────────────────────────────────────── */
-.oc-children {
+/* Children row — gap drives the horizontal spread */
+.oc2-children {
     display: flex;
     flex-direction: row;
     align-items: flex-start;
     position: relative;
-    padding-top: 28px;
+    padding-top: 48px; /* room for SVG connector canvas */
+    gap: 0;
 }
 
-    /* Horizontal bar spanning all children */
-    .oc-children::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: calc(50% - (100% - 24px) / 2);
-        right: calc(50% - (100% - 24px) / 2);
-        height: 2px;
-        background: var(--hr-border-med);
-        border-radius: 1px;
+/* SVG connector canvas — positioned over the gap */
+.oc2-connector-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 48px;
+    overflow: visible;
+    pointer-events: none;
+}
+
+    .oc2-connector-svg line,
+    .oc2-connector-svg path {
+        stroke: rgba(255,255,255,0.12);
+        stroke-width: 1.5;
+        fill: none;
+        stroke-linecap: round;
     }
 
-    /* Single child — no bar needed, just a straight line down */
-    .oc-children:has(> .oc-node:only-child)::before {
-        display: none;
-    }
-
-    /* Vertical line UP from each child to the horizontal bar */
-    .oc-children > .oc-node::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 2px;
-        height: 28px;
-        background: var(--hr-border-med);
-        border-radius: 1px;
-    }
-
-/* ── Card ────────────────────────────────────────────────── */
-.oc-card {
-    --oc-accent: var(--hr-accent);
+/* ── Card ──────────────────────────────────────────────────────── */
+.oc2-card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    width: 220px;
-    background: var(--hr-surface);
-    border: 1px solid var(--hr-border);
-    border-radius: 16px;
-    box-shadow: var(--hr-shadow-sm);
+    width: 200px;
+    background: var(--oc2-surface);
+    border: 1px solid var(--oc2-border);
+    border-radius: var(--oc2-radius);
     text-decoration: none;
+    color: var(--oc2-text-primary);
     overflow: hidden;
-    transition: all var(--hr-transition);
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
     cursor: pointer;
-    position: relative;
+    /* Entrance animation */
+    animation: oc2-fadein 0.35s ease both;
 }
 
-    .oc-card:hover {
-        border-color: var(--oc-accent);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--oc-accent) 15%, transparent), var(--hr-shadow-md);
-        transform: translateY(-3px);
+    .oc2-card:hover {
+        border-color: var(--oc2-border-hover);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px var(--oc2-border-hover);
+        transform: translateY(-2px);
         text-decoration: none;
+        color: var(--oc2-text-primary);
     }
 
-/* Depth-coloured top accent bar */
-.oc-card-accent {
-    height: 4px;
-    background: var(--oc-accent);
-    border-radius: 16px 16px 0 0;
-    flex-shrink: 0;
+/* Root node card — slightly larger, accent border */
+.oc2-root > .oc2-card {
+    width: 220px;
+    border-color: rgba(1,129,176,0.3);
+    box-shadow: 0 0 0 1px rgba(1,129,176,0.15), 0 4px 24px rgba(0,0,0,0.3);
 }
 
-/* ── Card body ───────────────────────────────────────────── */
-.oc-card-body {
+    .oc2-root > .oc2-card:hover {
+        border-color: var(--oc2-accent);
+        box-shadow: 0 0 0 1px var(--oc2-accent), 0 8px 32px rgba(1,129,176,0.2);
+    }
+
+/* Coloured left stripe */
+.oc2-card-stripe {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--stripe-color, var(--oc2-accent));
+    opacity: 0.7;
+    border-radius: 3px 0 0 3px;
+    transition: opacity 0.2s;
+}
+
+.oc2-card:hover .oc2-card-stripe {
+    opacity: 1;
+}
+
+/* Card inner: avatar + info */
+.oc2-card-inner {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 14px 10px;
+    gap: 10px;
+    padding: 14px 14px 12px 18px;
 }
 
-/* ── Initials avatar ─────────────────────────────────────── */
-.oc-avatar {
-    width: 40px;
-    height: 40px;
+/* ── Avatar ────────────────────────────────────────────────────── */
+.oc2-avatar {
+    width: 38px;
+    height: 38px;
     border-radius: 10px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 600;
     color: #fff;
     letter-spacing: 0.02em;
-    user-select: none;
+    position: relative;
+    overflow: hidden;
 }
 
-/* ── Text stack ──────────────────────────────────────────── */
-.oc-info {
+/* Root avatar slightly larger */
+.oc2-root > .oc2-card .oc2-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 15px;
+    border-radius: 12px;
+}
+
+/* Photo variant */
+.oc2-avatar.oc2-avatar-photo {
+    background: transparent !important;
+}
+
+.oc2-avatar-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: inherit;
+}
+
+/* ── Card info text ────────────────────────────────────────────── */
+.oc2-card-info {
     display: flex;
     flex-direction: column;
     gap: 2px;
     min-width: 0;
 }
 
-.oc-name {
+.oc2-card-name {
     font-size: 13px;
-    font-weight: 650;
-    color: var(--hr-text);
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    font-weight: 600;
+    color: var(--oc2-text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block;
+    letter-spacing: -0.01em;
 }
 
-.oc-title {
+.oc2-root > .oc2-card .oc2-card-name {
+    font-size: 14px;
+}
+
+.oc2-card-title {
     font-size: 11px;
-    color: var(--hr-text-2);
-    line-height: 1.3;
+    font-weight: 400;
+    color: var(--oc2-text-secondary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block;
 }
 
-.oc-dept {
-    display: inline-flex;
-    align-items: center;
-    font-size: 10px;
-    font-weight: 500;
-    color: var(--hr-text-muted);
-    background: var(--hr-surface-2);
-    border: 1px solid var(--hr-border);
-    border-radius: 99px;
-    padding: 1px 8px;
-    margin-top: 3px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 120px;
-}
-
-/* ── Card footer (team count) ────────────────────────────── */
-.oc-card-footer {
-    padding: 6px 14px 10px;
-    border-top: 1px solid var(--hr-border);
-    margin-top: 2px;
-}
-
-.oc-team-count {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--hr-text-muted);
+.oc2-card-dept {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--oc2-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+    font-family: var(--oc2-font-mono);
 }
 
-    .oc-team-count i {
-        color: var(--oc-accent);
-        font-size: 10px;
+    .oc2-card-dept i {
+        font-size: 9px;
+        opacity: 0.7;
     }
 
-/* ── Root node — slightly larger card ───────────────────── */
-.oc-root > .oc-card {
-    width: 240px;
-    box-shadow: var(--hr-shadow-md);
+/* ── Card footer ───────────────────────────────────────────────── */
+.oc2-card-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 18px;
+    border-top: 1px solid var(--oc2-border);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--oc2-text-muted);
+    font-family: var(--oc2-font-mono);
+    transition: color 0.2s, border-color 0.2s;
 }
 
-    .oc-root > .oc-card .oc-card-accent {
-        height: 5px;
-    }
+.oc2-card:hover .oc2-card-footer {
+    color: var(--oc2-text-secondary);
+    border-top-color: var(--oc2-border-hover);
+}
 
-    .oc-root > .oc-card .oc-avatar {
-        width: 46px;
-        height: 46px;
-        font-size: 16px;
-    }
-
-    .oc-root > .oc-card .oc-name {
-        font-size: 14px;
-    }
-
-/* ── Empty state ─────────────────────────────────────────── */
-.oc-empty {
+/* ── Empty state ───────────────────────────────────────────────── */
+.oc2-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 12px;
     padding: 80px 24px;
-    gap: 14px;
     text-align: center;
-    background: var(--hr-surface);
-    border: 1px solid var(--hr-border);
-    border-radius: var(--hr-radius-xl);
-    box-shadow: var(--hr-shadow-xs);
 }
 
-.oc-empty-icon {
-    width: 64px;
-    height: 64px;
-    border-radius: 18px;
-    background: var(--hr-accent-dim);
+.oc2-empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: var(--oc2-surface);
+    border: 1px solid var(--oc2-border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 26px;
-    color: var(--hr-accent);
+    font-size: 22px;
+    color: var(--oc2-text-muted);
+    margin-bottom: 4px;
 }
 
-.oc-empty-title {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    color: var(--hr-text);
+.oc2-empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--oc2-text-primary);
     margin: 0;
 }
 
-.oc-empty-sub {
-    font-size: 14px;
-    color: var(--hr-text-muted);
-    max-width: 280px;
-    line-height: 1.6;
+.oc2-empty-sub {
+    font-size: 13px;
+    color: var(--oc2-text-secondary);
     margin: 0;
 }
 
-/* ── Dark mode connector lines ───────────────────────────── */
-body.dark-mode .oc-node:has(.oc-children)::after,
-body.dark-mode .oc-children::before,
-body.dark-mode .oc-children > .oc-node::before {
-    background: var(--hr-border-med);
-}
+/* ── Entrance animation ────────────────────────────────────────── */
+@keyframes oc2-fadein {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
 
-/* ── Responsive ──────────────────────────────────────────── */
-@media (max-width: 1100px) {
-    .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-@media (max-width: 900px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .dept-stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .hr-reports-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .hr-meta-grid {
-        grid-template-columns: 1fr;
-    }
+/* Stagger children */
+.oc2-node:nth-child(1) .oc2-card {
+    animation-delay: 0.00s;
 }
 
-@media (max-width: 768px) {
-    .hierarchy-page,
-    .orgchart-page {
-        padding: 20px 16px;
-    }
+.oc2-node:nth-child(2) .oc2-card {
+    animation-delay: 0.04s;
+}
 
-    .search-input,
-    .search-input:focus {
+.oc2-node:nth-child(3) .oc2-card {
+    animation-delay: 0.08s;
+}
+
+.oc2-node:nth-child(4) .oc2-card {
+    animation-delay: 0.12s;
+}
+
+.oc2-node:nth-child(5) .oc2-card {
+    animation-delay: 0.16s;
+}
+
+.oc2-node:nth-child(6) .oc2-card {
+    animation-delay: 0.20s;
+}
+
+.oc2-node:nth-child(7) .oc2-card {
+    animation-delay: 0.24s;
+}
+
+.oc2-node:nth-child(8) .oc2-card {
+    animation-delay: 0.28s;
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   PHOTO AVATAR ADDITIONS  — append these rules to Hierarchy.css
+   ───────────────────────────────────────────────────────────────── */
+
+/* ── Shared photo state for all .av elements ─────────────────────
+   The .av element already has a fixed size (set by av-sm/md/lg/xl).
+   position:relative + inset:0 on the img keeps it locked inside.   */
+.av.av-photo {
+    background: transparent !important;
+    padding: 0;
+    overflow: hidden; /* clip the image to the avatar shape */
+    position: relative; /* establish containing block         */
+    flex-shrink: 0; /* prevent collapsing in flex parents */
+}
+
+    .av.av-photo .av-img {
+        position: absolute;
+        inset: 0; /* fill exactly the .av box           */
         width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        display: block;
+        border-radius: inherit;
     }
 
-    .hierarchy-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
+/* ── OrgChart node avatar photo ──────────────────────────────────*/
+.oc-avatar.oc-avatar-photo {
+    background: transparent !important;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+}
 
-    .control-section {
+    .oc-avatar.oc-avatar-photo .av-img {
+        position: absolute;
+        inset: 0;
         width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        display: block;
+        border-radius: inherit;
     }
 
-    .hr-profile-card {
-        flex-direction: column;
-    }
-
-    .hr-profile-avatar {
-        width: 80px;
-        height: 80px;
-    }
+/* ── Employee list table avatar photo ────────────────────────────*/
+.emp-avatar.emp-avatar-photo {
+    background: transparent !important;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
 }
 
-@media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr 1fr;
+    .emp-avatar.emp-avatar-photo .av-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center top;
+        display: block;
+        border-radius: inherit;
     }
 
-    .dept-stats {
-        grid-template-columns: 1fr 1fr;
-    }
+/* ── Subtle ring on photo avatars for polish ─────────────────────*/
+.av.av-photo,
+.oc-avatar.oc-avatar-photo,
+.emp-avatar.emp-avatar-photo {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6), 0 0 0 3px rgba(0, 0, 0, 0.08);
 }
 
-/* ── Print ───────────────────────────────────────────────── */
-@media print {
-    .hierarchy-controls,
-    .header-actions,
-    .node-actions {
-        display: none !important;
-    }
 
-    .subordinates-grid {
-        display: block !important;
-    }
-
-    .hierarchy-page {
-        padding: 0;
-    }
-
-    .node-card {
-        break-inside: avoid;
-        box-shadow: none;
-        border-color: #ccc;
-    }
-}

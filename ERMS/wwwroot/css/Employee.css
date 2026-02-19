@@ -1835,3 +1835,127 @@ body.dark-mode .ep-chip-danger {
     .ep-card:nth-child(4) {
         animation-delay: .22s;
     }
+
+
+/* ── Pagination ─────────────────────────────────────────────────────────── */
+/* Replace the entire pagination block at the bottom of Employee.css        */
+
+.emp-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-top: 1px solid var(--border, rgba(0,0,0,0.07));
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.emp-count {
+    font-size: 13px;
+    color: var(--text-muted, #8a95a3);
+}
+
+    .emp-count strong {
+        color: var(--text, #0d1117);
+        font-weight: 600;
+    }
+
+body.dark-mode .emp-count strong {
+    color: var(--text, #e8edf5);
+}
+
+/* Pagination container */
+.emp-pagination {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+/* Base button */
+.emp-page-btn {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border, rgba(0,0,0,0.08));
+    background: var(--surface, #fff);
+    color: var(--text-secondary, #4a5568);
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    user-select: none;
+    white-space: nowrap;
+}
+
+    /* Hover */
+    .emp-page-btn:hover:not(.disabled):not(.active) {
+        background: var(--surface-2, #f7f9fc);
+        border-color: var(--accent, #0181b0);
+        color: var(--accent, #0181b0);
+    }
+
+    /* Active / current page */
+    .emp-page-btn.active {
+        background: var(--accent, #0181b0);
+        border-color: var(--accent, #0181b0);
+        color: #fff;
+        cursor: default;
+        box-shadow: 0 2px 8px rgba(1, 129, 176, 0.28);
+    }
+
+    /* Disabled (prev on page 1, next on last page) */
+    .emp-page-btn.disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    /* Prev / Next arrows — slightly wider */
+    .emp-page-btn:first-child,
+    .emp-page-btn:last-child {
+        font-size: 16px;
+        padding: 0 8px;
+    }
+
+/* Ellipsis dots */
+.emp-page-dots {
+    min-width: 28px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted, #8a95a3);
+    font-size: 13px;
+    user-select: none;
+    letter-spacing: 0.05em;
+}
+
+/* ── Dark mode ───────────────────────────────────────────────────────────── */
+body.dark-mode .emp-page-btn {
+    background: var(--surface, #111827);
+    border-color: var(--border, rgba(255,255,255,0.07));
+    color: var(--text-secondary, #94a3b8);
+}
+
+    body.dark-mode .emp-page-btn:hover:not(.disabled):not(.active) {
+        background: var(--surface-2, #161d2e);
+        border-color: var(--accent, #22aad4);
+        color: var(--accent, #22aad4);
+    }
+
+    body.dark-mode .emp-page-btn.active {
+        background: var(--accent, #22aad4);
+        border-color: var(--accent, #22aad4);
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(34, 170, 212, 0.25);
+    }
+
+body.dark-mode .emp-page-dots {
+    color: var(--text-muted, #4e5d73);
+}

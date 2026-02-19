@@ -1,30 +1,38 @@
 @* Views/Hierarchy/_HierarchyNode.cshtml *@
 @model ERMS.ViewModels.Hierarchy.HierarchyNodeViewModel
-
 @{
     var name     = Model.FullName ?? "?";
     var parts    = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
     var initials = parts.Length >= 2
         ? $"{char.ToUpper(parts[0][0])}{char.ToUpper(parts[^1][0])}"
         : name.Length > 0 ? char.ToUpper(name[0]).ToString() : "?";
-
     string[] palette = { "#0181b0","#10b981","#f59e0b","#8b5cf6","#06b6d4","#ef4444","#ec4899","#6366f1" };
     int ci = 0; foreach (char c in name) ci += c;
-    var bg = palette[ci % palette.Length];
+    var bg          = palette[ci % palette.Length];
+    var hasPhoto    = !string.IsNullOrWhiteSpace(Model.ProfilePicturePath);
+    var photoSrc    = hasPhoto ? Url.Content(Model.ProfilePicturePath) : null;
 }
-
 <div class="org-chart-node" data-level="@Model.Level" data-employee-id="@Model.Id">
-
     <div class="node-card">
-
         <div class="node-avatar-container">
-            <div class="av av-md av-rounded" style="background: @bg">@initials</div>
+            @if (hasPhoto)
+            {
+                <div class="av av-md av-rounded av-photo">
+                    <img src="@photoSrc"
+                         alt="@name"
+                         class="av-img"
+                         onerror="this.closest('.av-photo').classList.remove('av-photo'); this.remove();" />
+                </div>
+            }
+            else
+            {
+                <div class="av av-md av-rounded" style="background: @bg">@initials</div>
+            }
             @if (Model.HasSubordinates)
             {
                 <span class="team-badge">@Model.SubordinateCount</span>
             }
         </div>
-
         <div class="node-content">
             <h3 class="node-name">
                 <a asp-controller="Hierarchy"
@@ -34,24 +42,48 @@
             </h3>
             <p class="node-title">@Model.PositionTitle</p>
             <span class="node-department">@Model.DepartmentName</span>
-
             <div class="node-actions">
-                <button class="action-btn"
-                        title="@Model.Email"
-                        data-bs-toggle="tooltip"
-                        data-bs-placement="top">
+                <a href="mailto:@Model.Email"
+                   class="action-btn"
+                   title="Email: @Model.Email"
+                   data-bs-toggle="tooltip"
+                   data-bs-placement="top">
                     <i class="fas fa-envelope"></i>
-                </button>
+                </a>
 
                 @if (Model.HasPhoneNumber)
                 {
-                    <button class="action-btn"
-                            title="@Model.PhoneNumber"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="top">
-                        <i class="fas fa-phone"></i>
-                    </button>
+                    <a href="sms:@Model.PhoneNumber"
+                       class="action-btn"
+                       title="Text: @Model.PhoneNumber"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top">
+                        <i class="fas fa-sms"></i>
+                    </a>
                 }
+
+                @if (Model.HasPhoneNumber)
+                {
+                    <a href="tel:@Model.PhoneNumber"
+                       class="action-btn"
+                       title="Call: @Model.PhoneNumber"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top">
+                        <i class="fas fa-phone"></i>
+                    </a>
+                }
+
+                {{!-- In-app chat --}}
+                <button class="action-btn chat-btn"
+                        type="button"
+                        title="Chat with @Model.FullName"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-employee-id="@Model.Id"
+                        data-employee-name="@Model.FullName"
+                        onclick="openChat(@Model.Id, '@Html.Raw(Model.FullName?.Replace("'", "\\'"))')">
+                    <i class="fas fa-comment-dots"></i>
+                </button>
 
                 @if (Model.HasSubordinates)
                 {
@@ -66,7 +98,6 @@
             </div>
         </div>
     </div>
-
     @if (Model.HasSubordinates && Model.Subordinates != null && Model.Subordinates.Any())
     {
         <div class="subordinates-grid hr-expanded"
@@ -78,5 +109,4 @@
             }
         </div>
     }
-
 </div>
