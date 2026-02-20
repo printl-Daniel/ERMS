@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ERMS.Migrations
 {
     [DbContext(typeof(ERMSDbContext))]
-    [Migration("20260219034642_sd")]
-    partial class sd
+    [Migration("20260220025442_sdadas")]
+    partial class sdadas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -100,6 +100,9 @@ namespace ERMS.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("datetime2");
 
@@ -164,6 +167,7 @@ namespace ERMS.Migrations
                         {
                             Id = 1,
                             Address = "123 Main St, City, State 12345",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1980, 5, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 1,
                             Email = "john.smith@company.com",
@@ -179,6 +183,7 @@ namespace ERMS.Migrations
                         {
                             Id = 2,
                             Address = "456 Oak Ave, City, State 12345",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1985, 8, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 2,
                             Email = "sarah.johnson@company.com",
@@ -195,6 +200,7 @@ namespace ERMS.Migrations
                         {
                             Id = 3,
                             Address = "789 Pine Rd, City, State 12345",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1983, 3, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 3,
                             Email = "michael.chen@company.com",
@@ -211,6 +217,7 @@ namespace ERMS.Migrations
                         {
                             Id = 4,
                             Address = "321 Elm St, City, State 12345",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1987, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 4,
                             Email = "emily.davis@company.com",
@@ -227,6 +234,7 @@ namespace ERMS.Migrations
                         {
                             Id = 5,
                             Address = "654 Maple Dr, City, State 12345",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1986, 7, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 5,
                             Email = "david.wilson@company.com",
@@ -243,6 +251,7 @@ namespace ERMS.Migrations
                         {
                             Id = 6,
                             Address = "987 Cedar Ln, City, State 12345",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1990, 2, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 3,
                             Email = "james.brown@company.com",
@@ -259,6 +268,7 @@ namespace ERMS.Migrations
                         {
                             Id = 7,
                             Address = "147 Birch St, City, State 12345",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1995, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 3,
                             Email = "lisa.garcia@company.com",
@@ -275,6 +285,7 @@ namespace ERMS.Migrations
                         {
                             Id = 8,
                             Address = "258 Willow Way, City, State 12345",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1992, 4, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 4,
                             Email = "robert.martinez@company.com",
@@ -291,6 +302,7 @@ namespace ERMS.Migrations
                         {
                             Id = 9,
                             Address = "369 Spruce Ave, City, State 12345",
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateTime(1993, 12, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DepartmentId = 4,
                             Email = "jennifer.taylor@company.com",

@@ -18,15 +18,15 @@ namespace ERMS.Repositories.Implementations
         public async Task<IEnumerable<Department>> GetAllAsync()
         {
             return await _context.Departments
+                .Include(d => d.Employees)
                 .OrderBy(d => d.Name)
                 .ToListAsync();
         }
-
         public async Task<IEnumerable<Department>> GetAllActiveAsync()
         {
             return await _context.Departments
+                .Include(d => d.Employees) 
                 .Where(d => !d.IsDeleted)
-                .OrderBy(d => d.Name)
                 .ToListAsync();
         }
 

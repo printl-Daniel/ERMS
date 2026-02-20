@@ -2,6 +2,7 @@
 using ERMS.Helpers;
 using ERMS.Services.Interfaces;
 using ERMS.ViewModels.Auth;
+using ERMS.Constants;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -43,25 +44,25 @@ namespace ERMS.Controllers
 
             if (!result.Success)
             {
-                ModelState.AddModelError("", result.Message);
+                ModelState.AddModelError("", result.Message ?? Messages.Error.Auth.InvalidCredentials);
                 return View(model);
             }
 
-            // ── First login → skip session/cookie, go straight to ResetPassword ──
+            // ── First login → force reset password ──
             if (result.IsFirstLogin)
             {
-                TempData["InfoMessage"] = "Please set a new password before continuing.";
+                TempData["InfoMessage"] = Messages.Info.InfoMessage;
                 var encodedToken = Uri.EscapeDataString(result.FirstLoginToken);
                 return Redirect($"/Auth/ResetPassword?token={encodedToken}");
             }
 
-            // ── Normal login → build claims and sign in ──
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, result.UserId.ToString()),
-                new Claim(ClaimTypes.Name,           result.FullName),
-                new Claim(ClaimTypes.Role,           result.Role),
-                new Claim("EmployeeId",              result.EmployeeId.ToString())
+                new Claim(ClaimTypes.Name, result.FullName),
+                new Claim(ClaimTypes.Role, result.Role),
+                new Claim("EmployeeId", result.EmployeeId.ToString()),
+                new Claim("ProfilePicture", result.ProfilePicturePath ?? "")
             };
 
             await HttpContext.SignInAsync(
@@ -71,8 +72,8 @@ namespace ERMS.Controllers
                 {
                     IsPersistent = model.RememberMe,
                     ExpiresUtc = model.RememberMe
-                                     ? DateTimeOffset.UtcNow.AddDays(30)
-                                     : DateTimeOffset.UtcNow.AddMinutes(30),
+                        ? DateTimeOffset.UtcNow.AddDays(30)
+                        : DateTimeOffset.UtcNow.AddMinutes(30),
                     AllowRefresh = true
                 });
 
@@ -95,6 +96,8 @@ namespace ERMS.Controllers
             await _authService.LogoutAsync();
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();
+
+            TempData["SuccessMessage"] = Messages.Success.Auth.LogoutSuccess;
             return RedirectToAction("Login");
         }
 
@@ -108,15 +111,16 @@ namespace ERMS.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var result = await _authService.ForgotPasswordAsync(new ForgotPasswordDto { Email = model.Email });
+            var result = await _authService.ForgotPasswordAsync(
+                new ForgotPasswordDto { Email = model.Email });
 
             if (result.Success)
             {
-                TempData["SuccessMessage"] = result.Message;
+                TempData["SuccessMessage"] = Messages.Success.Auth.PasswordResetSent;
                 return RedirectToAction("ForgotPasswordConfirmation");
             }
 
-            ModelState.AddModelError("", result.Message);
+            ModelState.AddModelError("", result.Message ?? Messages.Error.Auth.EmailNotFound);
             return View(model);
         }
 
@@ -128,7 +132,7 @@ namespace ERMS.Controllers
         {
             if (string.IsNullOrEmpty(token))
             {
-                TempData["ErrorMessage"] = "Invalid reset link.";
+                TempData["ErrorMessage"] = Messages.Error.Auth.InvalidResetLink;
                 return RedirectToAction("Login");
             }
 
@@ -137,11 +141,10 @@ namespace ERMS.Controllers
 
             if (!isValid)
             {
-                TempData["ErrorMessage"] = "This reset link is invalid or has expired.";
+                TempData["ErrorMessage"] = Messages.Error.Auth.InvalidToken;
                 return RedirectToAction("Login");
             }
 
-            // Pass through any first-login info message
             if (TempData["InfoMessage"] != null)
                 ViewData["InfoMessage"] = TempData["InfoMessage"];
 
@@ -164,11 +167,11 @@ namespace ERMS.Controllers
 
             if (result.Success)
             {
-                TempData["SuccessMessage"] = result.Message;
+                TempData["SuccessMessage"] = Messages.Success.Auth.PasswordResetSuccess;
                 return RedirectToAction("ResetPasswordConfirmation");
             }
 
-            ModelState.AddModelError("", result.Message);
+            ModelState.AddModelError("", result.Message ?? Messages.Error.Auth.PasswordUpdateFailed);
             return View(model);
         }
 
@@ -178,7 +181,7 @@ namespace ERMS.Controllers
         [HttpGet]
         public IActionResult AccessDenied() => View();
 
-        // ── PRIVATES ─────────────────────────────────────────────────────────────
+        // ── PRIVATE ─────────────────────────────────────────────
 
         private IActionResult RedirectToDashboard(string? role = null)
         {

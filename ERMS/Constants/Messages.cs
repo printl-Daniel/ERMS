@@ -17,7 +17,7 @@
             {
                 public const string Created = "Employee created successfully";
                 public const string Deleted = "Employee deleted successfully";
-                public const string Updated = "was updated successfully."; 
+                public const string Updated = "was updated successfully.";
             }
 
             public static class Department
@@ -72,7 +72,6 @@
                 // Add these:
                 public const string InvalidRequest = "Invalid request.";
                 public const string UpdateFailed = "Update failed. Please try again.";
-
             }
 
             public static class Department
@@ -80,6 +79,7 @@
                 public const string NotFound = "Department not found";
                 public const string DeleteFailed = "Failed to delete department";
                 public const string NameExists = "A department with this name already exists";
+                public const string HasEmployees = "Cannot delete a department that has active employees assigned.";
             }
 
             public static class Position
@@ -108,6 +108,7 @@
         {
             public const string LoginRequired = "Please login to continue";
             public const string SessionExpired = "Your session has expired. Please login again";
+            public const string InfoMessage = "Please set a new password before continuing.";
         }
     }
 }

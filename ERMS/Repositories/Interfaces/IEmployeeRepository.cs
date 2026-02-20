@@ -24,5 +24,7 @@ namespace ERMS.Repositories.Interfaces
         Task<IEnumerable<Employee>> GetEmployeeChainAsync(int employeeId);
 
         Task<IEnumerable<SelectListItem>> GetManagerDropdownAsync(int? excludeEmployeeId = null);
+
+
     }
 }

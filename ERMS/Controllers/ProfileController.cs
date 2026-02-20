@@ -1,7 +1,10 @@
 ﻿using ERMS.Helpers.Mappers;
 using ERMS.Services.Interfaces;
 using ERMS.ViewModels.Profile;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ERMS.Controllers
 {
@@ -61,6 +64,7 @@ namespace ERMS.Controllers
             return RedirectToAction("Profile");
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfilePicture(UpdateProfilePictureViewModel model)
@@ -97,8 +101,21 @@ namespace ERMS.Controllers
                 using (var fileStream = new FileStream(filePath, FileMode.Create))
                     await model.ProfilePicture.CopyToAsync(fileStream);
 
-                var result = await _profileService.UpdateProfilePictureAsync(
-                    model.ToDto($"/uploads/profiles/{uniqueFileName}"));
+                var newPicturePath = $"/uploads/profiles/{uniqueFileName}";
+
+                var result = await _profileService.UpdateProfilePictureAsync(model.ToDto(newPicturePath));
+
+                if (result.Success)
+                {
+                    var identity = (ClaimsIdentity)User.Identity;
+                    var existing = identity.FindFirst("ProfilePicture");
+                    if (existing != null) identity.RemoveClaim(existing);
+                    identity.AddClaim(new Claim("ProfilePicture", newPicturePath));
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(identity));
+                }
 
                 TempData[result.Success ? "Success" : "Error"] = result.Message;
             }

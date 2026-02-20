@@ -44,6 +44,9 @@ namespace ERMS.ViewModels.Employee
         [Display(Name = "Status")]
         public string Status { get; set; } = "Active";
 
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+
         public string FullName => $"{FirstName} {LastName}".Trim();
 
         public IEnumerable<SelectListItem> Departments { get; set; }

@@ -142,6 +142,24 @@
         </div>
     }
 
+    <!-- ── Audit Info ── -->
+    <div class="ep-card">
+        <div class="ep-info-grid">
+            <div class="ep-info-cell">
+                <div class="ep-info-key">Record Created</div>
+                <div class="ep-info-val">@Model.CreatedAt.ToString("MMMM d, yyyy 'at' h:mm tt")</div>
+            </div>
+            <div class="ep-info-cell">
+                <div class="ep-info-key">Last Modified</div>
+                <div class="ep-info-val">
+                    @(Model.UpdatedAt.HasValue
+                                        ? Model.UpdatedAt.Value.ToString("MMMM d, yyyy 'at' h:mm tt")
+                                        : "Never modified")
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- ── Actions ── -->
     <div class="ep-actions">
         <a href="@Url.Action("Index", "Employee")" class="btn btn-default btn-lg">

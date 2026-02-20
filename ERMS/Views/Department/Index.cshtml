@@ -1,81 +1,243 @@
 @model IEnumerable<ERMS.ViewModels.Department.DepartmentViewModel>
 @{
     ViewData["Title"] = "Departments";
+    var total = Model.Count();
+    var inUse = Model.Count(d => d.IsInUse);
+    var empty = total - inUse;
 }
 
-<link rel="stylesheet" href="~/css/Department-Position.css" />
+@section styles {
+    <link rel="stylesheet" href="~/css/Department.css" />
+}
 
-<div class="pp-wrap">
+<div class="emp-page">
 
-    <!-- Header -->
-    <div class="pp-header">
+    <!-- ── Header ── -->
+    <div class="emp-page-header">
         <div>
-            <p class="pp-eyebrow">Administration</p>
-            <h1 class="pp-title">Departments</h1>
+            <p class="emp-eyebrow">Administration</p>
+            <h1 class="emp-title">Departments</h1>
+            <p class="emp-sub">Manage and organise your company departments.</p>
         </div>
-        <a asp-action="Create" class="btn btn-primary">
-            <span class="glyphicon glyphicon-plus" style="font-size:12px;"></span>
+        <a asp-action="Create" class="emp-btn emp-btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 5v14M5 12h14"/>
+            </svg>
             New Department
         </a>
     </div>
 
-    <!-- Toast alerts -->
+    <!-- ── Alerts ── -->
     @if (TempData["SuccessMessage"] != null)
     {
-        <div class="pp-alert success">
-            <span class="pp-alert-icon glyphicon glyphicon-ok"></span>
-            <div class="pp-alert-content">@TempData["SuccessMessage"]</div>
+        <div class="emp-flash emp-flash--success">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            @TempData["SuccessMessage"]
         </div>
     }
     @if (TempData["ErrorMessage"] != null)
     {
-        <div class="pp-alert danger">
-            <span class="pp-alert-icon glyphicon glyphicon-exclamation-sign"></span>
-            <div class="pp-alert-content">@TempData["ErrorMessage"]</div>
+        <div class="emp-flash emp-flash--danger">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            @TempData["ErrorMessage"]
         </div>
     }
 
-    <!-- Table card -->
-    <div class="pp-card">
-        <div class="pp-card-head">
-            <span class="pp-card-label">
-                <span class="pp-card-icon"><span class="glyphicon glyphicon-th-large"></span></span>
+    <!-- ── Stats ── -->
+    <div class="emp-stats">
+        <div class="emp-stat-card">
+            <div class="emp-stat-icon emp-icon-blue">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
+            </div>
+            <div>
+                <div class="emp-stat-label">Total Departments</div>
+                <div class="emp-stat-value">@total</div>
+            </div>
+        </div>
+        <div class="emp-stat-card">
+            <div class="emp-stat-icon emp-icon-green">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+            </div>
+            <div>
+                <div class="emp-stat-label">In Use</div>
+                <div class="emp-stat-value">@inUse</div>
+                <div class="emp-stat-delta">
+                    @(total > 0 ? $"{(inUse * 100 / total)}% of total" : "—")
+                </div>
+            </div>
+        </div>
+        <div class="emp-stat-card">
+            <div class="emp-stat-icon emp-icon-amber">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="8" y1="12" x2="16" y2="12"/>
+                </svg>
+            </div>
+            <div>
+                <div class="emp-stat-label">Empty</div>
+                <div class="emp-stat-value">@empty</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Main Card ── -->
+    <div class="emp-card">
+
+        <div class="emp-card-header">
+            <span class="emp-card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
                 All Departments
             </span>
-            <span class="pp-chip pp-chip-accent">
-                @Model.Count() department@(Model.Count() == 1 ? "" : "s")
-            </span>
+
+            <div class="emp-card-controls">
+                <!-- Search -->
+                <div class="emp-search-wrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="deptSearchInput" class="emp-search-input"
+                           placeholder="Search departments…" />
+                </div>
+
+                <!-- Sort -->
+                <select id="deptSortSelect" class="emp-sort-select">
+                    <option value="name-asc">Name A to Z</option>
+                    <option value="name-desc">Name Z to A</option>
+                    <option value="newest">Newest Created</option>
+                    <option value="employees-desc">Most Employees</option>
+                </select>
+
+                <!-- Reset -->
+                <button type="button" id="deptResetFilters" class="emp-btn emp-btn-outline">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                    </svg>
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- ── Usage Pills ── -->
+        <div class="emp-filter-pills">
+            <button class="emp-pill active" data-filter="all">
+                All <span class="emp-pill-count">@total</span>
+            </button>
+            <button class="emp-pill" data-filter="inuse">
+                In Use <span class="emp-pill-count">@inUse</span>
+            </button>
+            <button class="emp-pill" data-filter="empty">
+                Empty <span class="emp-pill-count">@empty</span>
+            </button>
         </div>
 
         @if (Model.Any())
         {
-            <div class="pp-table-wrap">
-                <table class="pp-table">
+            <div class="emp-table-wrap">
+                <table id="deptTable">
                     <thead>
                         <tr>
                             <th>Department</th>
-                            <th class="right">Actions</th>
+                            <th>Employees</th>
+                            <th class="th-actions">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            <tr>
+                            <tr data-status="@(item.IsInUse ? "inuse" : "empty")"
+                                data-search="@((item.Name + " " + item.Description).ToLower())"
+                                data-id="@item.Id"
+                                data-name="@item.Name.ToLower()"
+                                data-employees="@item.EmployeeCount">
                                 <td>
-                                    <div class="pp-table-title">@item.Name</div>
+                                    <div class="emp-name">@item.Name</div>
                                     @if (!string.IsNullOrWhiteSpace(item.Description))
                                     {
-                                        <div class="pp-table-sub">@item.Description</div>
+                                        <div class="emp-email">@item.Description</div>
                                     }
                                 </td>
-                                <td class="right">
-                                    <div style="display:inline-flex; gap:6px;">
-                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">
-                                            <span class="glyphicon glyphicon-pencil"></span>
+                                <td>
+                                    @if (item.IsInUse)
+                                    {
+                                        <span class="emp-badge emp-badge-active">
+                                            <span class="emp-badge-dot"></span>
+                                            @item.EmployeeCount employee@(item.EmployeeCount == 1 ? "" : "s")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="emp-badge emp-badge-inactive">
+                                            <span class="emp-badge-dot"></span>
+                                            No employees
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="emp-actions">
+                                        <a asp-action="Edit" asp-route-id="@item.Id"
+                                           class="emp-act-btn emp-act-edit" title="Edit department">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            </svg>
                                         </a>
-                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">
-                                            <span class="glyphicon glyphicon-trash"></span>
-                                        </a>
+                                        @if (item.IsInUse)
+                                        {
+                                            <span class="emp-tooltip-wrap" data-tooltip="Cannot delete – Department has assigned employees.">
+                                                <button type="button" class="emp-act-btn emp-act-del"
+                                                        disabled style="opacity:0.35; cursor:not-allowed; pointer-events:none;">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <polyline points="3 6 5 6 21 6"/>
+                                                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                                        <path d="M10 11v6M14 11v6"/>
+                                                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                                    </svg>
+                                                </button>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Delete" asp-route-id="@item.Id"
+                                               class="emp-act-btn emp-act-del" title="Delete department">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polyline points="3 6 5 6 21 6"/>
+                                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                                                    <path d="M10 11v6M14 11v6"/>
+                                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                                </svg>
+                                            </a>
+                                        }
                                     </div>
                                 </td>
                             </tr>
@@ -83,21 +245,35 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="emp-table-footer">
+                <span class="emp-count" id="deptCount"></span>
+            </div>
         }
         else
         {
-            <div class="pp-empty">
-                <div class="pp-empty-icon">
-                    <span class="glyphicon glyphicon-th-large"></span>
+            <div class="emp-empty">
+                <div class="emp-empty-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                    </svg>
                 </div>
-                <div class="pp-empty-title">No departments yet</div>
-                <div class="pp-empty-sub">Create your first department to start organising employees.</div>
-                <a asp-action="Create" class="btn btn-primary" style="margin-top:8px;">
-                    <span class="glyphicon glyphicon-plus" style="font-size:12px;"></span>
+                <div class="emp-empty-title">No departments yet</div>
+                <div class="emp-empty-sub">Create your first department to start organising employees.</div>
+                <a asp-action="Create" class="emp-btn emp-btn-primary" style="margin-top:8px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 5v14M5 12h14"/>
+                    </svg>
                     New Department
                 </a>
             </div>
         }
     </div>
-
 </div>
+
+@section scripts {
+    <script src="~/js/Department.js"></script>
+}

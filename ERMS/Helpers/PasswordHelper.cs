@@ -43,7 +43,7 @@ namespace ERMS.Helpers
 
         public static string HashPassword(string password)
         {
-            // ✅ BCrypt handles salting internally
+  
             return BCrypt.Net.BCrypt.HashPassword(password);
         }
 

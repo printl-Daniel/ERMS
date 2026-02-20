@@ -10,13 +10,14 @@ namespace ERMS.Helpers.Mappers
         // ── SERVICE MAPPERS ───────────────────────────────────────────────────
 
         // Department → DepartmentDto
-        public static DepartmentDto ToDto(this Department department) =>
-            new DepartmentDto
-            {
-                Id = department.Id,
-                Name = department.Name,
-                Description = department.Description
-            };
+        public static DepartmentDto ToDto(this Department d) => new DepartmentDto
+        {
+            Id = d.Id,
+            Name = d.Name,
+            Description = d.Description,
+            EmployeeCount = d.Employees?.Count(e => !e.IsDeleted) ?? 0  // ← key fix
+        };
+
 
         // CreateDepartmentDto → Department
         public static Department ToEntity(this CreateDepartmentDto dto) =>
@@ -35,10 +36,9 @@ namespace ERMS.Helpers.Mappers
             {
                 Id = dto.Id,
                 Name = dto.Name,
-                Description = dto.Description
+                Description = dto.Description,
+                EmployeeCount = dto.EmployeeCount   // ← flows through
             };
-
-        // DepartmentDto → EditDepartmentViewModel
         public static EditDepartmentViewModel ToEditViewModel(this DepartmentDto dto) =>
             new EditDepartmentViewModel
             {

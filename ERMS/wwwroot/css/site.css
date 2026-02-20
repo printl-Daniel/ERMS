@@ -1,6 +1,7 @@
 /* ===== Ultra Modern Minimal Design ===== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 /* ===== CSS Variables ===== */
 :root {
     /* Light theme */
@@ -75,6 +76,10 @@ body {
     box-sizing: border-box;
 }
 
+html {
+    scrollbar-gutter: stable;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     background-color: var(--bg);
@@ -95,7 +100,6 @@ body {
     min-height: 64px;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-
     padding-left: 2vw;
     padding-top: 1vh;
     padding-right: 2vw;
@@ -151,7 +155,7 @@ body {
             border-radius: 2px 2px 0 0;
         }
 
-/* User Info Pill */
+/* ── User Info Pill ───────────────────────────────────────────────── */
 .user-info-pill {
     display: flex !important;
     align-items: center;
@@ -180,8 +184,19 @@ body.dark-mode .user-info-pill:hover {
     background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
     border-radius: 50%;
     color: white;
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    overflow: hidden;
 }
+
+    .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
 
 .user-details {
     display: flex;
@@ -203,7 +218,7 @@ body.dark-mode .user-info-pill:hover {
     letter-spacing: 0.3px;
 }
 
-/* Icon Buttons */
+/* ── Icon Buttons ─────────────────────────────────────────────────── */
 .icon-btn {
     display: flex !important;
     align-items: center;
@@ -234,8 +249,6 @@ body.dark-mode .user-info-pill:hover {
     margin-left: 4px;
 }
 
-
-/* Navbar Form Inline */
 .navbar-form-inline {
     display: inline-block;
     margin: 0;
@@ -260,6 +273,31 @@ body.dark-mode .user-info-pill:hover {
     .modern-navbar .navbar-toggle .icon-bar {
         background-color: var(--text-secondary);
         border-radius: 2px;
+    }
+
+/* ── Login Link ───────────────────────────────────────────────────── */
+.login-link {
+    color: #ffffff !important;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+    .login-link:hover,
+    .login-link:focus {
+        color: #ffffff !important;
+        background-color: rgba(255,255,255,0.15) !important;
+        text-decoration: none;
+    }
+
+body.dark-mode .login-link {
+    color: #f1f5f9 !important;
+}
+
+    body.dark-mode .login-link:hover {
+        background-color: rgba(255,255,255,0.1) !important;
     }
 
 /* ===== Main Content ===== */
@@ -613,7 +651,7 @@ body.dark-mode .alert-warning {
         margin: 0;
     }
 
-/* ===== Pagination ===== */
+/* ===== Pagination (Bootstrap) ===== */
 .pagination > li > a,
 .pagination > li > span {
     color: var(--text-secondary);
@@ -689,7 +727,7 @@ body.dark-mode .alert-warning {
     color: #ef4444 !important;
 }
 
-/* ===== Responsive Design ===== */
+/* ===== Responsive ===== */
 @media (max-width: 768px) {
     .modern-navbar .container-fluid {
         padding: 0 16px;
@@ -780,31 +818,6 @@ body.dark-mode .alert-warning {
     animation: slideDown 0.3s ease;
 }
 
-
-/* ── Login Link ─────────────────────────────────── */
-.login-link {
-    color: #ffffff !important;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: color 0.2s, background-color 0.2s;
-}
-
-    .login-link:hover, .login-link:focus {
-        color: #ffffff !important;
-        background-color: rgba(255,255,255,0.15) !important;
-        text-decoration: none;
-    }
-
-
-body.dark-mode .login-link {
-    color: #f1f5f9 !important;
-}
-
-    body.dark-mode .login-link:hover {
-        background-color: rgba(255,255,255,0.1) !important;
-    }
 /* ── TOAST CONTAINER ─────────────────────────────────────────────── */
 #toast-container {
     position: fixed;
@@ -819,7 +832,6 @@ body.dark-mode .login-link {
     width: calc(100vw - 48px);
 }
 
-/* ── TOAST ITEM ──────────────────────────────────────────────────── */
 .toast-item {
     pointer-events: all;
     display: flex;
@@ -842,7 +854,6 @@ body.dark-mode .login-link {
         animation: toast-out 0.3s cubic-bezier(0.4, 0, 1, 1) forwards;
     }
 
-/* ── COLOR VARIANTS ──────────────────────────────────────────────── */
 .toast-success {
     border-left: 3px solid #22c55e;
 }
@@ -859,7 +870,6 @@ body.dark-mode .login-link {
     border-left: 3px solid #3b82f6;
 }
 
-/* ── ICON ────────────────────────────────────────────────────────── */
 .toast-icon {
     width: 32px;
     height: 32px;
@@ -891,7 +901,6 @@ body.dark-mode .login-link {
     color: #3b82f6;
 }
 
-/* ── BODY ────────────────────────────────────────────────────────── */
 .toast-body {
     flex: 1;
     min-width: 0;
@@ -912,7 +921,6 @@ body.dark-mode .login-link {
     word-break: break-word;
 }
 
-/* ── CLOSE BUTTON ────────────────────────────────────────────────── */
 .toast-close {
     background: none;
     border: none;
@@ -931,7 +939,6 @@ body.dark-mode .login-link {
         background: rgba(255,255,255,0.07);
     }
 
-/* ── PROGRESS BAR ────────────────────────────────────────────────── */
 .toast-progress {
     position: absolute;
     bottom: 0;
@@ -958,7 +965,6 @@ body.dark-mode .login-link {
     background: #3b82f6;
 }
 
-/* ── KEYFRAMES ───────────────────────────────────────────────────── */
 @keyframes toast-in {
     from {
         opacity: 0;
@@ -995,7 +1001,7 @@ body.dark-mode .login-link {
     }
 }
 
-/* ── LIGHT MODE ──────────────────────────────────────────────────── */
+/* Light mode toast */
 body:not(.dark-mode) .toast-item {
     background: #ffffff;
     border-color: rgba(0,0,0,0.08);
@@ -1017,4 +1023,220 @@ body:not(.dark-mode) .toast-close {
     body:not(.dark-mode) .toast-close:hover {
         color: #334155;
         background: rgba(0,0,0,0.05);
+    }
+
+/* ── TABLE FILTER SELECT ──────────────────────────────────────────── */
+.emp-filter-select {
+    height: 38px;
+    padding: 0 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background-color: var(--surface);
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+    .emp-filter-select:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+
+/* ── COLUMN SORT INDICATORS ──────────────────────────────────────── */
+th[data-sort] {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+    th[data-sort]:hover {
+        color: var(--accent);
+    }
+
+.sort-indicator {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-left: 4px;
+    transition: color 0.15s;
+}
+
+    .sort-indicator.sort-asc,
+    .sort-indicator.sort-desc {
+        color: var(--accent);
+    }
+
+th[data-sort]:hover .sort-indicator {
+    color: var(--accent);
+}
+
+/* ── SORT BAR (server-side) ───────────────────────────────────────── */
+.sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.sort-bar-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-right: 4px;
+}
+
+.sort-bar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    text-decoration: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+    .sort-bar-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .sort-bar-btn.active {
+        background: var(--accent-bg);
+        border-color: var(--accent);
+        color: var(--accent);
+        font-weight: 600;
+    }
+
+/* ── CUSTOM PAGINATION (createTableFilter) ───────────────────────── */
+.table-pagination,
+.emp-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+    .page-btn:hover:not(.disabled):not(.active) {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--accent-bg);
+    }
+
+    .page-btn.active {
+        background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+        border-color: var(--accent);
+        color: #ffffff;
+        font-weight: 600;
+    }
+
+    .page-btn.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+
+.page-dots {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+
+.emp-sort-select {
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--input-bg, var(--card));
+    color: var(--text);
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.emp-sort-dir-btn {
+    height: 36px;
+    width: 36px;
+    margin-left: 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--input-bg, var(--card));
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.emp-sort-dir-btn:hover {
+    background: var(--hover-bg, var(--border));
+}
+
+
+/* ── FILTER SELECT – DARK MODE FIX ──────────────────────────────────
+   The OS-native <option> list doesn't inherit CSS variables, so we
+   must spell out concrete colours for dark mode explicitly.
+────────────────────────────────────────────────────────────────────── */
+
+body.dark-mode .emp-filter-select {
+    background-color: #1e293b; /* --surface-dark */
+    color: #f1f5f9; /* --text-dark */
+    border-color: #334155; /* --border-dark */
+}
+
+    /* Style the native option elements (supported in Firefox & Chrome) */
+    body.dark-mode .emp-filter-select option {
+        background-color: #1e293b;
+        color: #f1f5f9;
+    }
+
+        /* Disabled / placeholder option */
+        body.dark-mode .emp-filter-select option:disabled {
+            color: #94a3b8;
+        }
+
+    /* Focus ring in dark mode */
+    body.dark-mode .emp-filter-select:focus {
+        border-color: #0181b0;
+        box-shadow: 0 0 0 3px rgba(1, 129, 176, 0.25);
+        outline: none;
+    }
+
+/* Also fix the sort select used on other pages */
+body.dark-mode .emp-sort-select {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border-color: #334155;
+}
+
+    body.dark-mode .emp-sort-select option {
+        background-color: #1e293b;
+        color: #f1f5f9;
     }

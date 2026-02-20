@@ -96,8 +96,6 @@ namespace ERMS.Data
                 new Position { Id = 7, Title = "Sales Representative", Description = "Sales Rep", BaseSalary = 55000m },
                 new Position { Id = 8, Title = "Marketing Manager", Description = "Marketing Team Manager", BaseSalary = 90000m }
             );
-
-            // ── Employees ────────────────────────────────────────────────
             modelBuilder.Entity<Employee>().HasData(
                 new Employee
                 {
@@ -113,7 +111,8 @@ namespace ERMS.Data
                     ManagerId = null,
                     Address = "123 Main St, City, State 12345",
                     DateOfBirth = new DateTime(1980, 5, 15),
-                    IsDeleted = false
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2024, 1, 1)        // ← added
                 },
                 new Employee
                 {
@@ -129,7 +128,8 @@ namespace ERMS.Data
                     ManagerId = 1,
                     Address = "456 Oak Ave, City, State 12345",
                     DateOfBirth = new DateTime(1985, 8, 22),
-                    IsDeleted = false
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2024, 1, 1)        // ← added
                 },
                 new Employee
                 {
@@ -145,7 +145,8 @@ namespace ERMS.Data
                     ManagerId = 1,
                     Address = "789 Pine Rd, City, State 12345",
                     DateOfBirth = new DateTime(1983, 3, 10),
-                    IsDeleted = false
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2024, 1, 1)        // ← added
                 },
                 new Employee
                 {
@@ -161,7 +162,8 @@ namespace ERMS.Data
                     ManagerId = 1,
                     Address = "321 Elm St, City, State 12345",
                     DateOfBirth = new DateTime(1987, 11, 30),
-                    IsDeleted = false
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2024, 1, 1)        // ← added
                 },
                 new Employee
                 {
@@ -177,7 +179,8 @@ namespace ERMS.Data
                     ManagerId = 1,
                     Address = "654 Maple Dr, City, State 12345",
                     DateOfBirth = new DateTime(1986, 7, 18),
-                    IsDeleted = false
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2024, 1, 1)        // ← added
                 },
                 new Employee
                 {
@@ -193,7 +196,8 @@ namespace ERMS.Data
                     ManagerId = 3,
                     Address = "987 Cedar Ln, City, State 12345",
                     DateOfBirth = new DateTime(1990, 2, 14),
-                    IsDeleted = false
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2024, 1, 1)        // ← added
                 },
                 new Employee
                 {
@@ -209,7 +213,8 @@ namespace ERMS.Data
                     ManagerId = 3,
                     Address = "147 Birch St, City, State 12345",
                     DateOfBirth = new DateTime(1995, 9, 5),
-                    IsDeleted = false
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2024, 1, 1)        // ← added
                 },
                 new Employee
                 {
@@ -225,7 +230,8 @@ namespace ERMS.Data
                     ManagerId = 4,
                     Address = "258 Willow Way, City, State 12345",
                     DateOfBirth = new DateTime(1992, 4, 25),
-                    IsDeleted = false
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2024, 1, 1)        // ← added
                 },
                 new Employee
                 {
@@ -241,9 +247,11 @@ namespace ERMS.Data
                     ManagerId = 4,
                     Address = "369 Spruce Ave, City, State 12345",
                     DateOfBirth = new DateTime(1993, 12, 8),
-                    IsDeleted = false
+                    IsDeleted = false,
+                    CreatedAt = new DateTime(2024, 1, 1)        // ← added
                 }
             );
+
 
             // ── Users ────────────────────────────────────────────────────
             modelBuilder.Entity<User>().HasData(

@@ -18,6 +18,7 @@ namespace ERMS.Helpers.Mappers
         public static EmployeeResponseDto MapToResponseDto(Employee employee) =>
             new EmployeeResponseDto
             {
+                ProfilePicturePath = employee.ProfilePicturePath,
                 Id = employee.Id,
                 FirstName = employee.FirstName,
                 LastName = employee.LastName,
@@ -30,7 +31,9 @@ namespace ERMS.Helpers.Mappers
                 PositionTitle = employee.Position?.Title,
                 ManagerName = employee.Manager?.FullName,
                 Username = employee.User?.Username,
-                Role = employee.User?.Role.ToString()
+                Role = employee.User?.Role.ToString(),
+                CreatedAt = employee.CreatedAt,       // ← added
+                UpdatedAt = employee.UpdatedAt        // ← added
             };
 
         // Employee → UpdateEmployeeDto  (used by service: GetEmployeeForEditAsync)
@@ -46,6 +49,8 @@ namespace ERMS.Helpers.Mappers
                 PositionId = employee.PositionId,
                 ManagerId = employee.ManagerId,
                 Status = employee.Status.ToString(),
+                CreatedAt = employee.CreatedAt,       // ← added
+                UpdatedAt = employee.UpdatedAt        // ← added
             };
 
         // Employee → SubordinateViewModel  (used by service: GetEmployeeDetailsAsync)
@@ -70,7 +75,8 @@ namespace ERMS.Helpers.Mappers
                 DepartmentId = dto.DepartmentId,
                 PositionId = dto.PositionId,
                 ManagerId = dto.ManagerId,
-                Status = EmployeeStatus.Active
+                Status = EmployeeStatus.Active,
+                CreatedAt = DateTime.Now            // ← added
             };
 
         // UpdateEmployeeDto → Employee  (used by service: UpdateEmployeeAsync)
@@ -84,7 +90,7 @@ namespace ERMS.Helpers.Mappers
             employee.PositionId = dto.PositionId;
             employee.ManagerId = dto.ManagerId;
             employee.Status = status;
-            employee.UpdatedAt = DateTime.Now;
+            employee.UpdatedAt = DateTime.Now;      // ← already existed, kept
         }
 
         // ══════════════════════════════════════════════════════════════
@@ -104,12 +110,14 @@ namespace ERMS.Helpers.Mappers
                 PositionId = dto.PositionId,
                 ManagerId = dto.ManagerId,
                 Status = dto.Status,
+                CreatedAt = dto.CreatedAt,          // ← added
+                UpdatedAt = dto.UpdatedAt           // ← added
             };
 
-        // EmployeeResponseDto → EmployeeListViewModel  (used by controller: Index)
         public static EmployeeListViewModel DtoToModel(this EmployeeResponseDto employee) =>
             new EmployeeListViewModel
             {
+                ProfilePicturePath = employee.ProfilePicturePath,
                 Id = employee.Id,
                 FullName = employee.FullName,
                 Email = employee.Email,
@@ -139,6 +147,8 @@ namespace ERMS.Helpers.Mappers
                 Manager = employee.ManagerName,
                 Username = employee.Username,
                 Role = employee.Role,
+                CreatedAt = employee.CreatedAt,     // ← added
+                UpdatedAt = employee.UpdatedAt,     // ← added
                 Subordinates = employeeEntity.Subordinates?
                                    .Select(s => s.ToSubordinateViewModel())
                                    .ToList()
@@ -192,6 +202,8 @@ namespace ERMS.Helpers.Mappers
                 PositionId = vm.PositionId,
                 ManagerId = vm.ManagerId,
                 Status = vm.Status,
+                // CreatedAt/UpdatedAt intentionally not mapped here
+                // — ApplyUpdate() handles UpdatedAt on the entity directly
             };
 
         // CreateEmployeeViewModel → CreateEmployeeDto  (used by controller: POST Create)

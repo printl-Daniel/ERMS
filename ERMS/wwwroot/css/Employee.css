@@ -1959,3 +1959,38 @@ body.dark-mode .emp-page-btn {
 body.dark-mode .emp-page-dots {
     color: var(--text-muted, #4e5d73);
 }
+
+.emp-avatar-img {
+    background: none !important;
+    padding: 0;
+    overflow: hidden;
+}
+
+    .emp-avatar-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+th[data-sort] {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+    th[data-sort]:hover {
+        color: var(--accent, #0181b0);
+    }
+
+.sort-indicator {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-left: 4px;
+    transition: color 0.15s;
+}
+
+    .sort-indicator.sort-asc,
+    .sort-indicator.sort-desc {
+        color: var(--accent, #0181b0);
+    }

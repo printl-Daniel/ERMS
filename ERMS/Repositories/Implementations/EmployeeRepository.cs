@@ -44,8 +44,8 @@ namespace ERMS.Repositories.Implementations
                 .Include(e => e.Position)
                 .Include(e => e.Manager)
                 .Include(e => e.User)
-                .OrderBy(e => e.Department.Name)
-                .ThenBy(e => e.LastName)
+                .OrderBy(e => e.LastName)
+                .ThenBy(e => e.FirstName)
                 .ToListAsync();
         }
 
@@ -201,7 +201,6 @@ namespace ERMS.Repositories.Implementations
             managers.Insert(0, new SelectListItem
             {
                 Value = "",
-                Text = "-- No Manager --"
             });
 
             return managers;

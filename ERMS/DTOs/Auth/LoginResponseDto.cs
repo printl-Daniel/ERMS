@@ -4,6 +4,7 @@
     {
         public bool Success { get; set; }
         public string Message { get; set; }
+        public string? ProfilePicturePath { get; set; }
         public string Role { get; set; }
         public int UserId { get; set; }
         public int EmployeeId { get; set; }

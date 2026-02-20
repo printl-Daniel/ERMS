@@ -1,13 +1,13 @@
 @model IEnumerable<ERMS.ViewModels.Employee.EmployeeListViewModel>
 @{
     ViewBag.Title = "Employees";
-    var total      = Model?.Count() ?? 0;
-    var active     = Model?.Count(e => e.Status == "Active") ?? 0;
-    var onLeave    = Model?.Count(e => e.Status == "OnLeave") ?? 0;
-    var suspended  = Model?.Count(e => e.Status == "Suspended") ?? 0;
+    var total = Model?.Count() ?? 0;
+    var active = Model?.Count(e => e.Status == "Active") ?? 0;
+    var onLeave = Model?.Count(e => e.Status == "OnLeave") ?? 0;
+    var suspended = Model?.Count(e => e.Status == "Suspended") ?? 0;
     var terminated = Model?.Count(e => e.Status == "Terminated") ?? 0;
-    var inactive   = total - active;
-    var depts      = Model?.Select(e => e.Department).Distinct().Count() ?? 0;
+    var inactive = total - active;
+    var depts = Model?.Select(e => e.Department).Distinct().Count() ?? 0;
 
     string[] avatarColors = {
         "#0181b0","#10b981","#f59e0b","#ef4444",
@@ -37,6 +37,7 @@
         </a>
     </div>
 
+    <!-- ── Stats ── -->
     <div class="emp-stats">
         <div class="emp-stat-card">
             <div class="emp-stat-icon emp-icon-blue">
@@ -110,6 +111,8 @@
                 </svg>
                 All Employees
             </span>
+
+            <!-- ── Controls ── -->
             <div class="emp-card-controls">
                 <div class="emp-search-wrap">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -120,9 +123,58 @@
                     <input type="text" id="empSearchInput" class="emp-search-input"
                            placeholder="Search employees…" />
                 </div>
+
+                <select id="empDeptFilter" class="emp-sort-select">
+                    <option value="">All Departments</option>
+                    @foreach (var dept in Model.Select(e => e.Department).Where(d => d != null).Distinct().OrderBy(d => d))
+                    {
+                        <option value="@dept.ToLower()">@dept</option>
+                    }
+                </select>
+
+                <select id="empPositionFilter" class="emp-sort-select">
+                    <option value="">All Positions</option>
+                    @foreach (var pos in Model.Select(e => e.Position).Where(p => p != null).Distinct().OrderBy(p => p))
+                    {
+                        <option value="@pos.ToLower()">@pos</option>
+                    }
+                </select>
+
+                <select id="empManagerFilter" class="emp-sort-select">
+                    <option value="">All Managers</option>
+                    @foreach (var mgr in Model.Select(e => e.Manager).Where(m => !string.IsNullOrEmpty(m)).Distinct().OrderBy(m => m))
+                    {
+                        <option value="@mgr.ToLower()">@mgr</option>
+                    }
+                </select>
+
+                <select id="empRoleFilter" class="emp-sort-select">
+                    <option value="">All Roles</option>
+                    @foreach (var role in Model.Select(e => e.Role).Where(r => r != null).Distinct().OrderBy(r => r))
+                    {
+                        <option value="@role.ToLower()">@role</option>
+                    }
+                </select>
+
+                <select id="empYearFilter" class="emp-sort-select">
+                    <option value="">All Years</option>
+                    @foreach (var year in Model.Select(e => e.HireDate.Year).Distinct().OrderByDescending(y => y))
+                    {
+                        <option value="@year">@year</option>
+                    }
+                </select>
+                <button type="button" id="empResetFilters" class="emp-btn emp-btn-outline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                        <path d="M3 3v5h5" />
+                    </svg>
+                    Reset
+                </button>
             </div>
         </div>
 
+        <!-- ── Status Pills ── -->
         <div class="emp-filter-pills">
             <button class="emp-pill active" data-filter="all">
                 All <span class="emp-pill-count">@total</span>
@@ -163,21 +215,37 @@
                         {
                             var color = avatarColors[idx % avatarColors.Length];
                             var initials = (employee.FullName?.Length > 0
-                                ? string.Concat(employee.FullName.Split(' ')
-                                    .Where(w => w.Length > 0)
-                                    .Take(2)
-                                    .Select(w => w[0].ToString().ToUpper()))
-                                : "?");
+                            ? string.Concat(employee.FullName.Split(' ')
+                            .Where(w => w.Length > 0)
+                            .Take(2)
+                            .Select(w => w[0].ToString().ToUpper()))
+                            : "?");
                             idx++;
 
                             <tr data-status="@employee.Status"
+                                data-name="@employee.FullName?.ToLower()"
+                                data-department="@employee.Department?.ToLower()"
+                                data-position="@employee.Position?.ToLower()"
+                                data-manager="@employee.Manager?.ToLower()"
+                                data-role="@employee.Role?.ToLower()"
+                                data-date="@employee.HireDate.ToString("yyyy-MM-dd")"
+                                data-year="@employee.HireDate.Year"
                                 data-search="@((employee.FullName + employee.Email + employee.Department + employee.Position + employee.Role + employee.Status).ToLower())">
 
                                 <td>
                                     <div class="emp-cell">
-                                        <div class="emp-avatar" style="background: @color">
-                                            @initials
-                                        </div>
+                                        @if (!string.IsNullOrEmpty(employee.ProfilePicturePath))
+                                        {
+                                            <div class="emp-avatar emp-avatar-img">
+                                                <img src="@employee.ProfilePicturePath" alt="@employee.FullName" />
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="emp-avatar" style="background: @color">
+                                                @initials
+                                            </div>
+                                        }
                                         <div>
                                             <div class="emp-name">@employee.FullName</div>
                                             <div class="emp-email">@employee.Email</div>
@@ -186,14 +254,9 @@
                                 </td>
 
                                 <td class="emp-col-mono hide-mobile">@employee.PhoneNumber</td>
-
                                 <td class="emp-col-dept">@employee.Department</td>
-
                                 <td class="emp-col-secondary hide-mobile">@employee.Position</td>
-
-                                <td class="emp-col-secondary hide-mobile">
-                                    @(employee.Manager ?? "—")
-                                </td>
+                                <td class="emp-col-secondary hide-mobile">@(employee.Manager ?? "—")</td>
 
                                 <td>
                                     <span class="emp-role-badge">@employee.Role</span>
@@ -258,7 +321,8 @@
                                                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                                 <polyline points="3 6 5 6 21 6" />
                                                 <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                                                <path d="M10 11v6" /><path d="M14 11v6" />
+                                                <path d="M10 11v6" />
+                                                <path d="M14 11v6" />
                                                 <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
                                             </svg>
                                         </a>

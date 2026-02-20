@@ -1,4 +1,5 @@
 ﻿using ERMS.Models;
+using System.Text.RegularExpressions;
 using static ERMS.Enums.EmployeeEnum;
 
 namespace ERMS.Helpers.Mappers
@@ -16,10 +17,18 @@ namespace ERMS.Helpers.Mappers
                 EmployeeId = employeeId
             };
 
-        public static string GenerateUsername(string email) =>
-            email.Split('@')[0]
-                 .ToLower()
-                 .Replace(".", "")
-                 .Replace("-", "");
+        public static string GenerateUsername(string email)
+        {
+            var local = email.Split('@')[0];
+            var cleaned = Regex.Replace(local.ToLower(), @"[^a-z0-9]", "");
+
+            if (cleaned.Length < 3)
+                cleaned = cleaned.PadRight(3, 'x');
+
+            if (cleaned.Length > 20)
+                cleaned = cleaned[..20];
+
+            return cleaned;
+        }
     }
 }

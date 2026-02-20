@@ -95,28 +95,23 @@ namespace ERMS.Controllers
             return View(department.ToDeleteViewModel());
         }
 
-        // POST: Department/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
             {
-                var result = await _departmentService.DeleteAsync(id);
-                if (result)
-                {
-                    TempData["SuccessMessage"] = "Department deleted successfully";
-                }
-                else
-                {
-                    TempData["ErrorMessage"] = "Failed to delete department";
-                }
+                await _departmentService.DeleteAsync(id);
+                TempData["SuccessMessage"] = "Department deleted successfully.";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"Error: {ex.Message}";
             }
-
             return RedirectToAction(nameof(Index));
         }
     }

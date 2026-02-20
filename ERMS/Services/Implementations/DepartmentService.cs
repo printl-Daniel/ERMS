@@ -55,8 +55,17 @@ namespace ERMS.Services.Implementations
             return updated.ToDto();
         }
 
-        public async Task<bool> DeleteAsync(int id) =>
-            await _repository.SoftDeleteAsync(id);
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var department = await _repository.GetByIdActiveAsync(id);
+            if (department == null)
+                throw new InvalidOperationException(Messages.Error.Department.NotFound);
+
+            if (department.Employees != null && department.Employees.Any(e => !e.IsDeleted))
+                throw new InvalidOperationException(Messages.Error.Department.HasEmployees);
+
+            return await _repository.SoftDeleteAsync(id);
+        }
 
         public async Task<bool> ExistsAsync(int id) =>
             await _repository.ExistsAsync(id);

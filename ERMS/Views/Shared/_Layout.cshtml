@@ -43,21 +43,38 @@
                         }
                         else if (role == "Manager")
                         {
-                            <li>@Html.ActionLink("Dashboard", "Dashboard", "Manager")</li>
+                            <li>@Html.ActionLink("Hierarchy", "Index", "Hierarchy")</li>
                             <li>@Html.ActionLink("Employees", "Index", "Employee")</li>
+                            <li>@Html.ActionLink("Department", "Index", "Department")</li>
+                            <li>@Html.ActionLink("Position", "Index", "Position")</li>
                             <li>@Html.ActionLink("Profile", "Profile", "Profile")</li>
                         }
                         else
                         {
-                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            <li>@Html.ActionLink("Hierarchy", "Index", "Hierarchy")</li>
+                            <li>@Html.ActionLink("Profile", "Profile", "Profile")</li>
                         }
                     </ul>
 
                     <ul class="nav navbar-nav navbar-right">
-                        <!-- User Info Pill -->
                         <li class="user-info-pill">
+                            @{
+                                var profilePic = User.FindFirst("ProfilePicture")?.Value;
+                                var initials = string.IsNullOrEmpty(fullName) ? "?" :
+                                string.Join("", fullName.Split(' ')
+                                .Where(w => w.Length > 0)
+                                .Take(2)
+                                .Select(w => w[0].ToString().ToUpper()));
+                            }
                             <span class="user-avatar">
-                                <span class="glyphicon glyphicon-user"></span>
+                                @if (!string.IsNullOrEmpty(profilePic))
+                                {
+                                    <img src="@profilePic" alt="@fullName" />
+                                }
+                                else
+                                {
+                                    @initials
+                                }
                             </span>
                             <span class="user-details">
                                 <span class="user-name">@fullName</span>

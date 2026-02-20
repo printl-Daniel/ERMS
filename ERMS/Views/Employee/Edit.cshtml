@@ -254,6 +254,34 @@
 
         </div>
 
+        @* ─── Audit Info (read-only) ───────────────── *@
+        <div class="emp-card">
+            <div class="emp-card-header">
+                <span class="emp-card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10" />
+                        <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    Record Audit
+                </span>
+            </div>
+            <div class="emp-card-body emp-form-body">
+                <div class="emp-form-row">
+                    <div class="emp-field">
+                        <label class="emp-label">Created</label>
+                        <input class="emp-input" value="@Model.CreatedAt.ToString("MMMM d, yyyy 'at' h:mm tt")" disabled />
+                    </div>
+                    <div class="emp-field">
+                        <label class="emp-label">Last Modified</label>
+                        <input class="emp-input"
+                               value="@(Model.UpdatedAt.HasValue? Model.UpdatedAt.Value.ToString("MMMM d, yyyy 'at' h:mm tt") : "Never modified")"
+                               disabled />
+                    </div>
+                </div>
+            </div>
+        </div>
+
         @* ── Actions bar ──────────────────────────────── *@
         <div class="emp-form-actions">
             <a href="@Url.Action("Index", "Employee")" class="emp-btn emp-btn-outline">

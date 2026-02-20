@@ -22,11 +22,12 @@ namespace ERMS.Helpers
             {
                 Success = true,
                 Message = Messages.Success.Auth.LoginSuccess,
+                ProfilePicturePath = user.Employee?.ProfilePicturePath,
                 Role = user.Role.ToString(),
                 UserId = user.Id,
                 EmployeeId = user.EmployeeId,
                 FullName = user.Employee.FullName,
-                IsFirstLogin = user.IsFirstLogin  // ← ADD
+                IsFirstLogin = user.IsFirstLogin 
             };
     }
 }
